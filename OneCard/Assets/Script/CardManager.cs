@@ -8,9 +8,28 @@ public class CardManager : MonoBehaviour
     private List<object> openedCardDeck;
 
     private Object opendCard;
+    [SerializeField]
+    private Object cardPrefab;
+    private Card card;
 
-    private void Cards()
+    int maxCardNum = 12;
+    int maxShapeNum = 3;
+
+    void Start()
     {
+        InitCards();
+    }
+    private void InitCards()
+    {
+        for (int i = 0; i < maxShapeNum; i++)
+        {
+            for (int j = 0; j < maxCardNum; j++)
+            {
+                //card.InitCard(i, j);
+            }
+        }
+        //card.InitCard(4,13);
+        //card.InitCard(4,14);
 
     }
 
