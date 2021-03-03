@@ -10,7 +10,8 @@ public class Card : MonoBehaviour
         Heart,
         Diamond,
         Spade,
-        Club
+        Club,
+        Joker
     }
 
     private enum Color
@@ -27,6 +28,7 @@ public class Card : MonoBehaviour
     }
 
     private Image cardImage;
+    CardData cardData;
 
     protected virtual void Put()
     {
@@ -38,8 +40,42 @@ public class Card : MonoBehaviour
 
     }
 
-    public void InitCard()
+    public void InitCard(int ShapeNum, int CardNum)
     {
+        switch(ShapeNum)
+        {
+            case 0 :
+                cardData.shape = Shape.Heart;
+                cardData.color = Color.Red;
+                break;
+            case 1:
+                cardData.shape = Shape.Diamond;
+                cardData.color = Color.Red;
+                break;
+            case 2:
+                cardData.shape = Shape.Spade;
+                cardData.color = Color.Black;
+                break;
+            case 3:
+                cardData.shape = Shape.Club;
+                cardData.color = Color.Black;
+                break;
+            case 4:
+                cardData.shape = Shape.Joker;
+                break;
+            default :
+                return;
+        }
+        cardData.number = CardNum;
 
+        // 조커 색상
+        if(CardNum == 13)
+        {
+            cardData.color = Color.Black;
+        }
+        else if(CardNum == 14)
+        {
+            cardData.color = Color.Red;
+        }
     }
 }
