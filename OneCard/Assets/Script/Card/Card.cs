@@ -30,6 +30,9 @@ public class Card : MonoBehaviour
     private Image cardImage;
     CardData cardData;
 
+    public int currnetNum;
+    public string currentShape;
+
     protected virtual void Put()
     {
 
@@ -77,5 +80,7 @@ public class Card : MonoBehaviour
         {
             cardData.color = Color.Red;
         }
+        currnetNum = cardData.number;
+        currentShape = cardData.shape.ToString();
     }
 }
