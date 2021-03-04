@@ -150,6 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68cba22cd8819c340991915ca3debf38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  closedCardDeck: []
   cardPrefab: {fileID: 46382248676841180, guid: 4cad36fed0c70c24e9cccb87bb64548e,
     type: 3}
 --- !u!4 &245939020
