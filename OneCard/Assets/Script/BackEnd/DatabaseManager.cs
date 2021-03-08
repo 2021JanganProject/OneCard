@@ -7,16 +7,24 @@ using Firebase.Auth;
 using Firebase.Database;
 public class DatabaseManager : MonoBehaviour
 {
-    const string FIREBASE_PATH = "https://fir-demo-project.firebaseio.com/";
+    public static DatabaseManager instance;
+    private void Awake()
+    {
+        if(instance == null)
+        {
+            instance = this;
+        }
+    }
+    public const string FIREBASE_PATH = "https://one-card-backend-default-rtdb.firebaseio.com/";
+    public FirebaseDatabase firebaseDatabase { get; set; }
     public DatabaseReference reference { get; set; }
-    private FirebaseDatabase firebaseDatabase;
+    public PlayerInfo PlayerInfo { get => playerInfo; set => playerInfo = value; }
 
+    private PlayerInfo playerInfo;
     // Start is called before the first frame update
     void Start()
     {
-        //InitFirebaseDatabase();
-        Debuger.instance.debugDel += InitFirebaseDatabase;
-
+        Debuger.instance.del_debugInputR += SetFirebaseDatabase;
     }
 
     // Update is called once per frame
@@ -25,28 +33,58 @@ public class DatabaseManager : MonoBehaviour
         
     }
 
-    public void InitFirebaseDatabase()
+    public void SetFirebaseDatabase()
     {
-        firebaseDatabase = FirebaseDatabase.DefaultInstance;
+        SetPlayerInfo();
+        GetPlayerInfo();
+        Debug.Log("Set");
+    }
+    // ghj
+    void SetPlayerInfo()
+    {
+        PlayerInfo playerInfo = new PlayerInfo("Test3", 1, 5, 4, 4, 4);
+        string json = JsonUtility.ToJson(playerInfo);
+        reference = firebaseDatabase.RootReference;
+        Debug.Log(firebaseDatabase.RootReference);
+        string key = reference.Child("PlayerInfo").Push().Key;
+        reference.Child("PlayerInfo").Child(key).SetRawJsonValueAsync(json);
     }
 
-    void SetData()
+    void GetPlayerInfo()
     {
-        PlayerInfo playerInfo = new PlayerInfo("Test", 1, 5, 4, 4, 4);
-        string json = JsonUtility.ToJson(playerInfo);
-
-        firebaseDatabase.GetReference(FIREBASE_PATH).SetRawJsonValueAsync(json);
-
-        //reference.Child()
+        DatabaseReference reference = firebaseDatabase.GetReference("PlayerInfo");
+        reference.GetValueAsync().ContinueWith(task => 
+        {
+            if(task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                foreach (var item in snapshot.Children)
+                {
+                    IDictionary playerInfoTemp = (IDictionary)item.Value;
+                    playerInfo = new PlayerInfo
+                    (
+                        playerInfoTemp["nickname"].ToString(),
+                        (int)playerInfoTemp["level"],
+                        (int)playerInfoTemp["tiket"],
+                        (int)playerInfoTemp["rank"],
+                        (int)playerInfoTemp["gold"],
+                        (int)playerInfoTemp["diamond"]
+                    );
+                    
+                }
+            }
+        });
+        
+        
     }
 
 }
 
-class PlayerInfo
+public class PlayerInfo
 {
     public string nickname;
     public int level;
-    public int badge;
+    public int tiket;
     public int rank;
     public int gold;
     public int diamond;
@@ -55,9 +93,14 @@ class PlayerInfo
     {
         this.nickname = nickname;
         this.level = level;
-        this.badge = badge;
+        this.tiket = badge;
         this.rank = rank;
         this.gold = gold;
         this.diamond = diamond;
+    }
+
+    public override string ToString()
+    {
+        return $"nickname : {nickname} , level : {level} , tiket : {tiket} , rank : {rank} , gold : {gold} , diamond : {diamond}";
     }
 }

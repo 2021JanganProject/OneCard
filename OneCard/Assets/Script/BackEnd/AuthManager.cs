@@ -17,6 +17,7 @@ public class AuthManager : MonoBehaviour
     /// 중복 클릭이 되지 않게끔 확인
     /// </summary>
     public bool IsSignInOnProgress { get; private set; }
+    public FirebaseApp FirebaseApp { get => firebaseApp; set => firebaseApp = value; }
 
     /** auth 용 instance */
     FirebaseAuth firebaseAuth;
@@ -28,19 +29,23 @@ public class AuthManager : MonoBehaviour
     string displayName;
     string emailAddress;
     string photoUrl;
-
+    public static AuthManager instance;
     private void Awake()
     {
-        
+        if (instance == null)
+        {
+            instance = this;
+        }
     }
     void Start()
     {
         // 초기화
         InitializeFirebase();
-        Debuger.instance.debugDel += () =>
+        Debuger.instance.del_debugInputT += () =>
         {
             Debuger.instance.IsNull(firebaseAuth);
-            Debuger.instance.IsNull(firebaseDatabase);
+            Debuger.instance.IsNull(firebaseApp);
+            Debuger.instance.IsNull(DatabaseManager.instance.reference);
         };
     }
 
@@ -76,14 +81,13 @@ public class AuthManager : MonoBehaviour
                 firebaseApp = FirebaseApp.DefaultInstance;
                 //firebaseAuth = FirebaseAuth.GetAuth(firebaseApp); // <= 똑같은 건데 자주 NULL 에러가 떠서 DefaultInstance로 쓰는게 좋음 
                 firebaseAuth = FirebaseAuth.DefaultInstance;
-                firebaseDatabase = FirebaseDatabase.DefaultInstance;
+                
+                DatabaseManager.instance.firebaseDatabase = FirebaseDatabase.GetInstance(firebaseApp,DatabaseManager.FIREBASE_PATH);
                 firebaseAuth.StateChanged += AuthStateChanged;
             }
 
             // signInButton.interactable = IsFirebaseReady;
         });
-
-        
     }
 
     /** 상태변화 추적 */
@@ -105,9 +109,6 @@ public class AuthManager : MonoBehaviour
                 Debuger.instance.Log(string.Format("Signed in displayName {0} _ emailAddress {1}", displayName, emailAddress));
             }
         }
-        List<object> t = new List<object>();
-        t.Sort();
-        // cardList.Sort();
     }
 
     public void BtnEvt_anoymousLogin()
