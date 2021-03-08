@@ -34,13 +34,11 @@ public class PlayerProfileManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (cUI.getTime() <= 0)
+        if(cUI.currentTimeChange <= 0)
         {
-            float time = cUI.getTime();
             TurnManager();
-            time = 12f;
-            //cUI.setTime(time);
         }
+        cUI.currentTimeChange = 12f;
     }
     void TurnManager()
     {
