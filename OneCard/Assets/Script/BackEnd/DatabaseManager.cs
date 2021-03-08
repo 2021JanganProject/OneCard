@@ -24,7 +24,7 @@ public class DatabaseManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debuger.instance.del_debugInputR += SetFirebaseDatabase;
+        DebugerManager.instance.del_debugInputR += SetFirebaseDatabase;
     }
 
     // Update is called once per frame
@@ -83,6 +83,7 @@ public class DatabaseManager : MonoBehaviour
 public class PlayerInfo
 {
     public string nickname;
+    public Sprite profileImage;
     public int level;
     public int tiket;
     public int rank;

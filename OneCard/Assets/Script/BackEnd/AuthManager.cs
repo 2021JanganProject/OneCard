@@ -41,11 +41,11 @@ public class AuthManager : MonoBehaviour
     {
         // 초기화
         InitializeFirebase();
-        Debuger.instance.del_debugInputT += () =>
+        DebugerManager.instance.del_debugInputT += () =>
         {
-            Debuger.instance.IsNull(firebaseAuth);
-            Debuger.instance.IsNull(firebaseApp);
-            Debuger.instance.IsNull(DatabaseManager.instance.reference);
+            DebugerManager.instance.IsNull(firebaseAuth);
+            DebugerManager.instance.IsNull(firebaseApp);
+            DebugerManager.instance.IsNull(DatabaseManager.instance.reference);
         };
     }
 
@@ -103,10 +103,10 @@ public class AuthManager : MonoBehaviour
             user = firebaseAuth.CurrentUser;
             if (signedIn)
             {
-                Debuger.instance.Log(string.Format("Signed in {0}", user.UserId));
+                DebugerManager.instance.Log(string.Format("Signed in {0}", user.UserId));
                 displayName = user.DisplayName ?? "";
                 emailAddress = user.Email ?? "";
-                Debuger.instance.Log(string.Format("Signed in displayName {0} _ emailAddress {1}", displayName, emailAddress));
+                DebugerManager.instance.Log(string.Format("Signed in displayName {0} _ emailAddress {1}", displayName, emailAddress));
             }
         }
     }
@@ -123,7 +123,7 @@ public class AuthManager : MonoBehaviour
     private void anoymousLogout()
     {
         firebaseAuth.SignOut();
-        Debuger.instance.Log(string.Format("User signed in successfully: {0} ({1})",
+        DebugerManager.instance.Log(string.Format("User signed in successfully: {0} ({1})",
             user.DisplayName, user.UserId));
     }
     /** 익명 로그인 요청 */
@@ -143,7 +143,7 @@ public class AuthManager : MonoBehaviour
                   return;
               }
               user = task.Result;
-              Debuger.instance.Log(string.Format("User signed in successfully: DisplayName {0} UserId ({1})",
+              DebugerManager.instance.Log(string.Format("User signed in successfully: DisplayName {0} UserId ({1})",
               user.DisplayName, user.UserId));
           });
     }
