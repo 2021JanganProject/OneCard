@@ -8,7 +8,7 @@ public class CardManager : MonoBehaviour
     private List<GameObject> closedCardDeck;
     private List<GameObject> openedCardDeck;
 
-    private GameObject opendCard;
+    public GameObject openedCard;
     [SerializeField]
     private GameObject cardPrefab;    
 

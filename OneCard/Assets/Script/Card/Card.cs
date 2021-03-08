@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Card : MonoBehaviour
 {
-    private enum Shape
+    protected enum Shape
     {
         Heart,
         Diamond,
@@ -29,9 +29,15 @@ public class Card : MonoBehaviour
 
     private Image cardImage;
     CardData cardData;
+    private CardManager cardManager;
 
     public int currnetNum;
     public string currentShape;
+
+    void Start()
+    {
+        cardManager = GetComponent<CardManager>();
+    }
 
     protected virtual void Put()
     {
@@ -40,7 +46,8 @@ public class Card : MonoBehaviour
 
     protected virtual void Checking()
     {
-
+        // 같은 문양인지 확인
+        // CardManager.openedCard.cardData.Shape == cardData.Shape;
     }
 
     public void InitCard(int ShapeNum, int CardNum)
@@ -69,16 +76,39 @@ public class Card : MonoBehaviour
             default :
                 return;
         }
-        cardData.number = CardNum;
-
+        switch(CardNum)
+        {
+            case 0:
+            case 1:
+                this.gameObject.AddComponent<Attack>();
+                break;
+            case 2:
+                this.gameObject.AddComponent<Defence>();
+                break;
+            case 6:
+                this.gameObject.AddComponent<ChageShape>();
+                break;
+            case 10:
+                this.gameObject.AddComponent<Jump>();
+                break;
+            case 11:
+                this.gameObject.AddComponent<Back>();
+                break;
+            case 12:
+                this.gameObject.AddComponent<OneMore>();
+                break;
+        }
+                cardData.number = CardNum;
         // 조커 색상
         if(CardNum == 13)
         {
             cardData.color = Color.Black;
+            this.gameObject.AddComponent<Attack>();
         }
         else if(CardNum == 14)
         {
             cardData.color = Color.Red;
+            this.gameObject.AddComponent<Attack>();
         }
         currnetNum = cardData.number;
         currentShape = cardData.shape.ToString();

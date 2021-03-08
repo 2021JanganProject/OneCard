@@ -8,7 +8,12 @@ public class Jump : Card
 
     protected override void Put()
     {
-        
+        OrderJump();
+    }
+
+    protected override void Checking()
+    {
+
     }
 
     private void OrderJump()

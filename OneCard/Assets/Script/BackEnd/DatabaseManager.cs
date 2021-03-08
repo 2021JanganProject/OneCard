@@ -15,7 +15,7 @@ public class DatabaseManager : MonoBehaviour
     void Start()
     {
         //InitFirebaseDatabase();
-        Debuger.instance.debugDel += InitFirebaseDatabase;
+        //Debuger.instance.debugDel += InitFirebaseDatabase;
 
     }
 

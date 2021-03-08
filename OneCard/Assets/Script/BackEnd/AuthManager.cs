@@ -37,10 +37,10 @@ public class AuthManager : MonoBehaviour
     {
         // 초기화
         InitializeFirebase();
-        Debuger.instance.debugDel += () =>
+        //Debuger.instance.debugDel += () =>
         {
-            Debuger.instance.IsNull(firebaseAuth);
-            Debuger.instance.IsNull(firebaseDatabase);
+            //Debuger.instance.IsNull(firebaseAuth);
+            //Debuger.instance.IsNull(firebaseDatabase);
         };
     }
 
@@ -99,10 +99,10 @@ public class AuthManager : MonoBehaviour
             user = firebaseAuth.CurrentUser;
             if (signedIn)
             {
-                Debuger.instance.Log(string.Format("Signed in {0}", user.UserId));
+                //Debuger.instance.Log(string.Format("Signed in {0}", user.UserId));
                 displayName = user.DisplayName ?? "";
                 emailAddress = user.Email ?? "";
-                Debuger.instance.Log(string.Format("Signed in displayName {0} _ emailAddress {1}", displayName, emailAddress));
+                //Debuger.instance.Log(string.Format("Signed in displayName {0} _ emailAddress {1}", displayName, emailAddress));
             }
         }
         List<object> t = new List<object>();
@@ -122,8 +122,8 @@ public class AuthManager : MonoBehaviour
     private void anoymousLogout()
     {
         firebaseAuth.SignOut();
-        Debuger.instance.Log(string.Format("User signed in successfully: {0} ({1})",
-            user.DisplayName, user.UserId));
+        //Debuger.instance.Log(string.Format("User signed in successfully: {0} ({1})",
+            //user.DisplayName, user.UserId));
     }
     /** 익명 로그인 요청 */
     private void anoymousLogin()
@@ -142,8 +142,8 @@ public class AuthManager : MonoBehaviour
                   return;
               }
               user = task.Result;
-              Debuger.instance.Log(string.Format("User signed in successfully: DisplayName {0} UserId ({1})",
-              user.DisplayName, user.UserId));
+              //Debuger.instance.Log(string.Format("User signed in successfully: DisplayName {0} UserId ({1})",
+              //user.DisplayName, user.UserId));
           });
     }
 }
