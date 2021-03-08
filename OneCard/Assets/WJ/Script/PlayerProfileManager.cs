@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// 턴을 관리 
+
 public class PlayerProfileManager : MonoBehaviour
 {
-
-    ClockUI cUI;
+    ClockUI clockUI;
     
     [SerializeField]
     GameObject[] playerProfile;
@@ -15,13 +16,13 @@ public class PlayerProfileManager : MonoBehaviour
     Profile[] profile;
 
     int startTurn;
-
     int maxCount = 3;
+
     // Start is called before the first frame update
     void Start()
     {
         startTurn = Random.Range(0, profile.Length);
-        cUI = FindObjectOfType<ClockUI>();
+        clockUI = FindObjectOfType<ClockUI>();
 
         for (int i = 0; i < playerProfile.Length; i++)
         {
@@ -34,14 +35,15 @@ public class PlayerProfileManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (cUI.getTime() <= 0)
+        if (clockUI.TimeOver())
         {
-            float time = cUI.getTime();
+            float time = clockUI.getTime();
             TurnManager();
             time = 12f;
-            //cUI.setTime(time);
+            clockUI.setTime(time);
         }
     }
+    //
     void TurnManager()
     {
         Debug.Log(startTurn);
@@ -55,8 +57,5 @@ public class PlayerProfileManager : MonoBehaviour
         {
             profile[++startTurn].myTurn = true;
         }
-        
-
-
     }
 }

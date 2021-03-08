@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// UI 프로필 초기화 및 관련 함수 
 public class Profile : MonoBehaviour
 {
     [SerializeField]
@@ -38,23 +39,27 @@ public class Profile : MonoBehaviour
         
         
     }
+    // 
+    // => TurnManager
     void SetTurnCheck()
     {
-        
         if(myTurn != false)
         {
             Image image = GetComponent<Image>();
-            Color color = image.color;
-            color.a = 1.0f;
-            image.color = color;
+            SetAlpha(image, 1.0f);
         }
         else
         {
             Image image = GetComponent<Image>();
-            Color color = image.color;
-            color.a = 0.4f;
-            image.color = color;
+            SetAlpha(image , 0.4f);
         }
+    }
+
+    void SetAlpha(Image image, float alpha)
+    {
+        Color color = image.color;
+        color.a = alpha;
+        image.color = color;
     }
     // Update is called once per frame
     void Update()

@@ -18,6 +18,7 @@ public class AuthManager : MonoBehaviour
     /// </summary>
     public bool IsSignInOnProgress { get; private set; }
     public FirebaseApp FirebaseApp { get => firebaseApp; set => firebaseApp = value; }
+    public FirebaseUser User { get => user; set => user = value; }
 
     /** auth 용 instance */
     FirebaseAuth firebaseAuth;
@@ -45,6 +46,7 @@ public class AuthManager : MonoBehaviour
         {
             DebugerManager.instance.IsNull(firebaseAuth);
             DebugerManager.instance.IsNull(firebaseApp);
+            DebugerManager.instance.Log(GetUserId());
             DebugerManager.instance.IsNull(DatabaseManager.instance.reference);
         };
     }
@@ -61,6 +63,10 @@ public class AuthManager : MonoBehaviour
         }
     }
 
+    public string GetUserId()
+    {
+        return user.UserId;
+    }
     void InitializeFirebase()
     {
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
@@ -145,6 +151,7 @@ public class AuthManager : MonoBehaviour
               user = task.Result;
               DebugerManager.instance.Log(string.Format("User signed in successfully: DisplayName {0} UserId ({1})",
               user.DisplayName, user.UserId));
+              DatabaseManager.instance.InitUserDatabase();
           });
     }
 }
