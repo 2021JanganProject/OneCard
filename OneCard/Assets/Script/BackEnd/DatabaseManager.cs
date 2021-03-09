@@ -26,85 +26,104 @@ public class DatabaseManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        DebugerManager.instance.del_debugInputR += GetPlayerInfo;
+        DebugerManager.instance.del_debugInputR += AsyncGetPlayerInfo;
+        DebugerManager.instance.del_debugInputT += () => Debug.Log(playerInfo.uniqueID); 
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Hey");
-        Debug.Log("Hey1231");
+
     }
 
-    public void InitUserDatabase()
+    public void InitFirstLoginUserDatabase()
     {
-        InitPlayerInfo();
+        InitGuestPlayerInfo();
         
         Debug.Log("Set");
     }
     // ghj
-    void InitPlayerInfo()
+    void InitGuestPlayerInfo()
     {
-        PlayerInfo playerInfo = new PlayerInfo("Test3", AuthManager.instance.GetUserId(), 1, 5, 4, 4, 4);
+        PlayerInfo playerInfo = new PlayerInfo("Guest", AuthManager.instance.GetUserId(), 1, 5, 1, 100, 0);
         string json = JsonUtility.ToJson(playerInfo);
+        PushPlayerInfoToDB(json);
+    }
+
+    void PushPlayerInfoToDB(string json )
+    {
         reference = firebaseDatabase.RootReference;
         Debug.Log(firebaseDatabase.RootReference);
         string key = reference.Child("PlayerInfo").Push().Key;
         reference.Child("PlayerInfo").Child(key).SetRawJsonValueAsync(json);
     }
 
-    void GetPlayerInfo()
+    void GetPlayerInfo(DataSnapshot item)
+    {
+        IDictionary playerInfoTemp = (IDictionary)item.Value;
+        Debug.Log($"DB ID :{playerInfoTemp["uniqueID"].ToString()} , USER ID  : {AuthManager.instance.GetUserId()}");
+        if (playerInfoTemp["uniqueID"].ToString() == AuthManager.instance.GetUserId())
+        {
+            Debug.Log("Find!");
+
+            playerInfo = new PlayerInfo
+            (
+                playerInfoTemp["nickname"].ToString(),
+                playerInfoTemp["uniqueID"].ToString(),
+                int.Parse(playerInfoTemp["level"].ToString()),
+                int.Parse(playerInfoTemp["tiket"].ToString()),
+                int.Parse(playerInfoTemp["rank"].ToString()),
+                int.Parse(playerInfoTemp["gold"].ToString()),
+                int.Parse(playerInfoTemp["diamond"].ToString())
+            );
+        }
+    }
+
+    async void AsyncGetPlayerInfo()
     {
         DatabaseReference reference = firebaseDatabase.GetReference("PlayerInfo");
-        reference.GetValueAsync().ContinueWith(task => 
+        
+        await reference.GetValueAsync().ContinueWith(task =>
         {
-            if(task.IsCompleted)
+            if (task.IsCompleted)
             {
                 DataSnapshot snapshot = task.Result;
                 foreach (var item in snapshot.Children)
                 {
                     IDictionary playerInfoTemp = (IDictionary)item.Value;
-                    playerInfo = new PlayerInfo
-                    (
-                        playerInfoTemp["nickname"].ToString(),
-                        playerInfoTemp["uniqueID"].ToString(),
-                        (int)playerInfoTemp["level"],
-                        (int)playerInfoTemp["tiket"],
-                        (int)playerInfoTemp["rank"],
-                        (int)playerInfoTemp["gold"],
-                        (int)playerInfoTemp["diamond"]
-                    );
-                    
+                    Debug.Log($"DB ID :{playerInfoTemp["uniqueID"].ToString()} , USER ID  : {AuthManager.instance.GetUserId()}");
+                    if (playerInfoTemp["uniqueID"].ToString() == AuthManager.instance.GetUserId())
+                    {
+                        Debug.Log("Find!");
+                        //selectdPlayerInfoTemp = playerInfoTemp;
+                        GetPlayerInfo(item);
+                    }
                 }
             }
         });
+        
     }
 }
 
-public class PlayerInfo
+public struct PlayerInfo
 {
     public string nickname;
     public string uniqueID;
-    public Sprite profileImage;
     public int level;
     public int tiket;
     public int rank;
     public int gold;
     public int diamond;
 
-    public PlayerInfo(string nickname, string uniqueID , int level, int badge, int rank, int gold, int diamond)
+    public PlayerInfo(string nickname, string uniqueID , int level, int tiket, int rank, int gold, int diamond)
     {
         this.nickname = nickname;
         this.uniqueID = uniqueID;
         this.level = level;
-        this.tiket = badge;
+        this.tiket = tiket;
         this.rank = rank;
         this.gold = gold;
         this.diamond = diamond;
     }
 
-    public override string ToString()
-    {
-        return $"nickname : {nickname} , level : {level} , tiket : {tiket} , rank : {rank} , gold : {gold} , diamond : {diamond}";
-    }
 }

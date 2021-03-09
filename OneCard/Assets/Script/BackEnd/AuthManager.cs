@@ -44,10 +44,10 @@ public class AuthManager : MonoBehaviour
         InitializeFirebase();
         DebugerManager.instance.del_debugInputT += () =>
         {
-            DebugerManager.instance.IsNull(firebaseAuth);
-            DebugerManager.instance.IsNull(firebaseApp);
-            DebugerManager.instance.Log(GetUserId());
-            DebugerManager.instance.IsNull(DatabaseManager.instance.reference);
+            //DebugerManager.instance.IsNull(firebaseAuth);
+            //DebugerManager.instance.IsNull(firebaseApp);
+            //DebugerManager.instance.Log(GetUserId());
+            //DebugerManager.instance.IsNull(DatabaseManager.instance.reference);
         };
     }
 
@@ -135,6 +135,9 @@ public class AuthManager : MonoBehaviour
     /** 익명 로그인 요청 */
     private void anoymousLogin()
     {
+
+        StartCoroutine(WaitForCompleted());
+
         firebaseAuth
           .SignInAnonymouslyAsync()
           .ContinueWith(task => {
@@ -148,10 +151,25 @@ public class AuthManager : MonoBehaviour
                   Debug.LogError("SignInAnonymouslyAsync encountered an error: " + task.Exception);
                   return;
               }
-              user = task.Result;
-              DebugerManager.instance.Log(string.Format("User signed in successfully: DisplayName {0} UserId ({1})",
-              user.DisplayName, user.UserId));
-              DatabaseManager.instance.InitUserDatabase();
+              if(task.IsCompleted)
+              {
+                  user = task.Result;
+                  DebugerManager.instance.Log(string.Format("User signed in successfully: DisplayName {0} UserId ({1})",
+                  user.DisplayName, user.UserId));
+                  
+              }
           });
+    }
+
+    IEnumerator WaitForCompleted()
+    {
+        Debug.Log("Start");
+        while(user == null)
+        {
+            yield return null;
+        }
+        Debug.Log("Start InitFirstLoginUserDatabase");
+        DatabaseManager.instance.InitFirstLoginUserDatabase();
+
     }
 }
