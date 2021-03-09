@@ -33,6 +33,7 @@ public class DatabaseManager : MonoBehaviour
     void Update()
     {
         Debug.Log("Hey");
+        Debug.Log("Hey1231");
     }
 
     public void InitUserDatabase()
