@@ -32,7 +32,7 @@ public class DatabaseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        Debug.Log("Hey");
     }
 
     public void InitUserDatabase()
