@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour
     private GameObject ArrowRightObject;
     private GameObject ArrowLeftObject;
 
+
     private void SetCurrentAttackCountItemp(int num)
     {
 

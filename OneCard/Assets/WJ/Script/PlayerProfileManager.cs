@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// 턴을 관리 
+
 public class PlayerProfileManager : MonoBehaviour
 {
+    UIClock clockUI;
 
-    ClockUI cUI;
-    
     [SerializeField]
     GameObject[] playerProfile;
 
@@ -15,13 +16,13 @@ public class PlayerProfileManager : MonoBehaviour
     Profile[] profile;
 
     int startTurn;
-
     int maxCount = 3;
+
     // Start is called before the first frame update
     void Start()
     {
         startTurn = Random.Range(0, profile.Length);
-        cUI = FindObjectOfType<ClockUI>();
+        clockUI = FindObjectOfType<UIClock>();
 
         for (int i = 0; i < playerProfile.Length; i++)
         {
@@ -29,32 +30,40 @@ public class PlayerProfileManager : MonoBehaviour
         }
 
         profile[startTurn].myTurn = true;
-        
+
     }
     // Update is called once per frame
     void Update()
     {
-        if(cUI.currentTimeChange <= 0)
+
+        /*if (clockUI.currentTimeChange <= 0)
         {
             TurnManager();
-        }
-        cUI.currentTimeChange = 12f;
-    }
-    void TurnManager()
-    {
-        Debug.Log(startTurn);
-        profile[startTurn].myTurn = false;
-        if(startTurn == 3)
-        {
-            startTurn = 0;
-            profile[startTurn].myTurn = true;
-        }
-        else
-        {
-            profile[++startTurn].myTurn = true;
-        }
-        
 
+            if (clockUI.TimeOver())
+            {
+                float time = clockUI.getTime();
+                TurnManager();
+                time = 12f;
+                clockUI.setTime(time);
 
+            }
+            cUI.currentTimeChange = 12f;
+        }*/
+
+        void TurnManager()
+        {
+            Debug.Log(startTurn);
+            profile[startTurn].myTurn = false;
+            if (startTurn == 3)
+            {
+                startTurn = 0;
+                profile[startTurn].myTurn = true;
+            }
+            else
+            {
+                profile[++startTurn].myTurn = true;
+            }
+        }
     }
 }

@@ -19,7 +19,6 @@ public class attackCounter : MonoBehaviour
     void Update()
     {
         SetAcount();
-        
     }
     void SetAcount()
     {
@@ -30,7 +29,6 @@ public class attackCounter : MonoBehaviour
                 CountImage[i].SetActive(true);
             }
         }
-        
     }
 
     public void Acount2Up()
