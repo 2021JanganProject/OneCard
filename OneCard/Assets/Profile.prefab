@@ -128,6 +128,7 @@ GameObject:
   - component: {fileID: 1354744430955716333}
   - component: {fileID: 6145218266808295311}
   - component: {fileID: 4914743919286488736}
+  - component: {fileID: 2811288208988328113}
   m_Layer: 5
   m_Name: Profile
   m_TagString: Untagged
@@ -199,7 +200,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1623017669821102743}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: edef2db0eb6229c40b93444594e606df, type: 3}
   m_Name: 
@@ -207,7 +208,21 @@ MonoBehaviour:
   name: {fileID: 6606988330078008684}
   rank: {fileID: 8399065282751041373}
   photo: {fileID: 3950754810139900070}
-  info: {fileID: 0}
+  Base: {fileID: 0}
+  myTurn: 0
+--- !u!114 &2811288208988328113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1623017669821102743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cf5b095d00560c48ac20ffb12fc4a1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myTurn: 0
 --- !u!1 &4069665198151308999
 GameObject:
   m_ObjectHideFlags: 0
