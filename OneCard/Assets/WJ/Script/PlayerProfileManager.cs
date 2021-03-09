@@ -7,8 +7,8 @@ using UnityEngine.UI;
 
 public class PlayerProfileManager : MonoBehaviour
 {
-    ClockUI clockUI;
-    
+    UIClock clockUI;
+
     [SerializeField]
     GameObject[] playerProfile;
 
@@ -22,7 +22,7 @@ public class PlayerProfileManager : MonoBehaviour
     void Start()
     {
         startTurn = Random.Range(0, profile.Length);
-        clockUI = FindObjectOfType<ClockUI>();
+        clockUI = FindObjectOfType<UIClock>();
 
         for (int i = 0; i < playerProfile.Length; i++)
         {
@@ -30,32 +30,40 @@ public class PlayerProfileManager : MonoBehaviour
         }
 
         profile[startTurn].myTurn = true;
-        
+
     }
     // Update is called once per frame
     void Update()
     {
-        if (clockUI.TimeOver())
+
+        /*if (clockUI.currentTimeChange <= 0)
         {
-            float time = clockUI.getTime();
             TurnManager();
-            time = 12f;
-            clockUI.setTime(time);
-        }
-    }
-    //
-    void TurnManager()
-    {
-        Debug.Log(startTurn);
-        profile[startTurn].myTurn = false;
-        if(startTurn == 3)
+
+            if (clockUI.TimeOver())
+            {
+                float time = clockUI.getTime();
+                TurnManager();
+                time = 12f;
+                clockUI.setTime(time);
+
+            }
+            cUI.currentTimeChange = 12f;
+        }*/
+
+        void TurnManager()
         {
-            startTurn = 0;
-            profile[startTurn].myTurn = true;
-        }
-        else
-        {
-            profile[++startTurn].myTurn = true;
+            Debug.Log(startTurn);
+            profile[startTurn].myTurn = false;
+            if (startTurn == 3)
+            {
+                startTurn = 0;
+                profile[startTurn].myTurn = true;
+            }
+            else
+            {
+                profile[++startTurn].myTurn = true;
+            }
         }
     }
 }
