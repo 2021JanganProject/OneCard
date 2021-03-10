@@ -25,9 +25,6 @@ public class Profile : MonoBehaviour
     {
       
         Base = transform.Find("ProfileBase").gameObject;
-        //if(info != null)
-        //    setProfile(info.nickname, info.rank.ToString(), info.profileImage);
-        
     }
 
     public void setProfile(String name, String rank, Sprite photo)
