@@ -8,9 +8,9 @@ public class CardManager : MonoBehaviour
     private List<GameObject> closedCardDeck;
     private List<GameObject> openedCardDeck;
 
-    private GameObject opendCard;
+    public GameObject openedCard;
     [SerializeField]
-    private GameObject cardPrefab;    
+    private GameObject cardPrefab;
 
     int maxCardNum = 13;
     int maxShapeNum = 5;
@@ -37,11 +37,11 @@ public class CardManager : MonoBehaviour
             }
             else
             {
-                for(int j = 0; j < 2; j++)
+                for (int j = 0; j < 2; j++)
                 {
                     GameObject firstCard = Instantiate(cardPrefab);
                     Card card = firstCard.GetComponent<Card>();
-                    card.InitCard(i, 13+j);
+                    card.InitCard(i, 13 + j);
                     // 리스트에 추가
                     closedCardDeck.Add(firstCard);
                 }
@@ -54,8 +54,8 @@ public class CardManager : MonoBehaviour
     {
         int rnd1;
         int rnd2;
-        
-        for(int i = 0; i < Card.Count; i++)
+
+        for (int i = 0; i < Card.Count; i++)
         {
             rnd1 = Random.Range(0, Card.Count);
             rnd2 = Random.Range(0, Card.Count);

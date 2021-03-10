@@ -6,12 +6,12 @@ public class Defence : Card
 {
     protected override void Put()
     {
-
+        RemoveAttackCount();
     }
 
     protected override void Checking()
     {
-
+        IsOpenedCardNumber2();
     }
 
     private void RemoveAttackCount()

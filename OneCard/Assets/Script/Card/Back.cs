@@ -6,7 +6,12 @@ public class Back : Card
 {
     protected override void Put()
     {
-        
+        ReverseOrderDirection();
+    }
+
+    protected override void Checking()
+    {
+
     }
 
     private void ReverseOrderDirection()
