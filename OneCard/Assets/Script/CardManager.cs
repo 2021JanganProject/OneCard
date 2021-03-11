@@ -4,20 +4,32 @@ using UnityEngine;
 
 public class CardManager : MonoBehaviour
 {
+
+    public static CardManager instance = null;
     [SerializeField]
     private List<GameObject> closedCardDeck;
-    private List<GameObject> openedCardDeck;
+    public List<GameObject> openedCardDeck;
 
-    private GameObject opendCard;
+    public GameObject openedCard;
     [SerializeField]
-    private GameObject cardPrefab;    
+    public GameObject cardPrefab;
 
     int maxCardNum = 13;
     int maxShapeNum = 5;
+    public int currentAttackCount = 0;
 
+    private void Awake()
+    {
+        if(instance ==null)
+        {
+            instance = this;
+        }
+        
+    }
     void Start()
     {
         InitCards();
+        openedCard = closedCardDeck[0];
     }
 
     private void InitCards()
@@ -37,11 +49,11 @@ public class CardManager : MonoBehaviour
             }
             else
             {
-                for(int j = 0; j < 2; j++)
+                for (int j = 0; j < 2; j++)
                 {
                     GameObject firstCard = Instantiate(cardPrefab);
                     Card card = firstCard.GetComponent<Card>();
-                    card.InitCard(i, 13+j);
+                    card.InitCard(i, 13 + j);
                     // 리스트에 추가
                     closedCardDeck.Add(firstCard);
                 }
@@ -54,8 +66,8 @@ public class CardManager : MonoBehaviour
     {
         int rnd1;
         int rnd2;
-        
-        for(int i = 0; i < Card.Count; i++)
+
+        for (int i = 0; i < Card.Count; i++)
         {
             rnd1 = Random.Range(0, Card.Count);
             rnd2 = Random.Range(0, Card.Count);
