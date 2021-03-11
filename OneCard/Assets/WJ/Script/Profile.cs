@@ -23,21 +23,14 @@ public class Profile : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-      
-        Base = transform.Find("ProfileBase").gameObject;
-        //if(info != null)
-        //    setProfile(info.nickname, info.rank.ToString(), info.profileImage);
-        
+        //Base = transform.FindChild("ProfileBase").gameObject;
     }
 
-    public void setProfile(String name, String rank, Sprite photo)
+    public void setProfile(PlayerInfo playerInfo)
     {
-
-        this.name.text = name;
-        this.rank.text = rank;
-        this.photo.sprite = photo;
-        
-        
+        this.name.text = playerInfo.nickname;
+        this.rank.text = playerInfo.rank.ToString();
+        //this.photo.sprite = photo;
     }
     // 
     // => TurnManager

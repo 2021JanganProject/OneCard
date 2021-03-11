@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance =null;
     private CardManager cardManager;
     private bool orderDirection;
     private int MaxPlayerCount;
@@ -12,6 +13,16 @@ public class GameManager : MonoBehaviour
     private int currentTurnPlayer;
     private int CurrentTurnPlayer;
     private int[] orderPlayers;
+
+    
+
+    private void Awake()
+    {
+        if(instance == null)
+        {
+            instance = this;
+        }
+    }
 
     private void NextCurrentTurnPlayer()
     {

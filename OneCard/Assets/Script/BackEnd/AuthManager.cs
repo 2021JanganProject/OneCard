@@ -5,43 +5,31 @@ using UnityEngine;
 using UnityEngine.UI;
 using Firebase;
 using Firebase.Auth;
-using Firebase.Database;
-
+// 로그인
 public class AuthManager : MonoBehaviour
 {
-    /// <summary>
-    /// 현재 파이어베이스를 사용 가능한 환경인지 확인
-    /// </summary>
-    public bool IsFirebaseReady { get; private set; }
+
+
+    public FirebaseUser User { get => user; set => user = value; }
+    public FirebaseAuth FirebaseAuth { get => firebaseAuth; set => firebaseAuth = value; }
+    [SerializeField] FireBaseManager fireBaseManager;
+    FirebaseAuth firebaseAuth; // auth 용 instance
+    FirebaseUser user; // 사용자
+
     /// <summary>
     /// 중복 클릭이 되지 않게끔 확인
     /// </summary>
     public bool IsSignInOnProgress { get; private set; }
-    public FirebaseApp FirebaseApp { get => firebaseApp; set => firebaseApp = value; }
-    public FirebaseUser User { get => user; set => user = value; }
 
-    /** auth 용 instance */
-    FirebaseAuth firebaseAuth;
-    /** 사용자 */
-    FirebaseUser user;
-    FirebaseApp firebaseApp;
-    private FirebaseDatabase firebaseDatabase;
 
     string displayName;
     string emailAddress;
     string photoUrl;
-    public static AuthManager instance;
-    private void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-        }
-    }
+
     void Start()
     {
         // 초기화
-        InitializeFirebase();
+        
         DebugerManager.instance.del_debugInputT += () =>
         {
             //DebugerManager.instance.IsNull(firebaseAuth);
@@ -51,8 +39,21 @@ public class AuthManager : MonoBehaviour
         };
     }
 
-    bool IsLogined()
+    public bool IsLoginHasInstance()
     {
+        if (User == null)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    public bool IsLogined()
+    {
+        Debug.Log($"user{user}");
         if(user == null)
         {
             return false;
@@ -67,35 +68,16 @@ public class AuthManager : MonoBehaviour
     {
         return user.UserId;
     }
-    void InitializeFirebase()
+   
+    public void InitAuthInstance()
     {
-        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
-        {
-            var result = task.Result;
-
-            if (result != DependencyStatus.Available) // Available: 파이어베이스 구동 가능 상태
-            {
-                // 파이어베이스 구동 가능 상태가 아니면
-
-                Debug.LogError(result.ToString());
-                IsFirebaseReady = false; // 구동불가상태 갱신 
-            }
-            else
-            {
-                IsFirebaseReady = true;
-
-                firebaseApp = FirebaseApp.DefaultInstance;
-                //firebaseAuth = FirebaseAuth.GetAuth(firebaseApp); // <= 똑같은 건데 자주 NULL 에러가 떠서 DefaultInstance로 쓰는게 좋음 
-                firebaseAuth = FirebaseAuth.DefaultInstance;
-                
-                DatabaseManager.instance.firebaseDatabase = FirebaseDatabase.GetInstance(firebaseApp,DatabaseManager.FIREBASE_PATH);
-                firebaseAuth.StateChanged += AuthStateChanged;
-            }
-
-            // signInButton.interactable = IsFirebaseReady;
-        });
+        firebaseAuth = FirebaseAuth.DefaultInstance;
     }
 
+    public void AddEvtAuthStateChanged()
+    {
+        firebaseAuth.StateChanged += AuthStateChanged;
+    }
     /** 상태변화 추적 */
     void AuthStateChanged(object sender, System.EventArgs eventArgs)
     {
@@ -128,19 +110,15 @@ public class AuthManager : MonoBehaviour
 
     private void anoymousLogout()
     {
+        DebugerManager.instance.Log(string.Format("User Logout"));
         firebaseAuth.SignOut();
-        DebugerManager.instance.Log(string.Format("User signed in successfully: {0} ({1})",
-            user.DisplayName, user.UserId));
+        
     }
     /** 익명 로그인 요청 */
     private void anoymousLogin()
     {
-
-        StartCoroutine(WaitForCompleted());
-
-        firebaseAuth
-          .SignInAnonymouslyAsync()
-          .ContinueWith(task => {
+        StartCoroutine(WaitForLoginCompleted());
+        firebaseAuth.SignInAnonymouslyAsync().ContinueWith(task => {
               if (task.IsCanceled)
               {
                   Debug.LogError("SignInAnonymouslyAsync was canceled.");
@@ -161,15 +139,16 @@ public class AuthManager : MonoBehaviour
           });
     }
 
-    IEnumerator WaitForCompleted()
+    IEnumerator WaitForLoginCompleted()
     {
         Debug.Log("Start");
-        while(user == null)
+        while (user == null)
         {
             yield return null;
         }
         Debug.Log("Start InitFirstLoginUserDatabase");
-        DatabaseManager.instance.InitFirstLoginUserDatabase();
-
+        //IsUserReady = true;
+        fireBaseManager.databaseManager.InitFirstLoginUserDatabase();
     }
+
 }

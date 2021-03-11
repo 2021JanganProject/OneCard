@@ -3,20 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Firebase;
-using Firebase.Auth;
 using Firebase.Database;
+using System;
 
-// 최초 로그인 시에만 PlayerInfo 개체를 생성해서 서버에 전송하고 싶다. 
+// DB 생성
 public class DatabaseManager : MonoBehaviour
 {
-    public static DatabaseManager instance;
-    private void Awake()
-    {
-        if(instance == null)
-        {
-            instance = this;
-        }
-    }
+    [SerializeField] FireBaseManager fireBaseManager;
     public const string FIREBASE_PATH = "https://one-card-backend-default-rtdb.firebaseio.com/";
     public FirebaseDatabase firebaseDatabase { get; set; }
     public DatabaseReference reference { get; set; }
@@ -45,7 +38,7 @@ public class DatabaseManager : MonoBehaviour
     // ghj
     void InitGuestPlayerInfo()
     {
-        PlayerInfo playerInfo = new PlayerInfo("Guest", AuthManager.instance.GetUserId(), 1, 5, 1, 100, 0);
+        PlayerInfo playerInfo = new PlayerInfo("Guest", fireBaseManager.authManager.GetUserId(), 1, 5, 1, 100, 0);
         string json = JsonUtility.ToJson(playerInfo);
         PushPlayerInfoToDB(json);
     }
@@ -58,15 +51,19 @@ public class DatabaseManager : MonoBehaviour
         reference.Child("PlayerInfo").Child(key).SetRawJsonValueAsync(json);
     }
 
+    internal void InitFirebaseDatabase(FirebaseApp firebaseApp)
+    {
+        firebaseDatabase = FirebaseDatabase.GetInstance(firebaseApp, DatabaseManager.FIREBASE_PATH);
+    }
+
     void GetPlayerInfo(DataSnapshot item)
     {
         IDictionary playerInfoTemp = (IDictionary)item.Value;
-        Debug.Log($"DB ID :{playerInfoTemp["uniqueID"].ToString()} , USER ID  : {AuthManager.instance.GetUserId()}");
-        if (playerInfoTemp["uniqueID"].ToString() == AuthManager.instance.GetUserId())
+        Debug.Log($"DB ID :{playerInfoTemp["uniqueID"].ToString()} , USER ID  : {fireBaseManager.authManager.GetUserId()} asd {playerInfoTemp["nickname"].ToString()}");
+        if (playerInfoTemp["uniqueID"].ToString() == fireBaseManager.authManager.GetUserId())
         {
             Debug.Log("Find!");
-
-            playerInfo = new PlayerInfo
+            DataManager.instance.CurrentPlayerInfo = new PlayerInfo
             (
                 playerInfoTemp["nickname"].ToString(),
                 playerInfoTemp["uniqueID"].ToString(),
@@ -76,7 +73,13 @@ public class DatabaseManager : MonoBehaviour
                 int.Parse(playerInfoTemp["gold"].ToString()),
                 int.Parse(playerInfoTemp["diamond"].ToString())
             );
+            // = new PlayerInfo(PlayerInfo);
         }
+    }
+
+    public void GetAsyncGetPlayerInfo()
+    {
+        AsyncGetPlayerInfo();
     }
 
     async void AsyncGetPlayerInfo()
@@ -91,8 +94,8 @@ public class DatabaseManager : MonoBehaviour
                 foreach (var item in snapshot.Children)
                 {
                     IDictionary playerInfoTemp = (IDictionary)item.Value;
-                    Debug.Log($"DB ID :{playerInfoTemp["uniqueID"].ToString()} , USER ID  : {AuthManager.instance.GetUserId()}");
-                    if (playerInfoTemp["uniqueID"].ToString() == AuthManager.instance.GetUserId())
+                    Debug.Log($"DB ID :{playerInfoTemp["uniqueID"].ToString()} , USER ID  : {fireBaseManager.authManager.GetUserId()}");
+                    if (playerInfoTemp["uniqueID"].ToString() == fireBaseManager.authManager.GetUserId())
                     {
                         Debug.Log("Find!");
                         //selectdPlayerInfoTemp = playerInfoTemp;
@@ -105,25 +108,3 @@ public class DatabaseManager : MonoBehaviour
     }
 }
 
-public struct PlayerInfo
-{
-    public string nickname;
-    public string uniqueID;
-    public int level;
-    public int tiket;
-    public int rank;
-    public int gold;
-    public int diamond;
-
-    public PlayerInfo(string nickname, string uniqueID , int level, int tiket, int rank, int gold, int diamond)
-    {
-        this.nickname = nickname;
-        this.uniqueID = uniqueID;
-        this.level = level;
-        this.tiket = tiket;
-        this.rank = rank;
-        this.gold = gold;
-        this.diamond = diamond;
-    }
-
-}
