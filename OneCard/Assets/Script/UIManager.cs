@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     private GameObject[] currentAttackCountItemArr;
-    
+
     private Text LeftTime;
     private GameObject ArrowRightObject;
     private GameObject ArrowLeftObject;

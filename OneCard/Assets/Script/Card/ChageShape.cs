@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ChageShape : Card
 {
+
     protected override void Put()
     {
         ShowUIChangeShape();
@@ -11,7 +12,7 @@ public class ChageShape : Card
 
     protected override void Checking()
     {
-
+        base.Checking();
     }
 
     private void ShowUIChangeShape()

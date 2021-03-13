@@ -47,8 +47,10 @@ public class FireBaseManager : MonoBehaviour
 
                 firebaseApp = FirebaseApp.DefaultInstance;
                 //firebaseAuth = FirebaseAuth.GetAuth(firebaseApp); // <= 똑같은 건데 자주 NULL 에러가 떠서 DefaultInstance로 쓰는게 좋음 
+
                 authManager.InitAuthInstance();
                 databaseManager.InitFirebaseDatabase(firebaseApp);
+
                 authManager.AddEvtAuthStateChanged();
             }
 

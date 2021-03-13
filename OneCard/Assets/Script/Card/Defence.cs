@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Defence : Card
 {
+
     protected override void Put()
     {
         RemoveAttackCount();
@@ -11,6 +12,7 @@ public class Defence : Card
 
     protected override void Checking()
     {
+        base.Checking();
         IsOpenedCardNumber2();
     }
 

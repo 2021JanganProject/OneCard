@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Back : Card
 {
+
     protected override void Put()
     {
         ReverseOrderDirection();
@@ -11,7 +12,7 @@ public class Back : Card
 
     protected override void Checking()
     {
-
+        base.Checking();
     }
 
     private void ReverseOrderDirection()
