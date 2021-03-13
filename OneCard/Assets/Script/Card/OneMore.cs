@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class OneMore : Card
 {
+
     protected override void Put()
     {
         OneMoreMyTurn();
@@ -11,7 +12,7 @@ public class OneMore : Card
 
     protected override void Checking()
     {
-
+        base.Checking();
     }
 
     private void OneMoreMyTurn()

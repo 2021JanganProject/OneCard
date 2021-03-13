@@ -6,6 +6,8 @@ public class Jump : Card
 {
     private int jumpCount;
 
+
+
     protected override void Put()
     {
         OrderJump();
@@ -13,7 +15,7 @@ public class Jump : Card
 
     protected override void Checking()
     {
-
+        base.Checking();
     }
 
     private void OrderJump()

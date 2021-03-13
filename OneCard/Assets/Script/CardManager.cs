@@ -4,20 +4,32 @@ using UnityEngine;
 
 public class CardManager : MonoBehaviour
 {
+
+    public static CardManager instance = null;
     [SerializeField]
     private List<GameObject> closedCardDeck;
-    private List<GameObject> openedCardDeck;
+    public List<GameObject> openedCardDeck;
 
     public GameObject openedCard;
     [SerializeField]
-    private GameObject cardPrefab;
+    public GameObject cardPrefab;
 
     int maxCardNum = 13;
     int maxShapeNum = 5;
+    public int currentAttackCount = 0;
 
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+
+    }
     void Start()
     {
         InitCards();
+        openedCard = closedCardDeck[0];
     }
 
     private void InitCards()
