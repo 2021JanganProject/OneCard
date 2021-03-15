@@ -11,6 +11,7 @@ public class Jump : Card
     protected override void Put()
     {
         OrderJump();
+        base.Put();
     }
 
     protected override void Checking()

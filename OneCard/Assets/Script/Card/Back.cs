@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class Back : Card
 {
+    private GameManager gameManager;
+    private void Awake()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+    }
 
     protected override void Put()
     {
         ReverseOrderDirection();
+        base.Put();        
     }
 
     protected override void Checking()
@@ -17,6 +23,6 @@ public class Back : Card
 
     private void ReverseOrderDirection()
     {
-
+        gameManager.ReverseTurn();
     }
 }

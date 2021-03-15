@@ -4,27 +4,12 @@ using UnityEngine;
 
 public class Attack : Card
 {
-    [SerializeField]
-    private int attackCount;
-    [SerializeField]
-    public Card card;
+    [SerializeField] private int attackCount;
     private CardManager cardManager;
 
-    void Start()
+    private void Awake()
     {
-        card = GetComponent<Card>();
-        switch (card.currnetNum)
-        {
-            case 0:
-                attackCount = 3;
-                break;
-            case 1:
-                attackCount = 2;
-                break;
-            default:
-                return;
-        }
-
+        cardManager = FindObjectOfType<CardManager>();
     }
 
 
@@ -33,6 +18,7 @@ public class Attack : Card
         Debug.Log("오버라이딩");
         base.Put();
         AddAttackCount();
+        Debug.Log(cardManager.CurrentAttackCount);
     }
 
     protected override void Checking()
@@ -43,12 +29,12 @@ public class Attack : Card
 
     void AttackCheck()
     {
-        if (card.currnetNum == 1)
+        if (cardData.number == 1)
         {
             // 공격받았을때 A면 카드를 못낸다.
-            if (cardManager.currentAttackCount > 1)
+            if (cardManager.CurrentAttackCount > 1)
             {
-                card.isActiveState = false;
+                isActiveState = false;
             }
         }
     }
@@ -56,6 +42,18 @@ public class Attack : Card
     private void AddAttackCount()
     {
         // attackCount만큼 어딘가에 있을 currentAttackCount에 추가
-        cardManager.currentAttackCount += attackCount;
+        switch (cardData.number)
+        {
+            case 0:
+                attackCount = 3;
+                break;
+            case 1:
+                attackCount = 2;
+                break;
+            default:
+                break;
+        }
+
+        cardManager.CurrentAttackCount += attackCount;
     }
 }
