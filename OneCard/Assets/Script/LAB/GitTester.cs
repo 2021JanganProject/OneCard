@@ -10,7 +10,7 @@ public class GitTester : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        test2(false);
     }
 
     // Update is called once per frame
@@ -25,11 +25,10 @@ public class GitTester : MonoBehaviour
         Debug.Log("test , Dev_GitTest");
     }
 
-    void test2()
+    bool test2(bool tset)
     {
-
+        return true;
     }
-
     bool Istest()
     {
         return false;
