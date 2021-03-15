@@ -21,6 +21,12 @@ public class GitTester : MonoBehaviour
 
     void test()
     {
-        Debug.Log("test");
+        Debug.Log("test,asdsad");
+        Debug.Log("test , Dev_GitTest");
+    }
+
+    void test2()
+    {
+
     }
 }
