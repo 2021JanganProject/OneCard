@@ -9,7 +9,31 @@ public class DataManager : MonoBehaviour
     public PlayerInfo CurrentPlayerInfo { get => currentPlayerInfo; set => currentPlayerInfo = value; }
     [SerializeField]
     PlayerInfo currentPlayerInfo;
-    
+
+    public string Name
+    {
+        get
+        {
+            if (name == null)
+            {
+                Debug.Log("NULL");
+                
+                return null;
+            }
+            else
+            {
+                 return name;
+            }
+           
+        }
+        set
+        {
+            name = "학생의 이름은 :";
+            name += value;
+        }
+    }
+    private string name;
+
     private void Awake()
     {
         if (instance == null)
