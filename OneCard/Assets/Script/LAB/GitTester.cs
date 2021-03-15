@@ -25,9 +25,9 @@ public class GitTester : MonoBehaviour
         Debug.Log("test , Dev_GitTest");
     }
 
-    void test2()
+    bool test2()
     {
-
+        return true;
     }
 
     bool Istest()
