@@ -25,7 +25,7 @@ public class DebugerManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Assert(false , "asd");
+        //Debug.Assert(false , "asd");
     }
 
     // Update is called once per frame
