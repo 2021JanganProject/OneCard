@@ -32,6 +32,6 @@ public class GitTester : MonoBehaviour
 
     bool Istest()
     {
-        return false;
+        return true;
     }
 }
