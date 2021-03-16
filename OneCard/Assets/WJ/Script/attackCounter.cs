@@ -10,8 +10,7 @@ public class AttackCounter : MonoBehaviour
     private int CurrentAttackCount = 0;
     private int maxAttackCount = 16;
     
-    [SerializeField]
-    private GameObject[] CountImage;
+    [SerializeField] private GameObject[] CountImage;
 
     //15일때 2,3,5만큼 공격했을때 1만채워지는거 있어야함
 
@@ -34,10 +33,8 @@ public class AttackCounter : MonoBehaviour
             }
             CurrentAttackCount = maxAttackCount;
         }
-        
-
     }
-    public void ClearAttackCount()
+    private void ClearAttackCount()
     {
         Debug.Log(CurrentAttackCount);
         for (int i = 0; i < CurrentAttackCount; i++)
@@ -46,13 +43,15 @@ public class AttackCounter : MonoBehaviour
         }
         CurrentAttackCount = 0;
     }
-
-
-    public void attackCount2Up()
+    public void BtnEvt_ClearAttackCount()
+    {
+        ClearAttackCount();
+    }
+    public void BtnEvt_attackCount2Up()
     {
         SetAttackCount(2);
     }
-    public void attackCount3Up()
+    public void BtnEvt_attackCount3Up()
     {
         SetAttackCount(3);
     }
