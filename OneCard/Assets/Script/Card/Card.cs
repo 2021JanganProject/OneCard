@@ -14,7 +14,16 @@ public enum eShape
 public enum eCardColor
 {
     Black,
+    Blue,
+    Yellow,
     Red
+}
+public enum eCardType
+{
+    Nomarl,
+    ability,
+    Special
+
 }
 
 [System.Serializable]
@@ -22,11 +31,12 @@ public struct CardData
 {
     [SerializeField] public eShape shape;
     [SerializeField] public eCardColor cardColor;
+    [SerializeField] public eCardType eCardType;
     [SerializeField] public int number;
 }
 public class Card : MonoBehaviour
 {
-    private Image cardImage;
+    [SerializeField] private SpriteRenderer cardImage;
     [SerializeField] public CardData cardData;
     private CardManager cardManager;
     private GameManager gameManager;
@@ -56,15 +66,24 @@ public class Card : MonoBehaviour
     protected virtual void Put()
     {
         // 카드 매니저에 openedCardDeck 리스트에 추가
-        cardManager.openedCardDeck.Add(this.gameObject);
+        cardManager.OpenedCardDeck.Add(this.gameObject);
         transform.position = new Vector3(0, 10, 0);
         cardManager.OpenedCard = this.gameObject;
         cardManager.UpdateCardData();
         gameManager.TurnEnd();
-        Debug.Log(cardManager.openedCardDeck.Count);
+        Debug.Log(cardManager.OpenedCardDeck.Count);
     }
-
-
+    /// <summary>
+    /// 카드 이미지 셋팅
+    /// </summary>
+    public void SetCardImage(Sprite sprite)
+    {
+        if(cardImage == null)
+        {
+            cardImage = GetComponent<SpriteRenderer>();
+        }
+        cardImage.sprite = sprite;
+    }
 
     protected virtual void Checking()
     {

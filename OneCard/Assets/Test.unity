@@ -150,9 +150,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68cba22cd8819c340991915ca3debf38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cardAtlas: {fileID: 4343727234628468602, guid: 65e79670c90d86f4697a2a5dd7b6b093,
+    type: 2}
   closedCardDeck: []
-  cardPrefab: {fileID: 46382248676841180, guid: 4cad36fed0c70c24e9cccb87bb64548e,
+  openedCardDeck: []
+  cardPrefab: {fileID: 2149013791051856555, guid: 729f44139f28cbe4ebae6a622f3fabfe,
     type: 3}
+  currentCard:
+    shape: 0
+    cardColor: 0
+    eCardType: 0
+    number: 0
+  opendCardBase: {fileID: 993516385}
+  closedCardBase: {fileID: 2062404219}
+  currentAttackCount: 0
 --- !u!4 &245939020
 Transform:
   m_ObjectHideFlags: 0
@@ -342,3 +353,63 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &993516385
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 993516386}
+  m_Layer: 0
+  m_Name: OpendCardBase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &993516386
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993516385}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2062404219
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2062404220}
+  m_Layer: 0
+  m_Name: ClosedCardBase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2062404220
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062404219}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
