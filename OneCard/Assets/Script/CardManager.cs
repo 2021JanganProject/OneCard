@@ -221,6 +221,7 @@ public class CardManager : MonoBehaviour
         }
     }
 
+
     string GetAtlasCardName(eCardType eCardType, int num, eCardColor eCardColor)
     {
         string cardTypeString = null;
@@ -229,7 +230,7 @@ public class CardManager : MonoBehaviour
             case eCardType.Nomarl:
                 cardTypeString = "n";
                 break;
-            case eCardType.ability:
+            case eCardType.Ability:
                 cardTypeString = "ab";
                 break;
             case eCardType.Special:
@@ -239,8 +240,8 @@ public class CardManager : MonoBehaviour
                 Debug.Assert(false, " ?? GetAtlasCardName Default");
                 break;
         }
-        string atlasName = $"{cardTypeString}_{num}_{eCardColor.ToString().ToLower()}";
-        return null;
+        string atlasName = $"{cardTypeString}_{num}_of_{eCardColor.ToString().ToLower()}";
+        return atlasName;
     }
     private Sprite GetAtlasSpriteForTest(CardData cardData)
     {

@@ -21,7 +21,7 @@ public enum eCardColor
 public enum eCardType
 {
     Nomarl,
-    ability,
+    Ability,
     Special
 
 }
