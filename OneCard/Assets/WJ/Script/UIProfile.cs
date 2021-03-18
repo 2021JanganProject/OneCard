@@ -10,9 +10,9 @@ public class UIProfile : MonoBehaviour
     [SerializeField] private Text playerNickNameText;
     [SerializeField] private Text playerRankText;
     [SerializeField] private Image playerImageSprite;
-    [SerializeField] private string PlayerNickName;
-    [SerializeField] private string PlayerRank;
-    [SerializeField] private Image PlayerImage;
+    [SerializeField] private string playerNickName;
+    [SerializeField] private string playerRank;
+    [SerializeField] private Image playerImage;
     //private int PlayerCount;
     [SerializeField] Player player;
     [SerializeField] private GameObject myTurnImage;
@@ -55,14 +55,20 @@ public class UIProfile : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-            PlayerNickName = player.PlayerNickname;
-            PlayerRank = player.PlayerRank;
-            PlayerImage = player.PlayerImage;
-
-            playerNickNameText.text = PlayerNickName;
-            playerRankText.text = PlayerRank;
-            playerImageSprite.sprite = PlayerImage.sprite;
+        SetUIProfile();
     }
+
+    private void SetUIProfile()
+    {
+        playerNickName = player.PlayerNickname;
+        playerRank = player.PlayerRank;
+        playerImage = player.PlayerImage;
+
+        playerNickNameText.text = playerNickName;
+        playerRankText.text = playerRank;
+        playerImageSprite.sprite = playerImage.sprite;
+    }
+
     
     // Update is called once per frame
     private void Update()

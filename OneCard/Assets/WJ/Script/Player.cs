@@ -12,6 +12,7 @@ public enum ePlayerState
 public class Player : MonoBehaviour
 {
     //플레이어 역할 / 플레이어 myTurn, 플레이어 ID, 턴에 따른 상태들, 상태에 따른 효과 정보
+    public int PlayerID { get => playerID; set => playerID = value; }
     public string PlayerNickname { get => playerNickname; set => playerNickname = value; }
     public string PlayerRank { get => playerRank; set => playerRank = value; }
     public Image PlayerImage { get => playerImage; set => playerImage = value; }
@@ -28,7 +29,9 @@ public class Player : MonoBehaviour
         }
     }
 
-    //private int PlayerID;
+  
+
+    private int playerID;
     [SerializeField] private string playerNickname;
     [SerializeField] private string playerRank;
     [SerializeField] private Image playerImage;
@@ -52,13 +55,4 @@ public class Player : MonoBehaviour
                 break;
         }
     }
-    /*public void SetPlayerID(int ID)
-    {
-        this.PlayerID = ID;
-    }
-    public void SetPlayerImage(Image image)
-    {
-        this.PlayerImage = image;
-    }*/
-
 }

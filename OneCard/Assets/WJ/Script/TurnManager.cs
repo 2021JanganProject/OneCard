@@ -25,7 +25,7 @@ public class TurnManager : MonoBehaviour
         }
     }
     [SerializeField] private static int MaxPlayerCount = 4;
-    [SerializeField] private Player[] orderPlayers; // 들어온 플레이어 보관함
+    
     [SerializeField] private List<Player> orderList = new List<Player>();  // 실질적인 턴을 결정함
     [SerializeField] private UIClock clockUI;
 
@@ -39,6 +39,12 @@ public class TurnManager : MonoBehaviour
     private ePlayerState myTurn = ePlayerState.myTurn;
     private ePlayerState NextTurn = ePlayerState.NextTurn;
     private ePlayerState Wait = ePlayerState.Wait;
+
+
+    private void Start()
+    {
+        //SetRandomOrderPlayers(GameManager.instance.Players);
+    }
 
     public void ChangeOrderPlayer() // 플레이어 순서 바꿔주기
     {
@@ -56,9 +62,11 @@ public class TurnManager : MonoBehaviour
     }
     private void SetCurrentPlayerAndRemoveList(int index)
     {
-        currentPlayer = orderList[index];
-        orderList.RemoveAt(index);
+        //@bug
+        //currentPlayer = orderList[index];
+        //orderList.RemoveAt(index);
     }
+    // Check 보다 Setting이 낫지 않을까? 
     private void CheckTurn()
     {
         //리스트 인덱스에 따라 순서 정하기
@@ -94,24 +102,22 @@ public class TurnManager : MonoBehaviour
     }
     private void Awake()
     {
-        //Player배열에 들어온 순서대로 플레이어들 받아줌
-        //Player 배열에서 Player List로 쏴줌 -> 쏴줄 떄 무작위로 싸줘서 랜덤으로 첫 턴 걸리게끔
-        for (int i = 0; i < MaxPlayerCount; i++)
-        {
-            orderPlayers[i].GetComponent<Player>();   
-        }
-        int RandomPlayerIndex = Random.Range(0, orderPlayers.Length);
-        
-        for(int i = 0; i < orderPlayers.Length; i++)
-        {
-            orderList.Add(orderPlayers[RandomPlayerIndex--]);
-            if (RandomPlayerIndex < 0)
-                RandomPlayerIndex = orderPlayers.Length-1;
-        }
-        ReversCurrentTurnPlayer = orderPlayers.Length-1;
 
+    }
+
+    private void SetRandomOrderPlayers(List<Player> players)
+    {
+        int RandomPlayerIndex = Random.Range(0, players.Count);
+        for (int i = 0; i < players.Count; i++)
+        {
+            orderList.Add(orderList[RandomPlayerIndex--]);
+            if(RandomPlayerIndex < 0)
+            {
+                RandomPlayerIndex = players.Count - 1;
+            }
+        }
+        ReversCurrentTurnPlayer = players.Count - 1;
         CheckTurn();
-        
     }
     private void Update()
     {
