@@ -14,12 +14,10 @@ public enum eGameFlowState
 public class GameManager : MonoBehaviourPunCallbacks
 {
     public static GameManager instance = null;
-    public int[] Players { get => orderPlayer; set => orderPlayer = value; }
     public int MaxPlayerCount { get => MaxPlayerCount; set => MaxPlayerCount = value; }
 
     [SerializeField] private CardManager cardManager;
     [SerializeField] private TurnManager turnManager;
-    [SerializeField] private int[]  orderPlayer; // 접속한 순서대로 플레이어가 리스트에 쌓임
     [SerializeField] private Transform [] spawnPositions;
     [SerializeField] private GameObject playerProfilePrefab;
     [SerializeField] private GameObject playerProfileBase;
@@ -44,22 +42,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         
        
     }
-    IEnumerator SyncPlayerAndPlayerList() // 굳이 이걸 써야하나?
-    {
-        while(isPlayerAllInTheRoom == false)
-        {
-            for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
-            {
-                orderPlayer[i] = PhotonNetwork.PlayerList[i].ActorNumber-1;
-            }
-            if (maxPlayerCount <= PhotonNetwork.PlayerList.Length)
-            {
-                isPlayerAllInTheRoom = true;
-                break;
-            }
-            yield return null;
-        }
-    }
+    
     IEnumerator Start()
     {
        
@@ -82,9 +65,9 @@ public class GameManager : MonoBehaviourPunCallbacks
         DebugerManager.instance.ResetLog();
         DebugerManager.instance.Log($"totalplayer: {PhotonNetwork.PlayerList.Length}__playerList : {PhotonNetwork.LocalPlayer.ActorNumber}");
        
-        for (int i = 0; i < orderPlayer.Length; i++)
+        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
         {
-            DebugerManager.instance.Log($"{PhotonNetwork.PlayerList[i].ActorNumber}__{orderPlayer[i]}");
+            DebugerManager.instance.Log($"_ {PhotonNetwork.PlayerList[i].ActorNumber}");
         }
     }
 
@@ -130,6 +113,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
 
     }
+
     [SerializeField]GameObject playerForTest;
     private void SpawnPlayer()
     {
