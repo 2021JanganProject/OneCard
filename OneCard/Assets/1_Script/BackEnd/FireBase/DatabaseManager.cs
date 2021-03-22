@@ -3,6 +3,7 @@ using UnityEngine;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
+using System.Threading.Tasks;
 
 // DB 생성
 public class DatabaseManager : MonoBehaviour
@@ -104,13 +105,31 @@ public class DatabaseManager : MonoBehaviour
         });
     }
 
-    async void testtt()
+    void testtt()
     {
         DatabaseReference reference = firebaseDatabase.GetReference("PlayerInfo");
-        reference.GetValueAsync().ContinueWith(task => { });
         
-
-
+        reference.GetValueAsync().ContinueWith(task => 
+        {
+            if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                foreach (var item in snapshot.Children)
+                {
+                    IDictionary playerInfoTemp = (IDictionary)item.Value;
+                    Debug.Log($"DB ID :{playerInfoTemp["uniqueID"].ToString()} , USER ID  : {fireBaseManager.authManager.GetUserId()}");
+                    if (playerInfoTemp["uniqueID"].ToString() == fireBaseManager.authManager.GetUserId())
+                    {
+                        Debug.Log("Find!");
+                        //selectdPlayerInfoTemp = playerInfoTemp;
+                        GetPlayerInfo(item);
+                    }
+                }
+            }
+        });
     }
+
+
+    
 }
 
