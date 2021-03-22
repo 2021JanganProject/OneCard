@@ -19,7 +19,7 @@ public class Defence : Card
     protected override void Checking()
     {
         base.Checking();
-        IsOpenedCardNumber2();
+        DefenceCheck();
     }
 
     private void RemoveAttackCount()
@@ -27,18 +27,11 @@ public class Defence : Card
         cardManager.CurrentAttackCount = 0;
     }
 
-    private void IsOpenedCardNumber2()
+    private void DefenceCheck()
     {
-        if (cardManager.CurrentAttackCount > 1)
+        if (cardManager.CurrentCard.cardColor == eCardColor.Black && cardManager.CurrentCard.number == 12)
         {
-            if (cardManager.OpenedCard.GetComponent<Card>().cardData.number == 1)
-            {
-                isActiveState = true;
-            }
-            else
-            {
-                isActiveState = false;
-            }
+            isActiveState = true;
         }
     }
 }

@@ -23,6 +23,6 @@ public class ChageShape : Card
 
     private void ShowUIChangeShape()
     {
-        uiManager.ChangeShapeUI.SetActive(true);
+        //uiManager.ChangeShapeUI.SetActive(true);
     }
 }

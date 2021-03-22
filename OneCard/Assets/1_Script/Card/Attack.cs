@@ -12,7 +12,6 @@ public class Attack : Card
         cardManager = FindObjectOfType<CardManager>();
     }
 
-
     protected override void Put()
     {
         Debug.Log("오버라이딩");
@@ -27,9 +26,10 @@ public class Attack : Card
         AttackCheck();
     }
 
-    void AttackCheck()
+
+    private void AttackCheck()
     {
-        if (cardData.number == 1)
+        if (cardData.number == 7)
         {
             // 공격받았을때 A면 카드를 못낸다.
             if (cardManager.CurrentAttackCount > 1)
@@ -44,11 +44,17 @@ public class Attack : Card
         // attackCount만큼 어딘가에 있을 currentAttackCount에 추가
         switch (cardData.number)
         {
-            case 0:
+            case 7:
+                attackCount = 2;
+                break;
+            case 8:
                 attackCount = 3;
                 break;
-            case 1:
-                attackCount = 2;
+            case 12:
+                if(cardData.cardColor == eCardColor.Black)
+                {
+                    attackCount = 5;
+                }
                 break;
             default:
                 break;

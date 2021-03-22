@@ -2,26 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public enum eShape
-{
-    Heart,
-    Diamond,
-    Spade,
-    Club,
-    Joker
-}
 
 public enum eCardColor
 {
     Black,
     Blue,
     Yellow,
-    Red
+    Red,
+    Gray
 }
 public enum eCardType
 {
-    Nomarl,
-    Ability,
+    Normal,
+    ability,
     Special
 
 }
@@ -29,20 +22,17 @@ public enum eCardType
 [System.Serializable]
 public struct CardData
 {
-    [SerializeField] public eShape shape;
     [SerializeField] public eCardColor cardColor;
     [SerializeField] public eCardType eCardType;
     [SerializeField] public int number;
 }
 public class Card : MonoBehaviour
 {
-    [SerializeField] private SpriteRenderer cardImage;
+    public bool isActiveState = false;
     [SerializeField] public CardData cardData;
+    [SerializeField] private SpriteRenderer cardImage;   
     private CardManager cardManager;
     private GameManager gameManager;
-
-    public bool isActiveState = false;
-
     public CardData CardData1 { get => cardData; set => cardData = value; }
 
     void Start()
@@ -62,6 +52,14 @@ public class Card : MonoBehaviour
             Put();
         }
     }
+    public void SetCardImage(Sprite sprite)
+    {
+        if (cardImage == null)
+        {
+            cardImage = GetComponent<SpriteRenderer>();
+        }
+        cardImage.sprite = sprite;
+    }
 
     protected virtual void Put()
     {
@@ -70,24 +68,44 @@ public class Card : MonoBehaviour
         transform.position = new Vector3(0, 10, 0);
         cardManager.OpenedCard = this.gameObject;
         cardManager.UpdateCardData();
-        gameManager.TurnEnd();
+        //gameManager.TurnEnd();
         Debug.Log(cardManager.OpenedCardDeck.Count);
     }
     /// <summary>
     /// 카드 이미지 셋팅
     /// </summary>
-    public void SetCardImage(Sprite sprite)
-    {
-        if(cardImage == null)
-        {
-            cardImage = GetComponent<SpriteRenderer>();
-        }
-        cardImage.sprite = sprite;
-    }
+
 
     protected virtual void Checking()
     {
-        if (cardManager.CurrentCard.shape == cardData.shape || cardManager.CurrentCard.number == cardData.number)
+        if(cardData.number == 12)
+        {
+            if (cardManager.CurrentCard.cardColor == cardData.cardColor)
+            {
+                isActiveState = true;
+            }
+            else
+            {
+                isActiveState = false;
+            }
+        }
+        else if(cardData.number == 13 || cardData.number == 14)
+        {
+            isActiveState = true;
+        }
+        else
+        {
+            if (cardManager.CurrentCard.cardColor == cardData.cardColor || cardManager.CurrentCard.number == cardData.number)
+            {
+                isActiveState = true;
+            }
+            else
+            {
+                isActiveState = false;
+            }
+        }
+
+        /*if (cardManager.CurrentCard.cardColor == cardData.cardColor || cardManager.CurrentCard.number == cardData.number)
         {
             isActiveState = true;
         }
@@ -116,6 +134,6 @@ public class Card : MonoBehaviour
         else
         {
             isActiveState = false;
-        }
+        }*/
     }
 }
