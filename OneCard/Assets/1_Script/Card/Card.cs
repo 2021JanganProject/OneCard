@@ -28,6 +28,7 @@ public struct CardData
 }
 public class Card : MonoBehaviour
 {
+    // 주석
     public bool isActiveState = false;
     [SerializeField] public CardData cardData;
     [SerializeField] private SpriteRenderer cardImage;   
