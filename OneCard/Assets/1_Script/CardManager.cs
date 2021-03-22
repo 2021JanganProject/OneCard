@@ -16,8 +16,12 @@ public class CardManager : MonoBehaviour
     {
         this.openedCardDeck = openedCardDeck;
     }
+    
 
-    [SerializeField] SpriteAtlas cardAtlas;
+
+
+
+   [SerializeField] SpriteAtlas cardAtlas;
     [SerializeField] private List<GameObject> closedCardDeck = new List<GameObject>();
     [SerializeField] private List<GameObject> openedCardDeck = new List<GameObject>();
 

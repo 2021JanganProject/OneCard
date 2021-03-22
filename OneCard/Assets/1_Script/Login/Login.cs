@@ -25,7 +25,7 @@ public class Login : MonoBehaviour
     }
     public void LoginLoadingOver()
     {
-        CheckLoginActiveLoginField(LoginManager.instance.fireBaseManager.authManager.IsLogined());
+        CheckLoginActiveLoginField(LoginManager.instance.fireBaseManager.AuthManager.IsLogined());
     }
     void CheckLoginActiveLoginField(bool isLogined)
     {

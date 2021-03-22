@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+
 // 역할 : 전체적인 게임의 설정과 관리를 담당
 
 public enum eGameFlowState
