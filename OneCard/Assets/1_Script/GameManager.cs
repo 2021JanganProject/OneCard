@@ -126,6 +126,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         playerForTest =  PhotonNetwork.Instantiate(playerProfilePrefab.name, spawnPosition.position, spawnPosition.rotation ); // 리소스에서 이름값으로 가져옴. 알아서 동기화를 해준다. 
         playerForTest.transform.parent = playerProfileBase.transform;
         playerForTest.transform.localScale = new Vector3(1, 1, 1);
+
+        
     }
 
 
