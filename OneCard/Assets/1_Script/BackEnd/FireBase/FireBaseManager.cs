@@ -14,6 +14,9 @@ public class FireBaseManager : MonoBehaviour
     /// </summary>
     public bool IsFirebaseReady { get; private set; }
     public FirebaseApp FirebaseApp { get => firebaseApp; set => firebaseApp = value; }
+    public AuthManager AuthManager { get => authManager; set => authManager = value; }
+    public DatabaseManager DatabaseManager { get => databaseManager; set => databaseManager = value; }
+
     FirebaseApp firebaseApp;
 
 

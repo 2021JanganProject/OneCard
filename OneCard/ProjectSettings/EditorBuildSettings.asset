@@ -9,9 +9,9 @@ EditorBuildSettings:
     path: Assets/0_Scenes/01_GameStart.unity
     guid: 8608a4d1912ab8d4aaa78b1fb472f2cd
   - enabled: 0
-    path: Assets/0_Scenes/01_GameStart_DebugForPothon.unity
-    guid: 8bd1b9250afabed4e853c04b04360f32
-  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 1
     path: Assets/0_Scenes/02_Login.unity
     guid: 34392beaae65cfc488950ce593f41efe
   - enabled: 0

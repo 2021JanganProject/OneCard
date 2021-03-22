@@ -1,10 +1,9 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 using Firebase;
+using Firebase.Auth;
 using Firebase.Database;
-using System;
+using System.Threading.Tasks;
 
 // DB 생성
 public class DatabaseManager : MonoBehaviour
@@ -27,6 +26,7 @@ public class DatabaseManager : MonoBehaviour
     void Update()
     {
 
+
     }
 
     public void InitFirstLoginUserDatabase()
@@ -38,7 +38,7 @@ public class DatabaseManager : MonoBehaviour
     // ghj
     void InitGuestPlayerInfo()
     {
-        PlayerInfo playerInfo = new PlayerInfo("Guest", fireBaseManager.authManager.GetUserId(), 1, 5, 1, 100, 0);
+        PlayerInfo playerInfo = new PlayerInfo("Guest", fireBaseManager.AuthManager.GetUserId(), 1, 5, 1, 100, 0);
         string json = JsonUtility.ToJson(playerInfo);
         PushPlayerInfoToDB(json);
     }
@@ -59,8 +59,8 @@ public class DatabaseManager : MonoBehaviour
     void GetPlayerInfo(DataSnapshot item)
     {
         IDictionary playerInfoTemp = (IDictionary)item.Value;
-        Debug.Log($"DB ID :{playerInfoTemp["uniqueID"].ToString()} , USER ID  : {fireBaseManager.authManager.GetUserId()} asd {playerInfoTemp["nickname"].ToString()}");
-        if (playerInfoTemp["uniqueID"].ToString() == fireBaseManager.authManager.GetUserId())
+        Debug.Log($"DB ID :{playerInfoTemp["uniqueID"].ToString()} , USER ID  : {fireBaseManager.AuthManager.GetUserId()} asd {playerInfoTemp["nickname"].ToString()}");
+        if (playerInfoTemp["uniqueID"].ToString() == fireBaseManager.AuthManager.GetUserId())
         {
             Debug.Log("Find!");
             DataManager.instance.CurrentPlayerInfo = new PlayerInfo
@@ -85,7 +85,6 @@ public class DatabaseManager : MonoBehaviour
     async void AsyncGetPlayerInfo()
     {
         DatabaseReference reference = firebaseDatabase.GetReference("PlayerInfo");
-        
         await reference.GetValueAsync().ContinueWith(task =>
         {
             if (task.IsCompleted)
@@ -104,7 +103,33 @@ public class DatabaseManager : MonoBehaviour
                 }
             }
         });
-        
     }
+
+    void testtt()
+    {
+        DatabaseReference reference = firebaseDatabase.GetReference("PlayerInfo");
+        
+        reference.GetValueAsync().ContinueWith(task => 
+        {
+            if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                foreach (var item in snapshot.Children)
+                {
+                    IDictionary playerInfoTemp = (IDictionary)item.Value;
+                    Debug.Log($"DB ID :{playerInfoTemp["uniqueID"].ToString()} , USER ID  : {fireBaseManager.authManager.GetUserId()}");
+                    if (playerInfoTemp["uniqueID"].ToString() == fireBaseManager.authManager.GetUserId())
+                    {
+                        Debug.Log("Find!");
+                        //selectdPlayerInfoTemp = playerInfoTemp;
+                        GetPlayerInfo(item);
+                    }
+                }
+            }
+        });
+    }
+
+
+    
 }
 

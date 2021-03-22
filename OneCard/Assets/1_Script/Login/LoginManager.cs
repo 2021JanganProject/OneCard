@@ -23,7 +23,7 @@ public class LoginManager : MonoBehaviour
     void Start()
     {
         // 시작 시 데이터 갱신되면 시작
-        OnWaitLodingOver(fireBaseManager.authManager.IsLogined() , login.LoginLoadingOver);
+        OnWaitLodingOver(fireBaseManager.AuthManager.IsLogined() , login.LoginLoadingOver);
     }
 
     // Update is called once per frame
@@ -43,17 +43,17 @@ public class LoginManager : MonoBehaviour
     // 로그인 안되어 있으면 로그인 창 보여주고 로그인 유도
     IEnumerator WaitForUserInstanceLodingOver(bool trigger, lodingOverEvent onLodingOver)
     {
-        while (fireBaseManager.authManager.IsLoginHasInstance() == false) // 비동기 로그인 대기
+        while (fireBaseManager.AuthManager.IsLoginHasInstance() == false) // 비동기 로그인 대기
         {
-            Debug.Log($"비동기 로그인 대기중{fireBaseManager.authManager.IsLoginHasInstance()}");
+            Debug.Log($"비동기 로그인 대기중{fireBaseManager.AuthManager.IsLoginHasInstance()}");
             yield return null;
         }
-        Debug.Log($"로그인 상황 {fireBaseManager.authManager.IsLogined()}");
+        Debug.Log($"로그인 상황 {fireBaseManager.AuthManager.IsLogined()}");
         //finish
-        if (fireBaseManager.authManager.IsLogined())
+        if (fireBaseManager.AuthManager.IsLogined())
         {
            
-            fireBaseManager.databaseManager.GetAsyncGetPlayerInfo();
+            fireBaseManager.DatabaseManager.GetAsyncGetPlayerInfo();
             login.Signedin();
         }
         else

@@ -8,8 +8,6 @@ using Firebase.Auth;
 // 로그인
 public class AuthManager : MonoBehaviour
 {
-
-
     public FirebaseUser User { get => user; set => user = value; }
     public FirebaseAuth FirebaseAuth { get => firebaseAuth; set => firebaseAuth = value; }
     [SerializeField] FireBaseManager fireBaseManager;
@@ -148,7 +146,7 @@ public class AuthManager : MonoBehaviour
         }
         Debug.Log("Start InitFirstLoginUserDatabase");
         //IsUserReady = true;
-        fireBaseManager.databaseManager.InitFirstLoginUserDatabase();
+        fireBaseManager.DatabaseManager.InitFirstLoginUserDatabase();
     }
 
 }

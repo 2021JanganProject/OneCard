@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+
 // 역할 : 전체적인 게임의 설정과 관리를 담당
 
 public enum eGameFlowState
@@ -126,6 +127,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         playerForTest =  PhotonNetwork.Instantiate(playerProfilePrefab.name, spawnPosition.position, spawnPosition.rotation ); // 리소스에서 이름값으로 가져옴. 알아서 동기화를 해준다. 
         playerForTest.transform.parent = playerProfileBase.transform;
         playerForTest.transform.localScale = new Vector3(1, 1, 1);
+
+        
     }
 
 
