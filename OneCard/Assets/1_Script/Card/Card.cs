@@ -28,6 +28,8 @@ public struct CardData
 }
 public class Card : MonoBehaviour
 {
+    public PR cardPR;//원준
+
     // 주석
     public bool isActiveState = false;
     [SerializeField] public CardData cardData;

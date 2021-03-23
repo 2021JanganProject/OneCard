@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D;
+using DG.Tweening;
 
 public class CardManager : MonoBehaviour
 {
@@ -24,6 +25,13 @@ public class CardManager : MonoBehaviour
     [SerializeField] private GameObject cardPrefab;
     [SerializeField] private CardData currentCard;
 
+    [SerializeField] private Transform cardStorage; //원준
+    [SerializeField] private Transform handLeft;//원준
+    [SerializeField] private Transform handRight;//원준
+    [SerializeField] private Transform secondHandLeft;//원준
+    [SerializeField] private Transform secondHandRight;//원준
+    [SerializeField] private List<GameObject> myCards = new List<GameObject>(); //원준
+
     [Header("Card 상위 개체")]
     [SerializeField] private GameObject openedCardBase;
     [SerializeField] private GameObject closedCardBase;
@@ -33,7 +41,8 @@ public class CardManager : MonoBehaviour
     private GameObject openedCard;
     private UIManager uiManager;
 
-
+    private int cardHandOrder = 0; //원준
+    private int maxCardLine = 6; //원준
 
     #region == BtnEvts ==  
     public void BtnEvt_changeBlack()
@@ -60,6 +69,7 @@ public class CardManager : MonoBehaviour
 
     void Start()
     {
+        maxCardLine = 6; //원준
         maxCardNum = 13; // 중간에 0으로 초기화 되는 버그가 있어서 강제로 다시 설정함.
         maxCardColorNum = 5;
         SettingCard();
@@ -80,7 +90,8 @@ public class CardManager : MonoBehaviour
 
     private void Update()
     {
-
+        if(Input.GetKeyDown(KeyCode.Keypad1))
+            DrawCard();
     }
 
     public void UpdateCardData()
@@ -307,9 +318,98 @@ public class CardManager : MonoBehaviour
 
     public void DrawCard()
     {
+        var card = closedCardDeck[0];
+        myCards.Add(card);
+        card.transform.parent = cardStorage;
+        closedCardDeck.RemoveAt(0);
 
+        SetOrderLayer(card);
+        AlignCardAtHand();
     }
+    void SetOrderLayer(GameObject card)
+    {
+        var sprite = card.GetComponent<SpriteRenderer>();
+        sprite.sortingOrder = cardHandOrder;
+        cardHandOrder++;
+    }
+    void MoveTransformForDrawCard(Transform card, PR cardPR, float duration = 1f)
+    {
+        card.DOMove(cardPR.position, duration);
+        card.DORotateQuaternion(cardPR.rotation, duration);
+        
+    }
+    //내 카드패 갯수에 따른 카드패 정렬, 줄바꿈
+    void AlignCardAtHand()
+    {
+        List<PR> cardPRs = new List<PR>();
+        List<PR> secondCardPRs = new List<PR>();
+        int count = myCards.Count;
+        if (count <= maxCardLine)
+        {
+            cardPRs = AlignCardRound(handLeft, handRight, myCards.Count, 0.5f);
+            Debug.Log("안넘음");
+        }
+        else if(count > maxCardLine)
+        {
+            secondCardPRs = AlignCardRound(secondHandLeft, secondHandRight, myCards.Count-maxCardLine, 0.5f);
+            Debug.Log("넘음");
+            Debug.Log(myCards.Count);
+        }
 
+        var targetCards = myCards;
+        if(targetCards.Count <= maxCardLine)
+        {
+            AlignmentCardForLines(0, myCards, cardPRs);
+        }
+        else
+        {
+            AlignmentCardForLines(maxCardLine, myCards, secondCardPRs);
+        }
+    }
+    void AlignmentCardForLines(int maxCardLine, List<GameObject> myCards, List<PR> PRs)
+    {
+        int j = 0;
+        for (int i = maxCardLine; i < myCards.Count; i++)
+        {
+            var targetCard = myCards[i].GetComponent<Card>();
+            var targetCardTransform = myCards[i].GetComponent<Transform>();
+            targetCard.cardPR = PRs[j];
+            MoveTransformForDrawCard(targetCardTransform, targetCard.cardPR);
+            j++;
+        }
+        
+    }
+    //내 카드패 정렬
+    private List<PR> AlignCardRound(Transform leftTr, Transform rightTr, int cardCount, float height)
+    {
+        float[] cardLerps = new float[cardCount];
+        List<PR> resultsCardPR = new List<PR>();
+        switch (cardCount)
+        {
+            case 1: cardLerps = new float[] { 0.5f }; break;
+            case 2: cardLerps = new float[] { 0.27f, 0.73f }; break;
+            case 3: cardLerps = new float[] { 0.1f, 0.5f, 0.9f }; break;
+            default:
+                float interval = 1f / (cardCount - 1);
+                for (int i = 0; i < cardCount; i++)
+                    cardLerps[i] = interval * i;
+                break;
+        }
+        for (int i = 0; i < cardCount; i++)
+        {
+            var targetPos = Vector3.Lerp(leftTr.position, rightTr.position, cardLerps[i]);
+            var targetRot = Quaternion.identity;
+            if(cardCount >= 6)
+            {
+                float curve = Mathf.Sqrt(Mathf.Pow(height, 2) - Mathf.Pow(cardLerps[i] - 0.5f, 2));
+                curve = height >= 0 ? curve : -curve;
+                targetPos.y += curve;
+                targetRot = Quaternion.Slerp(leftTr.rotation, rightTr.rotation, cardLerps[i]);
+            }
+            resultsCardPR.Add(new PR(targetPos, targetRot));
+        }
+        return resultsCardPR;
+    }
     private void ResetCard()
     {
 
