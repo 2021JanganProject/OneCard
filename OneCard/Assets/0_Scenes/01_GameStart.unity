@@ -259,8 +259,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c517d5779b0acda40b84e17618ce9546, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTest: 0
+  isTest: 1
   waitTime: 1
+  dataManagerForDebug: {fileID: 5392784382372890806, guid: fcb4effe394877f4ca9af28f898ac9c5,
+    type: 3}
 --- !u!1 &1070699093
 GameObject:
   m_ObjectHideFlags: 0

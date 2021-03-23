@@ -51,13 +51,14 @@ public class AuthManager : MonoBehaviour
 
     public bool IsLogined()
     {
-        Debug.Log($"user{user}");
+        
         if(user == null)
         {
             return false;
         }
         else
         {
+            Debug.Log($"user :: {user.UserId}");
             return true;
         }
     }

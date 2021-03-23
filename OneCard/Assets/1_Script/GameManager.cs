@@ -16,12 +16,23 @@ public class GameManager : MonoBehaviourPunCallbacks
 {
     public static GameManager instance = null;
     public int MaxPlayerCount { get => MaxPlayerCount; set => MaxPlayerCount = value; }
-
+    /// <summary>
+    /// 0번부터 시작하는 LocalPlayerActorNumber
+    /// </summary>
+    public int LocalPlayerActorNumberStartZero
+    {
+        get
+        {
+            return PhotonNetwork.LocalPlayer.ActorNumber - 1;
+        }
+    }
+    [SerializeField] private Photon.Realtime.Player[] currentOrderPlayerArr;
     [SerializeField] private CardManager cardManager;
     [SerializeField] private TurnManager turnManager;
     [SerializeField] private Transform [] spawnPositions;
     [SerializeField] private GameObject playerProfilePrefab;
     [SerializeField] private GameObject playerProfileBase;
+    [SerializeField] private Vector3 profileScale = new Vector3(2, 2, 2);
 
     private int maxPlayerCount = 4;
     private int playerCount = 0;
@@ -29,7 +40,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private int[] orderPlayers = new int[4];
 
     private bool isPlayerAllInTheRoom =false;
-    [SerializeField] Text orderTest;
+    //Text orderTest;
 
     
 
@@ -48,7 +59,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
        
         yield return new WaitForSeconds(1f);
+        currentOrderPlayerArr = PhotonNetwork.PlayerList;
         SpawnPlayer();
+        SpawnPlayerForDebug();
         StartCoroutine(Update1Sec());
     }
     IEnumerator Update1Sec()
@@ -60,15 +73,23 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public int[] GetOrderPlayer()
+    {
+        int[] playerOrderNumberList = new int[currentOrderPlayerArr.Length];
+        for (int i = 0; i < playerOrderNumberList.Length; i++)
+        {
+            playerOrderNumberList[i] = currentOrderPlayerArr[i].ActorNumber-1;
+        }
+        return playerOrderNumberList;
+    }
     void UpdatePlayerListLog()
     {
-        
         DebugerManager.instance.ResetLog();
-        DebugerManager.instance.Log($"totalplayer: {PhotonNetwork.PlayerList.Length}__playerList : {PhotonNetwork.LocalPlayer.ActorNumber}");
+        DebugerManager.instance.Log($"totalplayer: {PhotonNetwork.PlayerList.Length}__playerList : {LocalPlayerActorNumberStartZero}");
        
         for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
         {
-            DebugerManager.instance.Log($"_ {PhotonNetwork.PlayerList[i].ActorNumber}");
+            DebugerManager.instance.Log($"_ {PhotonNetwork.PlayerList[i].ActorNumber-1}");
         }
     }
 
@@ -115,7 +136,14 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     }
 
-    [SerializeField]GameObject playerForTest;
+    [SerializeField] GameObject playerForTest;
+    GameObject playerGameObj;
+    private void SpawnPlayerForDebug()
+    {
+        playerGameObj = PhotonNetwork.Instantiate(playerForTest.name , new Vector3(Random.Range(-2f,2f),0,0),  Quaternion.Euler(new Vector3(0, 0, 0))); // 리소스에서 이름값으로 가져옴. 알아서 동기화를 해준다. 
+        photonView.RPC("RPC_SetProfileBase", RpcTarget.All);
+    }
+
     private void SpawnPlayer()
     {
         // LocalPlayer : 현재 방에 들어온 로컬 플레이어 (즉 나 자신)
@@ -123,13 +151,18 @@ public class GameManager : MonoBehaviourPunCallbacks
         var localPlayerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
         Debug.Log($"localPlayerIndex_{localPlayerIndex}");
         var spawnPosition = spawnPositions[localPlayerIndex % spawnPositions.Length];
-        //// GameObject.Instantiate() 로컬 세상에서만 생성됨
-        playerForTest =  PhotonNetwork.Instantiate(playerProfilePrefab.name, spawnPosition.position, spawnPosition.rotation ); // 리소스에서 이름값으로 가져옴. 알아서 동기화를 해준다. 
-        playerForTest.transform.parent = playerProfileBase.transform;
-        playerForTest.transform.localScale = new Vector3(1, 1, 1);
-
-        
+        GameObject playerGameObj =  PhotonNetwork.Instantiate(playerProfilePrefab.name, spawnPosition.position, spawnPosition.rotation ); // 리소스에서 이름값으로 가져옴. 알아서 동기화를 해준다. 
+        playerGameObj.transform.parent = playerProfileBase.transform;
+        playerGameObj.transform.localScale = profileScale;
+        Player player = playerGameObj.GetComponent<Player>();
+        player.InitPlayer(DataManager.instance.CurrentPlayerInfo, LocalPlayerActorNumberStartZero);
     }
+    [PunRPC]
+    private void RPC_SetProfileBase(int parent)
+    {
+        playerGameObj.transform.parent = playerProfileBase.transform;
+    }
+    
 
 
     private void OrderPlayer()

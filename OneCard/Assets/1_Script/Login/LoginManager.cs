@@ -60,5 +60,6 @@ public class LoginManager : MonoBehaviour
         {
             login.SignedOut();
         }
+        
     }
 }

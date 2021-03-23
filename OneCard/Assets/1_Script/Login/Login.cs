@@ -37,7 +37,7 @@ public class Login : MonoBehaviour
     {
         loginFiled.SetActive(false);
         loginText.text = "환영합니다";
-        StartCoroutine(WaitAndNextScene(2));
+        
     }
     public void SignedOut()
     {
@@ -50,7 +50,7 @@ public class Login : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
         
-        SceneManager.LoadScene("03_Main");
+        
     }
 
 }
