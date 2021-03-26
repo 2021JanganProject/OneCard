@@ -7,7 +7,7 @@ using UnityEngine.UI;
 //맥스카운트 = 16, 공격 실행됬을 때 어택카운트 초기화/ 방어카드 나와도 어택카운트 초기화
 public class AttackCounter : MonoBehaviour
 {
-    private int CurrentAttackCount = 0;
+    private int currentAttackCount = 0;
     private int maxAttackCount = 16;
     
     [SerializeField] private GameObject[] CountImage;
@@ -17,41 +17,41 @@ public class AttackCounter : MonoBehaviour
     public void SetAttackCount (int attackCount)
     {
         
-        if(CurrentAttackCount + attackCount <= maxAttackCount)
+        if(currentAttackCount + attackCount <= maxAttackCount)
         {  
-            for (int i = CurrentAttackCount; i < CurrentAttackCount + attackCount; i++)
+            for (int i = currentAttackCount; i < currentAttackCount + attackCount; i++)
             {
                 CountImage[i].SetActive(true);
             }
-            CurrentAttackCount += attackCount;
+            currentAttackCount += attackCount;
         }
-        else if(CurrentAttackCount + attackCount >= maxAttackCount)
+        else if(currentAttackCount + attackCount >= maxAttackCount)
         {   
-            for (int i = CurrentAttackCount; i < maxAttackCount; i++)
+            for (int i = currentAttackCount; i < maxAttackCount; i++)
             {
                 CountImage[i].SetActive(true);
             }
-            CurrentAttackCount = maxAttackCount;
+            currentAttackCount = maxAttackCount;
         }
     }
     private void ClearAttackCount()
     {
-        Debug.Log(CurrentAttackCount);
-        for (int i = 0; i < CurrentAttackCount; i++)
+        Debug.Log(currentAttackCount);
+        for (int i = 0; i < currentAttackCount; i++)
         {
             CountImage[i].SetActive(false);
         }
-        CurrentAttackCount = 0;
+        currentAttackCount = 0;
     }
-    public void BtnEvt_ClearAttackCount()
+    public void BtnEvt_ClearAttackCountForTest()
     {
         ClearAttackCount();
     }
-    public void BtnEvt_attackCount2Up()
+    public void BtnEvt_attackCount2UpForTest()
     {
         SetAttackCount(2);
     }
-    public void BtnEvt_attackCount3Up()
+    public void BtnEvt_attackCount3UpForTest()
     {
         SetAttackCount(3);
     }

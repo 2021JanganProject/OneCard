@@ -10,41 +10,37 @@ public class UIProfile : MonoBehaviour
     [SerializeField] private Text playerNickNameText;
     [SerializeField] private Text playerRankText;
     [SerializeField] private Image playerImageSprite;
-    [SerializeField] private string playerNickName;
-    [SerializeField] private string playerRank;
-    [SerializeField] private Image playerImage;
+    
     //private int PlayerCount;
     [SerializeField] Player player;
-    [SerializeField] private GameObject myTurnImage;
-    [SerializeField] private GameObject nextTurnImage;
-    [SerializeField] private GameObject WaitImage;
+    [SerializeField] private GameObject myTurnImageForTest;
+    [SerializeField] private GameObject nextTurnImageForTest;
+    [SerializeField] private GameObject waitImageForTest;
+
     private ePlayerState playerstate;
-    private ePlayerState myTurn = ePlayerState.myTurn;
-    private ePlayerState NextTurn = ePlayerState.NextTurn;
-    private ePlayerState Wait = ePlayerState.Wait;
 
 
     private void ChangeTurnImageForPlayerState()
     {
-        if (myTurnImage != null && nextTurnImage != null && WaitImage != null)
+        if (myTurnImageForTest != null && nextTurnImageForTest != null && waitImageForTest != null)
         {
-            if (playerstate == myTurn)
+            if (playerstate == ePlayerState.myTurn)
             {
-                WaitImage.SetActive(false);
-                nextTurnImage.SetActive(false);
-                myTurnImage.SetActive(true);
+                waitImageForTest.SetActive(false);
+                nextTurnImageForTest.SetActive(false);
+                myTurnImageForTest.SetActive(true);
             }
-            else if (playerstate == NextTurn)
+            else if (playerstate == ePlayerState.NextTurn)
             {
-                WaitImage.SetActive(false);
-                myTurnImage.SetActive(false);
-                nextTurnImage.SetActive(true);
+                waitImageForTest.SetActive(false);
+                myTurnImageForTest.SetActive(false);
+                nextTurnImageForTest.SetActive(true);
             }
             else
             {
-                myTurnImage.SetActive(false);
-                nextTurnImage.SetActive(false);
-                WaitImage.SetActive(true);
+                myTurnImageForTest.SetActive(false);
+                nextTurnImageForTest.SetActive(false);
+                waitImageForTest.SetActive(true);
             }
         }
     }
@@ -60,13 +56,9 @@ public class UIProfile : MonoBehaviour
 
     private void SetUIProfile()
     {
-        playerNickName = player.PlayerNickname;
-        playerRank = player.PlayerRank;
-        playerImage = player.PlayerImage;
-
-        playerNickNameText.text = playerNickName;
-        playerRankText.text = playerRank;
-        playerImageSprite.sprite = playerImage.sprite;
+        playerNickNameText.text = player.PlayerNickname;
+        playerRankText.text = player.PlayerRank;
+        playerImageSprite.sprite = player.PlayerImage.sprite;
     }
 
     
