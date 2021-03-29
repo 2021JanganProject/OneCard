@@ -36,7 +36,11 @@ public class Card : MonoBehaviour
     [SerializeField] private SpriteRenderer cardImage;   
     private CardManager cardManager;
     private GameManager gameManager;
+    private GameObject closedCardBase;
+    private GameObject openedCardBase;
+    [SerializeField] private bool isOpen = false;
     public CardData CardData1 { get => cardData; set => cardData = value; }
+    public bool IsOpen { get => isOpen; set => isOpen = value; }
 
     void Start()
     {
@@ -50,7 +54,7 @@ public class Card : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (isActiveState)
+        if (isActiveState && isOpen)
         {
             Put();
         }
@@ -68,11 +72,11 @@ public class Card : MonoBehaviour
     {
         // 카드 매니저에 openedCardDeck 리스트에 추가
         cardManager.OpenedCardDeck.Add(this.gameObject);
-        transform.position = new Vector3(0, 10, 0);
+        transform.position = new Vector3(0, 3, 0);
         cardManager.OpenedCard = this.gameObject;
         cardManager.UpdateCardData();
+        //this.transform.parent = openedCardBase.transform;
         //gameManager.TurnEnd();
-        Debug.Log(cardManager.OpenedCardDeck.Count);
     }
     /// <summary>
     /// 카드 이미지 셋팅

@@ -14,7 +14,6 @@ public class Attack : Card
 
     protected override void Put()
     {
-        Debug.Log("오버라이딩");
         base.Put();
         AddAttackCount();
         Debug.Log(cardManager.CurrentAttackCount);

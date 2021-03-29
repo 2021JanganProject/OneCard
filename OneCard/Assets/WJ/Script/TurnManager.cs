@@ -112,7 +112,7 @@ public class TurnManager : MonoBehaviour
 
     private void SetRandomOrderPlayers(List<Player> players)
     {
-        int RandomPlayerIndex = Random.Range(0, players.Count);
+        /*int RandomPlayerIndex = Random.Range(0, players.Count);
         for (int i = 0; i < players.Count; i++)
         {
             orderList.Add(orderList[RandomPlayerIndex--]);
@@ -122,7 +122,7 @@ public class TurnManager : MonoBehaviour
             }
         }
         ReversCurrentTurnPlayer = players.Count - 1;
-        CheckTurn();
+        CheckTurn();*/
     }
     private void Update()
     {

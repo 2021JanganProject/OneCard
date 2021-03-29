@@ -40,6 +40,7 @@ public class CardManager : MonoBehaviour
     [SerializeField] private int currentAttackCount = 0;
     private GameObject openedCard;
     private UIManager uiManager;
+    private Player_test player_Test;
 
     private int cardHandOrder = 0; //원준
     private int maxCardLine = 6; //원준
@@ -65,6 +66,10 @@ public class CardManager : MonoBehaviour
         ChangeRed();
         QuitChangeCardColor();
     }
+    public void BtnEvt_Draw()
+    {
+        DrawCard();
+    }
     #endregion
 
     void Start()
@@ -81,6 +86,7 @@ public class CardManager : MonoBehaviour
     private void Awake()
     {
         uiManager = FindObjectOfType<UIManager>();
+        player_Test = FindObjectOfType<Player_test>();
         if (instance == null)
         {
             instance = this;
@@ -97,7 +103,7 @@ public class CardManager : MonoBehaviour
     public void UpdateCardData()
     {
         // 카드 정보 업데이트 7카드 때문
-        currentCard = openedCard.GetComponent<Card>().cardData;        
+        currentCard = openedCard.GetComponent<Card>().cardData;
     }
 
 
@@ -300,32 +306,24 @@ public class CardManager : MonoBehaviour
     {
         currentCard.cardColor = eCardColor.Red;
     }
-
-    private void AddInitedCardsToColsedCardDeck()
-    {
-
-    }
-
-    private void AllocateCard()
-    {
-
-    }
-
-    private void AllocateCardAllPlayer()
-    {
-
-    }
-
     public void DrawCard()
     {
-        var card = closedCardDeck[0];
+        player_Test.Player_CardDeck.Add(closedCardDeck[0]);
+        closedCardDeck[0].transform.position = new Vector3(0, -3, 0);
+        closedCardDeck[0].GetComponent<Card>().IsOpen = true;
+        closedCardDeck.Remove(closedCardDeck[0]);
+
+        // 잠시 주석처리
+        /*var card = closedCardDeck[0];
         myCards.Add(card);
         card.transform.parent = cardStorage;
         closedCardDeck.RemoveAt(0);
 
         SetOrderLayer(card);
-        AlignCardAtHand();
+        AlignCardAtHand();*/
     }
+
+
     void SetOrderLayer(GameObject card)
     {
         var sprite = card.GetComponent<SpriteRenderer>();
@@ -411,6 +409,24 @@ public class CardManager : MonoBehaviour
         return resultsCardPR;
     }
     private void ResetCard()
+    {
+        if(closedCardDeck.Count < 4)
+        {
+            
+        }
+    }
+
+    private void AddInitedCardsToColsedCardDeck()
+    {
+
+    }
+
+    private void AllocateCard()
+    {
+
+    }
+
+    private void AllocateCardAllPlayer()
     {
 
     }
