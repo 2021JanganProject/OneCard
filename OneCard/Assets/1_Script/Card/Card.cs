@@ -53,7 +53,7 @@ public class Card : MonoBehaviour
     {
         if (isActiveState)
         {
-            Put();
+            //Put();
         }
     }
     public void SetCardImage(Sprite sprite)
