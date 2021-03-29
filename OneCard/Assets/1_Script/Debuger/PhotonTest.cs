@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class PhotonTest : MonoBehaviourPunCallbacks
+public class PhotonTest : MonoBehaviourPunCallbacks ,IPunObservable
 {
     // Start is called before the first frame update
     void Start()
@@ -16,15 +16,12 @@ public class PhotonTest : MonoBehaviourPunCallbacks
     {
         
     }
-    [PunRPC]
-    void NetworkSetParent(string name)
-    {
-        photonView.GetInstanceID();
-    }
+   
     // 로컬에서 각자 알아서 생성하게 하는 방법
     GameObject fire;
     GameObject myGuy;
     GameObject flameBaby;  //Drag "flamebaby" here in the Inspector
+
     void asdf()
     {
         if (Input.GetKeyDown(KeyCode.F))
@@ -53,9 +50,25 @@ public class PhotonTest : MonoBehaviourPunCallbacks
         }
 
     }
-          
-
-
+    [PunRPC]
+    private void RPC_SetProfileBase()
+    {
+        transform.parent = GameManager.instance.baseForTest.transform;
+    }
+    Vector3 testVec;
+    int testInt;
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if(stream.IsWriting)
+        {
+            stream.SendNext(testVec);
+            stream.SendNext(testInt);
+        }
+        else if(stream.IsReading)
+        {
+            
+        }
+    }
 }
  
          

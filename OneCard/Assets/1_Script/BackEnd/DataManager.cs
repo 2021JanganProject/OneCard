@@ -8,9 +8,10 @@ public class DataManager : MonoBehaviour
     public static DataManager instance;
     
     public PlayerInfo CurrentPlayerInfo { get => currentPlayerInfo; set => currentPlayerInfo = value; }
-    [SerializeField]
-    PlayerInfo currentPlayerInfo;
+    [SerializeField] PlayerInfo currentPlayerInfo;
 
+    public int ActorNumber { get => actorNumber; set => actorNumber = value; }
+    int actorNumber;
 
     private void Awake()
     {
@@ -34,7 +35,7 @@ public class DataManager : MonoBehaviour
         currentPlayerInfo = new PlayerInfo("DEBUG", "nnnnnnnnn", 100, 100, 20, 20, 20);
     }
 
-    
+   
 }
 [System.Serializable]
 public struct PlayerInfo

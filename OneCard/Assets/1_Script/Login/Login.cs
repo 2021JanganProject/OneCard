@@ -37,7 +37,6 @@ public class Login : MonoBehaviour
     {
         loginFiled.SetActive(false);
         loginText.text = "환영합니다";
-        
     }
     public void SignedOut()
     {

@@ -59,6 +59,7 @@ public class UIProfile : MonoBehaviour
         playerNickNameText.text = player.PlayerNickname;
         playerRankText.text = player.PlayerRank;
         playerImageSprite.sprite = player.PlayerImage.sprite;
+        
     }
 
     

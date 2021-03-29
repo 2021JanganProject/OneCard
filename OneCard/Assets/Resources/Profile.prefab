@@ -585,8 +585,7 @@ GameObject:
   - component: {fileID: 1465226830149678464}
   - component: {fileID: 896289465813047004}
   - component: {fileID: 896289465813047005}
-  - component: {fileID: 4169254955447345425}
-  - component: {fileID: -3274608920196162071}
+  - component: {fileID: 3320520651725914673}
   m_Layer: 5
   m_Name: Profile
   m_TagString: Untagged
@@ -674,6 +673,7 @@ MonoBehaviour:
     type: 3}
   uIProfile: {fileID: 896289465813047005}
   playerState: 0
+  profileScale: {x: 2, y: 2, z: 2}
 --- !u!114 &896289465813047005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -692,7 +692,7 @@ MonoBehaviour:
   myTurnImage: {fileID: 896289465023318128}
   nextTurnImage: {fileID: 896289465309087765}
   WaitImage: {fileID: 896289464975899001}
---- !u!114 &4169254955447345425
+--- !u!114 &3320520651725914673
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -709,28 +709,11 @@ MonoBehaviour:
   prefixField: -1
   Synchronization: 3
   OwnershipTransfer: 0
-  observableSearch: 0
-  ObservedComponents:
-  - {fileID: -3274608920196162071}
-  sceneViewId: 2
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &-3274608920196162071
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6312822393856757912}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 0
-  m_SynchronizeScale: 0
-  m_UseLocal: 0
 --- !u!1 &8748208818518555848
 GameObject:
   m_ObjectHideFlags: 0

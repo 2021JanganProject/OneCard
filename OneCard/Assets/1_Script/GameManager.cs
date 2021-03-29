@@ -17,31 +17,54 @@ public class GameManager : MonoBehaviourPunCallbacks
     public static GameManager instance = null;
     public int MaxPlayerCount { get => MaxPlayerCount; set => MaxPlayerCount = value; }
     /// <summary>
-    /// 0번부터 시작하는 LocalPlayerActorNumber
+    /// PlayerActorNumber는 방에 들어온 순서대로 할당되는 플레이어 Number이다. Ex ) 첫번쨰로 들어오면 0  두번쨰로 들어오면 1 ...
     /// </summary>
     public int LocalPlayerActorNumberStartZero
     {
         get
         {
-            return PhotonNetwork.LocalPlayer.ActorNumber - 1;
+            int actorNum = PhotonNetwork.LocalPlayer.ActorNumber - 1;
+            Debug.Log($"LocalActorNumber :: {actorNum}");
+            return actorNum;
         }
     }
-    [SerializeField] private Photon.Realtime.Player[] currentOrderPlayerArr;
+    /// <summary>
+    ///  
+    /// </summary>
+    public int [] CurrentPlayerActorNumberArr
+    {
+        get
+        {
+            int[] playerListActorNum = new int[PhotonNetwork.PlayerList.Length];
+
+            for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+            {
+                playerListActorNum[i] = PhotonNetwork.PlayerList[i].ActorNumber-1;
+            }
+            return playerListActorNum;
+        }
+    }
+
+    public Transform LocalSpawnPositions { get => localSpawnPositions;}
+    public GameObject[] PlayerArr { get => playerArr; set => playerArr = value; }
+    public GameObject PlayerProfileBase { get => playerProfileBase;}
+
     [SerializeField] private CardManager cardManager;
     [SerializeField] private TurnManager turnManager;
     [SerializeField] private Transform [] spawnPositions;
+    [SerializeField] private Transform localSpawnPositions;
+
     [SerializeField] private GameObject playerProfilePrefab;
     [SerializeField] private GameObject playerProfileBase;
-    [SerializeField] private Vector3 profileScale = new Vector3(2, 2, 2);
+    
 
     private int maxPlayerCount = 4;
     private int playerCount = 0;
     private int currentTurnPlayer;
-    private int[] orderPlayers = new int[4];
 
-    private bool isPlayerAllInTheRoom =false;
+    private bool isPlayerAllInTheRoom = false;
     //Text orderTest;
-
+    [SerializeField] private GameObject[] playerArr;
     
 
     private void Awake()
@@ -57,31 +80,27 @@ public class GameManager : MonoBehaviourPunCallbacks
     
     IEnumerator Start()
     {
-       
+        playerArr = new GameObject[4];
         yield return new WaitForSeconds(1f);
-        currentOrderPlayerArr = PhotonNetwork.PlayerList;
-        SpawnPlayer();
-        SpawnPlayerForDebug();
+        SpawnLocalPlayer();
+        //SpawnPlayer();
+        
         StartCoroutine(Update1Sec());
     }
     IEnumerator Update1Sec()
     {
-        while(true)
+        while(maxPlayerCount <= PhotonNetwork.PlayerList.Length)
         {
             yield return new WaitForSeconds(1);
+            Updatesdsd();
             UpdatePlayerListLog();
         }
     }
-
-    public int[] GetOrderPlayer()
+    void Updatesdsd()
     {
-        int[] playerOrderNumberList = new int[currentOrderPlayerArr.Length];
-        for (int i = 0; i < playerOrderNumberList.Length; i++)
-        {
-            playerOrderNumberList[i] = currentOrderPlayerArr[i].ActorNumber-1;
-        }
-        return playerOrderNumberList;
+        
     }
+   
     void UpdatePlayerListLog()
     {
         DebugerManager.instance.ResetLog();
@@ -137,33 +156,39 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
     [SerializeField] GameObject playerForTest;
-    GameObject playerGameObj;
+    [SerializeField] PhotonView pvForTest;
+    public GameObject baseForTest;
     private void SpawnPlayerForDebug()
     {
-        playerGameObj = PhotonNetwork.Instantiate(playerForTest.name , new Vector3(Random.Range(-2f,2f),0,0),  Quaternion.Euler(new Vector3(0, 0, 0))); // 리소스에서 이름값으로 가져옴. 알아서 동기화를 해준다. 
-        photonView.RPC("RPC_SetProfileBase", RpcTarget.All);
+        GameObject playerGameObj = PhotonNetwork.Instantiate(playerForTest.name , new Vector3(Random.Range(-2f,2f),0,0),  Quaternion.Euler(new Vector3(0, 0, 0))); // 리소스에서 이름값으로 가져옴. 알아서 동기화를 해준다. 
+        pvForTest = playerGameObj.GetComponent<PhotonView>();
     }
 
-    private void SpawnPlayer()
+    [PunRPC]
+    private void RPC_SpawnPlayer()
     {
         // LocalPlayer : 현재 방에 들어온 로컬 플레이어 (즉 나 자신)
         // 플레이어 번호를 가져온다.
-        var localPlayerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
-        Debug.Log($"localPlayerIndex_{localPlayerIndex}");
-        var spawnPosition = spawnPositions[localPlayerIndex % spawnPositions.Length];
-        GameObject playerGameObj =  PhotonNetwork.Instantiate(playerProfilePrefab.name, spawnPosition.position, spawnPosition.rotation ); // 리소스에서 이름값으로 가져옴. 알아서 동기화를 해준다. 
-        playerGameObj.transform.parent = playerProfileBase.transform;
-        playerGameObj.transform.localScale = profileScale;
-        Player player = playerGameObj.GetComponent<Player>();
-        player.InitPlayer(DataManager.instance.CurrentPlayerInfo, LocalPlayerActorNumberStartZero);
-    }
-    [PunRPC]
-    private void RPC_SetProfileBase(int parent)
-    {
-        playerGameObj.transform.parent = playerProfileBase.transform;
-    }
-    
+        
+        var spawnPosition = spawnPositions[LocalPlayerActorNumberStartZero % spawnPositions.Length];
 
+        
+
+    }
+    GameObject playerGameObj;
+    [PunRPC]
+    private void SpawnLocalPlayer()
+    {
+        Debug.Log($"localPlayerIndex :: {LocalPlayerActorNumberStartZero}");
+        playerGameObj = PhotonNetwork.Instantiate(playerProfilePrefab.name, localSpawnPositions.position, localSpawnPositions.rotation); // 리소스에서 이름값으로 가져옴. 알아서 동기화를 해준다. 
+     
+    }
+
+    
+    
+    
+    
+    
 
     private void OrderPlayer()
     {

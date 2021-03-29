@@ -39,27 +39,57 @@ public class Player : MonoBehaviourPunCallbacks
     [SerializeField] private string playerNickname;
     [SerializeField] private string playerRank;
     [SerializeField] private Image playerImage;
-    [SerializeField] private UIProfile uIProfile; 
+    [SerializeField] private UIProfile uIProfile;
 
     [SerializeField] private ePlayerState playerState;
-
+    [SerializeField] private Vector3 profileScale = new Vector3(2, 2, 2);
 
     private void Start()
     {
         uIProfile.Playerstate = PlayerState;
+        photonView.RPC("RPC_SetTransform", RpcTarget.All);
+        photonView.RPC("RPC_InitPlayer", RpcTarget.All);
+        photonView.RPC("RPC_SetPlayerArr", RpcTarget.All);
     }
     private void Update()
     {
         uIProfile.Playerstate = PlayerState;
     }
    
-    public void InitPlayer(PlayerInfo playerInfo , int ActorNumber)
+    
+    [PunRPC]
+    private void RPC_InitPlayer()
+    {
+        InitPlayer(DataManager.instance.CurrentPlayerInfo, photonView.Controller.ActorNumber-1);
+    }
+    private void InitPlayer(PlayerInfo playerInfo, int ActorNumber)
     {
         playerNickname = playerInfo.nickname;
         playerRank = playerInfo.rank.ToString();
         playerUniqueID = playerInfo.uniqueID;
         playerActorNumber = ActorNumber;
         uIProfile.InitUIProfile(this);
+    }
+    [PunRPC]
+    private void RPC_SetTransform()
+    {
+        SetTransform();
+    }
+    private void SetTransform() // 부모 , 크기 , 이름
+    {
+        transform.parent = GameManager.instance.PlayerProfileBase.transform;
+        transform.localScale = profileScale;
+        transform.name = $"Player_{photonView.Controller.ActorNumber}";
+    }
+    [PunRPC]
+    private void RPC_SetPlayerArr()
+    {
+        SetPlayerArr();
+    }
+    private void SetPlayerArr()
+    {
+        GameManager.instance.PlayerArr[PlayerActorNumber] = gameObject;
+        
     }
 
     public void DoSwitchPlayerState()
