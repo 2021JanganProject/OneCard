@@ -4,34 +4,48 @@ using UnityEngine;
 
 public class PlayCard : MonoBehaviour
 {
+    public Vector3 OriginPos { get => originPos; set => originPos = value; }
+    public Quaternion OriginRot { get => originRot; set => originRot = value; }
+    public bool IsCardEnlarge { get => isCardEnlarge; set => isCardEnlarge = value; }
+
     public void SetEnlarge(bool isEnlarge)
     {
         this.isEnlarge = isEnlarge;
     }
-    bool isEnlarge = false;
-    float distance = 11.89f;
-    private void OnMouseDrag()
-    {
-        Debug.Log("Drag");
-        Vector3 mousePosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
+    [SerializeField] private bool isEnlarge = false;
+    [SerializeField] private bool isCardEnlarge = false;
+    private float distance = 11.89f;
+    [SerializeField] private Vector3 originPos;
+    [SerializeField] private Quaternion originRot;
+    
+    CardManager CM;
 
-        Vector3 objPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-        transform.position = objPosition;
+    
+
+    private void Awake()
+    {
+        CM = CardManager.instance;
     }
-    private void OnMouseOver()
+
+    public void EnlargeCard()
     {
         if(isEnlarge == true)
         {
-            Vector3 enlargePos = new Vector3(transform.position.x, transform.position.y, 0f);
-            transform.position = enlargePos;
-        } 
+            originPos = transform.position;
+            originRot = transform.rotation;
+            IsCardEnlarge = true;
+            CM.MoveCardToEnlargeArea(transform);
+        }
+        
     }
-    private void OnMouseExit()
+    public void ReduceCard()
     {
         if(isEnlarge == true)
         {
-            Vector3 enlargePos = new Vector3(transform.position.x, transform.position.y, 1.89f);
-            transform.position = enlargePos;
+            CM.MoveCardToOrigin(transform, originPos, originRot);
+            originPos = transform.position;
+            originRot = transform.rotation;
         }
     }
+    
 }

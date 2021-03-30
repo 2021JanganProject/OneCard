@@ -5,11 +5,8 @@ using UnityEngine;
 public class EnlargeCardHand : MonoBehaviour
 {
     CardManager CM;
-
-    public void SetCardEnlarge(bool isCardEnlarge)
-    {
-        this.isCardEnlarge = isCardEnlarge;
-    }
+    private GameObject currentCard = null;
+    
     private bool isEnlarge = false;
     private bool isCardEnlarge = false;
     // Start is called before the first frame update
@@ -23,7 +20,7 @@ public class EnlargeCardHand : MonoBehaviour
     { // 0.75  11    5
         if (Input.GetMouseButtonDown(0))
         {
-           
+            
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit2D hit = Physics2D.GetRayIntersection(ray, Mathf.Infinity);
             if(hit.collider != null && hit.collider.transform == transform)
@@ -31,19 +28,44 @@ public class EnlargeCardHand : MonoBehaviour
                 isEnlarge = true;
                 Debug.Log(isEnlarge);
                 ModulateCardHandSize(isEnlarge);
-                isCardEnlarge = true;
+                
+            }
+            else if(hit.collider != null && hit.collider.gameObject.tag == "MyCard")
+            {  
+                if(currentCard != null)
+                {
+                    if (hit.collider.gameObject == currentCard)
+                    {
+                        currentCard.GetComponent<PlayCard>().ReduceCard();
+                        currentCard = null;
+                        return;
+                    }
+                    else
+                    {
+                        currentCard.GetComponent<PlayCard>().ReduceCard();
+                        hit.collider.gameObject.GetComponent<PlayCard>().EnlargeCard();
+                    }
+                }
+                else 
+                {
+                    hit.collider.gameObject.GetComponent<PlayCard>().EnlargeCard();
+                }
+                 currentCard = hit.collider.gameObject;
             }
             else
             {
-                if(isCardEnlarge == false)
+                isEnlarge = false;
+                Debug.Log(isEnlarge);
+                if (currentCard != null)
                 {
-                    isEnlarge = false;
-                    Debug.Log(isEnlarge);
-                    ModulateCardHandSize(isEnlarge);
-                }  
+                    currentCard.GetComponent<PlayCard>().ReduceCard();
+                    currentCard = null;
+                }
+                ModulateCardHandSize(isEnlarge);
+                
             }
             
-        
+
         }
     }
     private void ModulateCardHandSize(bool isEnlarge)
