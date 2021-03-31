@@ -1,10 +1,9 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 using Firebase;
+using Firebase.Auth;
 using Firebase.Database;
-using System;
+using System.Threading.Tasks;
 
 // DB 생성
 public class DatabaseManager : MonoBehaviour
@@ -14,8 +13,10 @@ public class DatabaseManager : MonoBehaviour
     public FirebaseDatabase firebaseDatabase { get; set; }
     public DatabaseReference reference { get; set; }
     public PlayerInfo PlayerInfo { get => playerInfo; set => playerInfo = value; }
+    public bool IsPlayerInfoDataReady { get => playerInfoReady; set => playerInfoReady = value; }
 
     private PlayerInfo playerInfo;
+    private bool playerInfoReady;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,6 +27,7 @@ public class DatabaseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
 
     }
 
@@ -38,7 +40,7 @@ public class DatabaseManager : MonoBehaviour
     // ghj
     void InitGuestPlayerInfo()
     {
-        PlayerInfo playerInfo = new PlayerInfo("Guest", fireBaseManager.authManager.GetUserId(), 1, 5, 1, 100, 0);
+        PlayerInfo playerInfo = new PlayerInfo("Guest", fireBaseManager.AuthManager.GetUserId(), 1, 5, 1, 100, 0);
         string json = JsonUtility.ToJson(playerInfo);
         PushPlayerInfoToDB(json);
     }
@@ -59,10 +61,10 @@ public class DatabaseManager : MonoBehaviour
     void GetPlayerInfo(DataSnapshot item)
     {
         IDictionary playerInfoTemp = (IDictionary)item.Value;
-        Debug.Log($"DB ID :{playerInfoTemp["uniqueID"].ToString()} , USER ID  : {fireBaseManager.authManager.GetUserId()} asd {playerInfoTemp["nickname"].ToString()}");
-        if (playerInfoTemp["uniqueID"].ToString() == fireBaseManager.authManager.GetUserId())
+        Debug.Log($"DB ID :{playerInfoTemp["uniqueID"].ToString()} , USER ID  : {fireBaseManager.AuthManager.GetUserId()} asd {playerInfoTemp["nickname"].ToString()}");
+        if (playerInfoTemp["uniqueID"].ToString() == fireBaseManager.AuthManager.GetUserId())
         {
-            Debug.Log("Find!");
+            Debug.Log("UserInfoMatching!");
             DataManager.instance.CurrentPlayerInfo = new PlayerInfo
             (
                 playerInfoTemp["nickname"].ToString(),
@@ -73,7 +75,7 @@ public class DatabaseManager : MonoBehaviour
                 int.Parse(playerInfoTemp["gold"].ToString()),
                 int.Parse(playerInfoTemp["diamond"].ToString())
             );
-            // = new PlayerInfo(PlayerInfo);
+            playerInfoReady = true;
         }
     }
 
@@ -85,8 +87,31 @@ public class DatabaseManager : MonoBehaviour
     async void AsyncGetPlayerInfo()
     {
         DatabaseReference reference = firebaseDatabase.GetReference("PlayerInfo");
-        
         await reference.GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                foreach (var item in snapshot.Children)
+                {
+                    IDictionary playerInfoTemp = (IDictionary)item.Value;
+                    Debug.Log($"DB ID :{playerInfoTemp["uniqueID"].ToString()} , USER ID  : {fireBaseManager.authManager.GetUserId()}");
+                    if (playerInfoTemp["uniqueID"].ToString() == fireBaseManager.authManager.GetUserId())
+                    {
+                        Debug.Log("UserDataBase Find!");
+                        //selectdPlayerInfoTemp = playerInfoTemp;
+                        GetPlayerInfo(item);
+                    }
+                }
+            }
+        });
+    }
+
+    void testtt()
+    {
+        DatabaseReference reference = firebaseDatabase.GetReference("PlayerInfo");
+        
+        reference.GetValueAsync().ContinueWith(task => 
         {
             if (task.IsCompleted)
             {
@@ -104,7 +129,9 @@ public class DatabaseManager : MonoBehaviour
                 }
             }
         });
-        
     }
+
+
+    
 }
 

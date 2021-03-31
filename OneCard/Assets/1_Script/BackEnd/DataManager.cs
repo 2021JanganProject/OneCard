@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// 씬간에 데이터를 전달해주는 역할
 public class DataManager : MonoBehaviour
 {
     public static DataManager instance;
     
     public PlayerInfo CurrentPlayerInfo { get => currentPlayerInfo; set => currentPlayerInfo = value; }
-    [SerializeField]
-    PlayerInfo currentPlayerInfo;
+    [SerializeField] PlayerInfo currentPlayerInfo;
 
+    public int ActorNumber { get => actorNumber; set => actorNumber = value; }
+    int actorNumber;
 
     private void Awake()
     {
@@ -28,8 +30,12 @@ public class DataManager : MonoBehaviour
     {
         
     }
+    public void InitPlayerInfoForNoUseFirebaseDebug()
+    {
+        currentPlayerInfo = new PlayerInfo("DEBUG", "nnnnnnnnn", 100, 100, 20, 20, 20);
+    }
 
-    
+   
 }
 [System.Serializable]
 public struct PlayerInfo

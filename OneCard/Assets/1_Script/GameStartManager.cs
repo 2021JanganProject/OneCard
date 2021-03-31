@@ -8,12 +8,15 @@ public class GameStartManager : MonoBehaviour
     public bool isTest = false;
     [SerializeField] float waitTime;
     // Start is called before the first frame update
+    [SerializeField] DataManager dataManagerForDebug;
     void Start()
     {
         
         if (isTest == true)
         {
+            Instantiate(dataManagerForDebug).InitPlayerInfoForNoUseFirebaseDebug();
             StartCoroutine(WaitForSecTest());
+
             Screen.SetResolution(640,360, false);
         }
         else
@@ -32,6 +35,7 @@ public class GameStartManager : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
         SceneManager.LoadScene("03_Main");
+        
     }
     IEnumerator WaitForSec()
     {
