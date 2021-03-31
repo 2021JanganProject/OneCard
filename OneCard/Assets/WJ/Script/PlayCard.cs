@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+// 역할 : 카드패 확대 했을 때(만) 카드 하나 하나 마다 가운대로 움직이거나 드래그 해서 내는 동작을 맡음
 public class PlayCard : MonoBehaviour
 {
     public Vector3 OriginPos { get => originPos; set => originPos = value; }

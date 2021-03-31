@@ -115,7 +115,7 @@ public class CardManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Keypad1))//원준
+        if (Input.GetKeyDown(KeyCode.Alpha1))//원준
         {
             if (turnIdxForTest == 0)
                 isMineForTest = true;
@@ -127,7 +127,7 @@ public class CardManager : MonoBehaviour
                 turnIdxForTest = 0;
             
         }
-        if (Input.GetKeyDown(KeyCode.Keypad2))//원준
+        if (Input.GetKeyDown(KeyCode.Alpha2))//원준
         {
                 StartCoroutine(DrawAtStart());    
         }   
