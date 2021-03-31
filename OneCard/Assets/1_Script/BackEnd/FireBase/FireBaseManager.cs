@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Firebase;
+using UnityEngine.SceneManagement;
 
 // FireBase 개체 생성
 public class FireBaseManager : MonoBehaviour
@@ -19,18 +20,50 @@ public class FireBaseManager : MonoBehaviour
 
     FirebaseApp firebaseApp;
 
+    
+
 
     void Start()
     {
+        StartCoroutine(CheckingLoding());
         InitializeFirebase();
     }
 
-    // Update is called once per frame
+    
     void Update()
     {
-        
+       
     }
-    public 
+    IEnumerator CheckingLoding()
+    {
+        bool isAllDataLodingOver = false;
+        while (isAllDataLodingOver == false)
+        {
+            isAllDataLodingOver = IsCheckingDataReady();
+            if (isAllDataLodingOver == true)
+            {
+                Debug.Log("DataLodingFinish!");
+                SceneManager.LoadScene("03_Main");
+                break;
+            }
+            else if(isAllDataLodingOver == false)
+            {
+                Debug.Log($"DataLoding...{isAllDataLodingOver}");
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+    public bool IsCheckingDataReady()
+    {
+        if(databaseManager.IsPlayerInfoDataReady == true)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     void InitializeFirebase()
     {
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>

@@ -13,8 +13,10 @@ public class DatabaseManager : MonoBehaviour
     public FirebaseDatabase firebaseDatabase { get; set; }
     public DatabaseReference reference { get; set; }
     public PlayerInfo PlayerInfo { get => playerInfo; set => playerInfo = value; }
+    public bool IsPlayerInfoDataReady { get => playerInfoReady; set => playerInfoReady = value; }
 
     private PlayerInfo playerInfo;
+    private bool playerInfoReady;
     // Start is called before the first frame update
     void Start()
     {
@@ -62,7 +64,7 @@ public class DatabaseManager : MonoBehaviour
         Debug.Log($"DB ID :{playerInfoTemp["uniqueID"].ToString()} , USER ID  : {fireBaseManager.AuthManager.GetUserId()} asd {playerInfoTemp["nickname"].ToString()}");
         if (playerInfoTemp["uniqueID"].ToString() == fireBaseManager.AuthManager.GetUserId())
         {
-            Debug.Log("Find!");
+            Debug.Log("UserInfoMatching!");
             DataManager.instance.CurrentPlayerInfo = new PlayerInfo
             (
                 playerInfoTemp["nickname"].ToString(),
@@ -73,7 +75,7 @@ public class DatabaseManager : MonoBehaviour
                 int.Parse(playerInfoTemp["gold"].ToString()),
                 int.Parse(playerInfoTemp["diamond"].ToString())
             );
-            // = new PlayerInfo(PlayerInfo);
+            playerInfoReady = true;
         }
     }
 
@@ -96,7 +98,7 @@ public class DatabaseManager : MonoBehaviour
                     Debug.Log($"DB ID :{playerInfoTemp["uniqueID"].ToString()} , USER ID  : {fireBaseManager.authManager.GetUserId()}");
                     if (playerInfoTemp["uniqueID"].ToString() == fireBaseManager.authManager.GetUserId())
                     {
-                        Debug.Log("Find!");
+                        Debug.Log("UserDataBase Find!");
                         //selectdPlayerInfoTemp = playerInfoTemp;
                         GetPlayerInfo(item);
                     }

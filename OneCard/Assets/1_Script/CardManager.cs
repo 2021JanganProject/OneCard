@@ -379,7 +379,7 @@ public class CardManager : MonoBehaviour
     
     private void SetCardImage(Card card)
     {
-        Sprite spriteTemp = GetAtlasSpriteForTest(card.cardData);
+        Sprite spriteTemp = GetAtlasSprite(card.cardData);
         card.SetCardImage(spriteTemp);
     }
     private void ShuffleCards(List<GameObject> Card)
@@ -419,7 +419,7 @@ public class CardManager : MonoBehaviour
         string atlasName = $"{cardTypeString}_{num+1}_of_{eCardColor.ToString().ToLower()}";        
         return atlasName;
     }
-    private Sprite GetAtlasSpriteForTest(CardData cardData)
+    private Sprite GetAtlasSprite(CardData cardData)
     {
         // 이름 규칙 노션 논의 참고 노말카드 : n_num_of_color
         string atlasString = GetAtlasCardName(cardData.eCardType, cardData.number, cardData.cardColor);

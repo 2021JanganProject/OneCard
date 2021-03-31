@@ -10,15 +10,13 @@ public class UIProfile : MonoBehaviour
     [SerializeField] private Text playerNickNameText;
     [SerializeField] private Text playerRankText;
     [SerializeField] private Image playerImageSprite;
-    
-    //private int PlayerCount;
-    [SerializeField] Player player;
     [SerializeField] private GameObject myTurnImageForTest;
     [SerializeField] private GameObject nextTurnImageForTest;
     [SerializeField] private GameObject waitImageForTest;
 
     private ePlayerState playerstate;
 
+    public ePlayerState Playerstate { get => playerstate; set => playerstate = value; }
 
     private void ChangeTurnImageForPlayerState()
     {
@@ -46,26 +44,27 @@ public class UIProfile : MonoBehaviour
     }
     private void Awake()
     {
-        playerstate = player.PlayerState;       
+        // playerstate = player.PlayerState;       
     }
     // Start is called before the first frame update
     private void Start()
     {
-        SetUIProfile();
+        //SetUIProfile();
     }
 
-    private void SetUIProfile()
+    public void InitUIProfile(Player player)
     {
+
         playerNickNameText.text = player.PlayerNickname;
         playerRankText.text = player.PlayerRank;
         playerImageSprite.sprite = player.PlayerImage.sprite;
+        
     }
 
     
     // Update is called once per frame
     private void Update()
     {
-        playerstate = player.PlayerState;
         ChangeTurnImageForPlayerState();
     }
 }

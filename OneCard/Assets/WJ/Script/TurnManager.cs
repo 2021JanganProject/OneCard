@@ -30,7 +30,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private UIClock clockUI;
 
     private int playerCount = 0;
-    private const int CURRENT_TURN_PLAYER_IDX = 0;//현재 턴인 플레이어 인덱스 -> List첫번쨰 플레이어가 턴이니깐 계속 0이면 될듯 // currentTurnPlayer
+    private const int CURRENT_TURN_PLAYER_IDX = 0;//현재 턴인 플레이어 인덱스 -> List첫번쨰 플레이어가 턴이니깐 계속 0이면 될듯 
     private int reversCurrentTurnPlayer;
     private bool isOrderDirection = true; // true면 시계 방향
 
@@ -43,7 +43,7 @@ public class TurnManager : MonoBehaviour
 
     private void Start()
     {
-        
+        //SetRandomOrderPlayers(GameManager.instance.Players);
         //SetRandomOrderPlayers(GameManager.instance.Players);
     }
     private void Update()
@@ -85,7 +85,6 @@ public class TurnManager : MonoBehaviour
     }
     private void SetCurrentPlayerAndRemoveList(int index)
     {
-        //@bug
         if(currentPlayer = null)
         {
             currentPlayer = orderList[index];

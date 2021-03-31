@@ -585,7 +585,7 @@ GameObject:
   - component: {fileID: 1465226830149678464}
   - component: {fileID: 896289465813047004}
   - component: {fileID: 896289465813047005}
-  - component: {fileID: 4169254955447345425}
+  - component: {fileID: 3320520651725914673}
   m_Layer: 5
   m_Name: Profile
   m_TagString: Untagged
@@ -600,9 +600,9 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6312822393856757912}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.92724, y: 1.92724, z: 1.92724}
   m_Children:
   - {fileID: 7917142265560518771}
   - {fileID: 896289465023318129}
@@ -666,11 +666,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cf5b095d00560c48ac20ffb12fc4a1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerActorNumber: 0
   playerNickname: "\uC544"
   playerRank: "\uC544"
   playerImage: {fileID: 1420339093459406345, guid: e5482df7d5d1f4f49b2809b36f79d8e5,
     type: 3}
+  uIProfile: {fileID: 896289465813047005}
   playerState: 0
+  profileScale: {x: 2, y: 2, z: 2}
 --- !u!114 &896289465813047005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -686,14 +689,10 @@ MonoBehaviour:
   playerNickNameText: {fileID: 1922200982609698659}
   playerRankText: {fileID: 3860361283464979794}
   playerImageSprite: {fileID: 8632940807653233321}
-  playerNickName: 
-  playerRank: 
-  playerImage: {fileID: 0}
-  player: {fileID: 896289465813047004}
   myTurnImage: {fileID: 896289465023318128}
   nextTurnImage: {fileID: 896289465309087765}
   WaitImage: {fileID: 896289464975899001}
---- !u!114 &4169254955447345425
+--- !u!114 &3320520651725914673
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
