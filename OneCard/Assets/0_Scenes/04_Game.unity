@@ -5275,12 +5275,13 @@ MonoBehaviour:
   - {fileID: 2086424387}
   - {fileID: 935374495}
   - {fileID: 2009132413}
-  localSpawnPositions: {fileID: 3229212110294591907}
+  localSpawnPosition: {fileID: 3229212110294591907}
   playerProfilePrefab: {fileID: 6312822393856757912, guid: 0fcf167fa3701e848b5fe1c0dbc8fb22,
     type: 3}
   playerProfileBase: {fileID: 1412455160}
-  profileScale: {x: 2, y: 2, z: 2}
-  playerArr: []
+  playerObjArr: []
+  localPlayerObj: {fileID: 0}
+  remotePlayerObjArr: []
   playerForTest: {fileID: 1039096070116928540, guid: bb6240522d622f34b8d748d22258a583,
     type: 3}
   pvForTest: {fileID: 0}

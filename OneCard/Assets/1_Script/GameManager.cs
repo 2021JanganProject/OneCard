@@ -17,9 +17,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     public static GameManager instance = null;
     public int MaxPlayerCount { get => MaxPlayerCount; set => MaxPlayerCount = value; }
     /// <summary>
-    /// PlayerActorNumber는 방에 들어온 순서대로 할당되는 플레이어 Number이다. Ex ) 첫번쨰로 들어오면 0  두번쨰로 들어오면 1 ...
+    /// PlayerActorNumber는 방에 들어온 순서대로 할당되는 플레이어 Number이다. Ex ) 첫번쨰로 들어오면 0  두번쨰로 들어오면 1
     /// </summary>
-    public int LocalPlayerActorNumberStartZero
+    public int LocalPlayerActorIndex
     {
         get
         {
@@ -45,26 +45,29 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
-    public Transform LocalSpawnPositions { get => localSpawnPositions;}
-    public GameObject[] PlayerArr { get => playerArr; set => playerArr = value; }
+    public GameObject[] PlayerObjArr { get => playerObjArr; set => playerObjArr = value; }
     public GameObject PlayerProfileBase { get => playerProfileBase;}
+    public GameObject[] RemotePlayerObjArr { get => remotePlayerObjArr; set => remotePlayerObjArr = value; }
 
     [SerializeField] private CardManager cardManager;
     [SerializeField] private TurnManager turnManager;
     [SerializeField] private Transform [] spawnPositions;
-    [SerializeField] private Transform localSpawnPositions;
+    [SerializeField] private Transform localSpawnPosition;
 
     [SerializeField] private GameObject playerProfilePrefab;
     [SerializeField] private GameObject playerProfileBase;
-    
+    [SerializeField] private GameObject[] playerObjArr;
 
-    private int maxPlayerCount = 4;
+    [SerializeField] private GameObject localPlayerObj;
+    [SerializeField] private GameObject[] remotePlayerObjArr;
+
+
+    private int maxPlayerCount = 3;
     private int playerCount = 0;
     private int currentTurnPlayer;
 
     private bool isPlayerAllInTheRoom = false;
-    //Text orderTest;
-    [SerializeField] private GameObject[] playerArr;
+  
     
 
     private void Awake()
@@ -80,31 +83,90 @@ public class GameManager : MonoBehaviourPunCallbacks
     
     IEnumerator Start()
     {
-        playerArr = new GameObject[4];
+        playerObjArr = new GameObject[maxPlayerCount];
+        remotePlayerObjArr = new GameObject[maxPlayerCount - 1];
         yield return new WaitForSeconds(1f);
         SpawnLocalPlayer();
         //SpawnPlayer();
         
-        StartCoroutine(Update1Sec());
+        StartCoroutine(CoCheckingRoomFull());
     }
-    IEnumerator Update1Sec()
+    IEnumerator CoCheckingRoomFull()
     {
-        while(maxPlayerCount <= PhotonNetwork.PlayerList.Length)
+        while(true)
         {
-            yield return new WaitForSeconds(1);
-            Updatesdsd();
-            UpdatePlayerListLog();
+            if (IsTheRoomFull() && IsNotNullPlayerObjArr()) // 예외처리 : RPC로 Player들을 삽입 하기 때문에 들어오는 순서가 때마다 다름 
+            {
+                SetRemotePlayer();
+                SetPlayersPosition();
+                break;
+            }
+            yield return null;
         }
     }
-    void Updatesdsd()
+
+    private void SetRemotePlayer()
     {
         
+        
+        List<GameObject> playerList = new List<GameObject>();
+        for (int i = 0; i < maxPlayerCount; i++)
+        {
+            playerList.Add(playerObjArr[i]);
+        }
+        playerList.RemoveAt(LocalPlayerActorIndex);
+        remotePlayerObjArr = playerList.ToArray();
     }
-   
+    bool IsTheRoomFull()
+    {
+        if(maxPlayerCount <= PhotonNetwork.PlayerList.Length)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    bool IsNotNullPlayerObjArr()
+    {
+        for (int i = 0; i < playerObjArr.Length; i++)
+        {
+            if (playerObjArr[i] == null)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    void SetPlayersPosition()
+    {
+        // 로컬 먼저 배치
+
+        localPlayerObj.transform.position = localSpawnPosition.position;
+        int startRemoteIndex = LocalPlayerActorIndex-1;
+        // 0번째 자신의 인덱스 + 1
+        // 만약 넘어가면 다시 0부터 시작
+        for (int i = 0; i < remotePlayerObjArr.Length; i++)
+        {
+            startRemoteIndex++;
+            if (remotePlayerObjArr.Length <= startRemoteIndex)
+            {
+                startRemoteIndex = 0;
+            }
+            Debug.Log($"startRemoteIndex{startRemoteIndex}");
+            GameObject player = remotePlayerObjArr[startRemoteIndex];
+            player.transform.position = spawnPositions[i].position;
+            
+        }
+    }
+
     void UpdatePlayerListLog()
     {
         DebugerManager.instance.ResetLog();
-        DebugerManager.instance.Log($"totalplayer: {PhotonNetwork.PlayerList.Length}__playerList : {LocalPlayerActorNumberStartZero}");
+        DebugerManager.instance.Log($"totalplayer: {PhotonNetwork.PlayerList.Length}__playerList : {LocalPlayerActorIndex}");
        
         for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
         {
@@ -170,25 +232,19 @@ public class GameManager : MonoBehaviourPunCallbacks
         // LocalPlayer : 현재 방에 들어온 로컬 플레이어 (즉 나 자신)
         // 플레이어 번호를 가져온다.
         
-        var spawnPosition = spawnPositions[LocalPlayerActorNumberStartZero % spawnPositions.Length];
+        var spawnPosition = spawnPositions[LocalPlayerActorIndex % spawnPositions.Length];
 
         
 
     }
-    GameObject playerGameObj;
+    
     [PunRPC]
     private void SpawnLocalPlayer()
     {
-        Debug.Log($"localPlayerIndex :: {LocalPlayerActorNumberStartZero}");
-        playerGameObj = PhotonNetwork.Instantiate(playerProfilePrefab.name, localSpawnPositions.position, localSpawnPositions.rotation); // 리소스에서 이름값으로 가져옴. 알아서 동기화를 해준다. 
+        Debug.Log($"localPlayerIndex :: {LocalPlayerActorIndex}");
+        localPlayerObj = PhotonNetwork.Instantiate(playerProfilePrefab.name, localSpawnPosition.position, localSpawnPosition.rotation); // 리소스에서 이름값으로 가져옴. 알아서 동기화를 해준다. 
      
     }
-
-    
-    
-    
-    
-    
 
     private void OrderPlayer()
     {

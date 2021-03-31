@@ -15,9 +15,9 @@ public class Player : MonoBehaviourPunCallbacks
     //플레이어 역할 / 플레이어 myTurn, 플레이어 ID, 턴에 따른 상태들, 상태에 따른 효과 정보
     public string PlayerID { get => playerUniqueID;}
     /// <summary>
-    /// 룸에 들어온 순서대로 ActorNumber가 정해진다. 
+    /// 룸에 들어온 순서대로 ActorIndex가 정해진다. ActorNum - 1 을 한 값
     /// </summary>
-    public int PlayerActorNumber { get => playerActorNumber; }
+    public int PlayerActorIndex { get => playerActorNumber; }
     public string PlayerNickname { get => playerNickname;}
     public string PlayerRank { get => playerRank;}
     public Image PlayerImage { get => playerImage;}
@@ -88,10 +88,9 @@ public class Player : MonoBehaviourPunCallbacks
     }
     private void SetPlayerArr()
     {
-        GameManager.instance.PlayerArr[PlayerActorNumber] = gameObject;
-        
+        GameManager.instance.PlayerObjArr[PlayerActorIndex] = gameObject;
     }
-
+   
     public void DoSwitchPlayerState()
     {
         switch (playerState)
