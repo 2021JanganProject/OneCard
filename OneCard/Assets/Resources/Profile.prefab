@@ -689,9 +689,9 @@ MonoBehaviour:
   playerNickNameText: {fileID: 1922200982609698659}
   playerRankText: {fileID: 3860361283464979794}
   playerImageSprite: {fileID: 8632940807653233321}
-  myTurnImage: {fileID: 896289465023318128}
-  nextTurnImage: {fileID: 896289465309087765}
-  WaitImage: {fileID: 896289464975899001}
+  myTurnImageForTest: {fileID: 0}
+  nextTurnImageForTest: {fileID: 0}
+  waitImageForTest: {fileID: 0}
 --- !u!114 &3320520651725914673
 MonoBehaviour:
   m_ObjectHideFlags: 0
