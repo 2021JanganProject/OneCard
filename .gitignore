@@ -596,6 +596,8 @@ Library/
 
 Temp/
 
+UserSettings/
+
 
 
 *.csproj
