@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject[] remotePlayerObjArr;
 
 
-    private int maxPlayerCount = 3;
+    private int maxPlayerCount = 4;
     private int playerCount = 0;
     private int currentTurnPlayer;
 

@@ -24,7 +24,7 @@ public class UIClock : MonoBehaviour
     private float currentTimeForClockhand; // 인게임시간 / 상수값 넣을 변수 
     private float currentTime;
 
-    public void BtnEvt_ResetTime()
+    public void BtnEvt_ResetTimeForTest()
     {
         ResetCurrentTimeAndClockhand();
     }
@@ -33,7 +33,7 @@ public class UIClock : MonoBehaviour
         currentTime = maxTime;
         currentTimeForClockhand = 0;
     }
-    private void DoRotateClockHand()
+    private void RotateClockHand()
     {
         currentTimeForClockhand += Time.deltaTime / maxTime; // 프레임에따른 인게임 시간 나누기 상수값(10)한 값을 계속 더해줌
         //첨에 0.1초 지났다치면 day = 0.01임 /day % 1f = 0.01 그대로/ -0.01 *360 (-3.6)만큼 z축 회전함/이런식으로 tm.time이 0보다 클때까지 쭉감
@@ -55,7 +55,7 @@ public class UIClock : MonoBehaviour
 
         if (currentTime > 0) 
         {
-            DoRotateClockHand();
+            RotateClockHand();
         }
     } 
 }

@@ -28,7 +28,8 @@ public struct CardData
 }
 public class Card : MonoBehaviour
 {
-    public PR cardPR;//원준
+    public PR CardPR { get => cardPR; set => cardPR = value; }
+    private PR cardPR;//원준
 
     // 주석
     public bool isActiveState = false;
@@ -52,7 +53,7 @@ public class Card : MonoBehaviour
     {
         if (isActiveState)
         {
-            Put();
+            //Put();
         }
     }
     public void SetCardImage(Sprite sprite)
