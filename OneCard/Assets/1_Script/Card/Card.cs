@@ -18,12 +18,18 @@ public enum eCardType
     Special
 
 }
+public enum eCardState
+{
+    Opend,
+    Closed
+}
 
 [System.Serializable]
 public struct CardData
 {
     [SerializeField] public eCardColor cardColor;
     [SerializeField] public eCardType eCardType;
+    [SerializeField] public eCardState CardState;
     [SerializeField] public int number;
 }
 public class Card : MonoBehaviour
@@ -31,7 +37,6 @@ public class Card : MonoBehaviour
     public PR CardPR { get => cardPR; set => cardPR = value; }
     private PR cardPR;//원준
 
-    // 주석
     public bool isActiveState = false;
     [SerializeField] public CardData cardData;
     [SerializeField] private SpriteRenderer cardImage;   
@@ -78,8 +83,6 @@ public class Card : MonoBehaviour
     /// <summary>
     /// 카드 이미지 셋팅
     /// </summary>
-
-
     protected virtual void Checking()
     {
         if(cardData.number == 12)
