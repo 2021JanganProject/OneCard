@@ -20,9 +20,9 @@ public class EnlargeCardHand : MonoBehaviour
     { // 0.75  11    5
         if (Input.GetMouseButtonDown(0))
         {
-            
+            int layerMask = (-1) - (1 << LayerMask.NameToLayer("InvisibleWall"));
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.GetRayIntersection(ray, Mathf.Infinity);
+            RaycastHit2D hit = Physics2D.GetRayIntersection(ray, Mathf.Infinity, layerMask);
             if(hit.collider != null && hit.collider.transform == transform)
             {
                 isEnlarge = true;
@@ -30,48 +30,25 @@ public class EnlargeCardHand : MonoBehaviour
                 ModulateCardHandSize(isEnlarge);
                 
             }
-            else if(hit.collider != null && hit.collider.gameObject.tag == "MyCard")
-            {  
-                if(currentCard != null)
-                {
-                    if (hit.collider.gameObject == currentCard)
-                    {
-                        currentCard.GetComponent<PlayCard>().ReduceCard();
-                        currentCard = null;
-                        return;
-                    }
-                    else
-                    {
-                        currentCard.GetComponent<PlayCard>().ReduceCard();
-                        hit.collider.gameObject.GetComponent<PlayCard>().EnlargeCard();
-                    }
-                }
-                else 
-                {
-                    hit.collider.gameObject.GetComponent<PlayCard>().EnlargeCard();
-                }
-                 currentCard = hit.collider.gameObject;
+            else if(hit.collider != null && hit.collider.gameObject.tag == "MyCardEnlarge")
+            {
+                return;
             }
             else
             {
                 isEnlarge = false;
                 Debug.Log(isEnlarge);
-                if (currentCard != null)
-                {
-                    currentCard.GetComponent<PlayCard>().ReduceCard();
-                    currentCard = null;
-                }
                 ModulateCardHandSize(isEnlarge);
                 
             }
-            
-
         }
     }
     private void ModulateCardHandSize(bool isEnlarge)
     {
         if (isEnlarge)
+        {
             CM.EnlargeMyCardHand();
+        }
         else
             CM.ReduceMyCardHand();
     }

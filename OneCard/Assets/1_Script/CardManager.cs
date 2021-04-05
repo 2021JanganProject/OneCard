@@ -13,6 +13,8 @@ public class CardManager : MonoBehaviour
     public CardData CurrentCard { get => currentCard; set => currentCard = value; }
     public List<GameObject> ClosedCardDeck { get => closedCardDeck; set => closedCardDeck = value; }
     public List<GameObject> OpenedCardDeck { get => openedCardDeck; set => openedCardDeck = value; }
+    public int OpenedCardLayerOrder { get => openedCardLayerOrder; set => openedCardLayerOrder = value; }
+
     public CardManager(List<GameObject> openedCardDeck)
     {
         this.openedCardDeck = openedCardDeck;
@@ -31,6 +33,8 @@ public class CardManager : MonoBehaviour
     [SerializeField] private Transform mySecondHandLeft;//원준
     [SerializeField] private Transform mySecondHandRight;//원준
     [SerializeField] private Transform enlargeCardArea;
+    [SerializeField] private Transform cardStorage;
+
 
     [SerializeField] private Transform myCardStorage; //원준
     [SerializeField] private Transform myHandLeft;//원준
@@ -62,7 +66,8 @@ public class CardManager : MonoBehaviour
     private GameObject openedCard;
     private UIManager uiManager;
 
-   // private float cardPosZ = 0f;
+    // private float cardPosZ = 0f;
+    private int openedCardLayerOrder = 1;
     private int layerIdx = 0;
     private int turnIdxForTest = 0;
     private int cardHandOrderForTest = 1; //원준
@@ -93,6 +98,7 @@ public class CardManager : MonoBehaviour
 
     void Start()
     {
+        openedCardLayerOrder = 1;
         cardHandOrderForTest = 1;
         maxCardLineForTest = 6; //원준
         maxCardNum = 13; // 중간에 0으로 초기화 되는 버그가 있어서 강제로 다시 설정함.
@@ -124,7 +130,11 @@ public class CardManager : MonoBehaviour
             DrawCard(turnIdxForTest, isMineForTest);
             turnIdxForTest++;
             if (turnIdxForTest > 3)
+            {
                 turnIdxForTest = 0;
+                //cardHandOrderForTest++;
+            }
+                
             
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))//원준
@@ -141,19 +151,23 @@ public class CardManager : MonoBehaviour
                 myCards.Add(card);
                 card.transform.parent = myCardStorage;
                 card.AddComponent<PlayCard>();
-                
+                card.tag = "MyCard";
+                SetCardOrder(myCards, cardHandOrderForTest);
                 break;
             case 1:
                 firstotherCards.Add(card);
                 card.transform.parent = firstCardStorage;
+                SetCardOrder(firstotherCards, cardHandOrderForTest);
                 break;
             case 2:
                 secondotherCards.Add(card);
                 card.transform.parent = secondCardStorage;
+                SetCardOrder(secondotherCards, cardHandOrderForTest);
                 break;
             case 3:
                 lastotherCards.Add(card);
                 card.transform.parent = lastCardStorage;
+                SetCardOrder(lastotherCards, cardHandOrderForTest);
                 break;
             default:
                 Debug.Log("에러");
@@ -163,8 +177,7 @@ public class CardManager : MonoBehaviour
         if (!isMine)
             card.GetComponent<Card>().SetCardImage(closedSprite);
 
-        //card.tag = "MyCard";
-        SetOrderLayer(card);
+        //SetOrderLayer(card, cardHandOrderForTest);
         AlignCard(turnIdx);
     }
     public IEnumerator DrawAtStart()
@@ -200,10 +213,9 @@ public class CardManager : MonoBehaviour
         AlignOtherCardsToPR(targetCards, cardPRs);
         for (int i = 0; i < myCards.Count; i++)
         {
-            myCards[i].GetComponent<PlayCard>().SetEnlarge(false);
-            myCards[i].tag = "Card";
-            //myCards[i].GetComponent<PlayCard>().OriginPos = myCards[i].transform.position;
-            //myCards[i].GetComponent<PlayCard>().OriginRot = myCards[i].transform.rotation;
+            myCards[i].GetComponent<PlayCard>().IsEnlarge = false;
+            myCards[i].tag = "MyCard";
+            
         }
     }
     public void EnlargeMyCardHand()
@@ -241,13 +253,20 @@ public class CardManager : MonoBehaviour
         }
         for (int i = 0; i < myCards.Count; i++)
         {
-            myCards[i].GetComponent<PlayCard>().SetEnlarge(true);
-            myCards[i].tag = "MyCard";
-            //myCards[i].GetComponent<PlayCard>().OriginPos = myCards[i].transform.position;
-            //myCards[i].GetComponent<PlayCard>().OriginRot = myCards[i].transform.rotation;
+            myCards[i].GetComponent<PlayCard>().IsEnlarge = true;
+            myCards[i].tag = "MyCardEnlarge";
         }
+        Invoke("Tlqkf", 0.3f);
     }
 
+    private void Tlqkf()
+    {
+        for (int i = 0; i < myCards.Count; i++)
+        {
+
+            myCards[i].GetComponent<PlayCard>().SetPosAndRot();
+        }
+    }
     private void SettingCard()
     {
         InitCards();
@@ -462,11 +481,23 @@ public class CardManager : MonoBehaviour
     {
 
     }
-    private void SetOrderLayer(GameObject card)//원준
+    private void SetOrderLayer(GameObject card, int cardHandOrderForTest)//원준
     {
         var sprite = card.GetComponent<SpriteRenderer>();
         sprite.sortingOrder = cardHandOrderForTest;
-        cardHandOrderForTest++;
+    }
+    public void SetCardOrderFuck()
+    {
+        SetCardOrder(myCards, cardHandOrderForTest);
+    }
+    private void SetCardOrder(List<GameObject> cards, int cardHandOrderForTest)
+    {
+        for (int i = 0; i < cards.Count; i++)
+        {
+            var sprite = cards[i].GetComponent<SpriteRenderer>();
+            sprite.sortingLayerName = "CardOnHand";
+            sprite.sortingOrder = cardHandOrderForTest++;
+        }
     }
     //내 카드패 갯수에 따른 카드패 정렬, 줄바꿈
     private void AlignCard(int turnIdxForTest)
@@ -510,6 +541,7 @@ public class CardManager : MonoBehaviour
             var targetCardTransform = myCards[i].GetComponent<Transform>();
             targetCard.CardPR = PRs[j];
             MoveTransformForDrewCard(targetCardTransform, targetCard.CardPR);
+            
             j++;
         }
         
@@ -591,16 +623,34 @@ public class CardManager : MonoBehaviour
         cardTransform.DOMove(enlargeCardArea.position, 0.5f);
         cardTransform.DORotateQuaternion(enlargeCardArea.rotation, 0.5f);
         layerIdx = cardTransform.GetComponent<SpriteRenderer>().sortingOrder;
-        cardTransform.GetComponent<SpriteRenderer>().sortingOrder = 100;
+        //cardTransform.GetComponent<SpriteRenderer>().sortingOrder = 100;
     }
     public void MoveCardToOrigin(Transform cardTransform, Vector3 originPos, Quaternion originRot)
     {
         cardTransform.DOMove(originPos, 0.3f);
         cardTransform.DORotateQuaternion(originRot, 0.3f);
-        cardTransform.GetComponent<SpriteRenderer>().sortingOrder = layerIdx;
+        //cardTransform.GetComponent<SpriteRenderer>().sortingOrder = layerIdx;
+    }
+    public void MoveCardToOpenedCardBase(Transform cardTransform)
+    {
+        cardTransform.DOMove(openedCardBase.transform.position, 0.3f);
+        cardTransform.DORotateQuaternion(openedCardBase.transform.rotation, 0.3f);
+        cardTransform.DOScale(openedCardBase.transform.localScale, 0.3f);
+    }
+    public void RemoveCard(int index)
+    {
+        myCards.RemoveAt(index);
+        if (myCards != null)
+        {
+            for (int i = 0; i < myCards.Count; i++)
+            {
+                myCards[i].GetComponent<SpriteRenderer>().sortingOrder -= 1;
+            }
+        }
+        
     }
     private void ResetCard()
     {
-
+       
     }
 }
