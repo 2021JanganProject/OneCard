@@ -6,10 +6,12 @@ public class Attack : Card
 {
     [SerializeField] private int attackCount;
     private CardManager cardManager;
+    private AttackCounter attackCounter;
 
     private void Awake()
     {
         cardManager = FindObjectOfType<CardManager>();
+        attackCounter = FindObjectOfType<AttackCounter>();
     }
 
     protected override void Put()
@@ -45,21 +47,21 @@ public class Attack : Card
         switch (cardData.number)
         {
             case 7:
-                attackCount = 2;
+                attackCounter.CurrentAttackCount += 2;
                 break;
             case 8:
-                attackCount = 3;
+                attackCounter.CurrentAttackCount += 3;
                 break;
             case 12:
                 if(cardData.cardColor == eCardColor.Black)
                 {
-                    attackCount = 5;
+                    attackCounter.CurrentAttackCount += 5;
                 }
                 break;
             default:
                 break;
         }
 
-        cardManager.CurrentAttackCount += attackCount;
+        //cardManager.CurrentAttackCount += attackCount;
     }
 }
