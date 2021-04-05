@@ -103,7 +103,6 @@ public class CardManager : MonoBehaviour
         maxCardLineForTest = 6; //원준
         maxCardNum = 13; // 중간에 0으로 초기화 되는 버그가 있어서 강제로 다시 설정함.
         maxCardColorNum = 5;
-        SettingCard();
 
         openedCard = closedCardDeck[0];
         UpdateCardData();
@@ -267,7 +266,7 @@ public class CardManager : MonoBehaviour
             myCards[i].GetComponent<PlayCard>().SetPosAndRot();
         }
     }
-    private void SettingCard()
+    public void SettingCard()
     {
         InitCards();
     }
