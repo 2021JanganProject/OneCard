@@ -90,6 +90,12 @@ public class GameManager : MonoBehaviourPunCallbacks
         //SpawnPlayer();
         
         StartCoroutine(CoCheckingRoomFull());
+        if(PhotonNetwork.IsMasterClient)
+        {
+            CardManager.instance.SettingCard();
+        }
+       
+
     }
     IEnumerator CoCheckingRoomFull()
     {
@@ -104,11 +110,9 @@ public class GameManager : MonoBehaviourPunCallbacks
             yield return null;
         }
     }
-
+    
     private void SetRemotePlayer()
     {
-        
-        
         List<GameObject> playerList = new List<GameObject>();
         for (int i = 0; i < maxPlayerCount; i++)
         {

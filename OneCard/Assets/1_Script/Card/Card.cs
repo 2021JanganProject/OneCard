@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
 public enum eCardColor
 {
@@ -42,7 +43,6 @@ public class Card : MonoBehaviour
     [SerializeField] private SpriteRenderer cardImage;   
     private CardManager cardManager;
     private GameManager gameManager;
-    public CardData CardData1 { get => cardData; set => cardData = value; }
 
     void Start()
     {

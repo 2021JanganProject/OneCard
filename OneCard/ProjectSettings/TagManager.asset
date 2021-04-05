@@ -5,7 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Card
+  - MyCardEnlarge
   - MyCard
+  - OpenedCard
   layers:
   - Default
   - TransparentFX
@@ -14,9 +16,9 @@ TagManager:
   - Water
   - UI
   - myHand
-  - 
-  - 
-  - 
+  - InvisibleWall
+  - OpenedCard
+  - card
   - 
   - 
   - 
@@ -42,4 +44,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: CardOnField
+    uniqueID: 461415797
+    locked: 0
+  - name: CardOnHand
+    uniqueID: 414935667
     locked: 0
