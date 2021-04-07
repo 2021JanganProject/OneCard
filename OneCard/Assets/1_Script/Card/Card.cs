@@ -71,7 +71,7 @@ public class Card : MonoBehaviour
     {
         if (isActiveState)
         {
-            //Put();
+            Put();
         }
     }
     public void SetCardImage(Sprite sprite)
@@ -101,13 +101,13 @@ public class Card : MonoBehaviour
 
     protected virtual void Checking()
     {
-        if(cardData.number == 12)
+        if (cardData.number == 7 || cardData.number == 8)
         {
             if (cardManager.CurrentCard.number == 14)
             {
                 isActiveState = true;
             }
-            else if (cardManager.CurrentCard.cardColor == cardData.cardColor)
+            else if (cardManager.CurrentCard.cardColor == cardData.cardColor || cardManager.CurrentCard.number == cardData.number)
             {
                 isActiveState = true;
             }
@@ -116,9 +116,45 @@ public class Card : MonoBehaviour
                 isActiveState = false;
             }
         }
-        else if(cardData.number == 13 || cardData.number == 14)
+        else if(cardData.number == 12)
+        {
+            if (cardManager.CurrentCard.number == 14)
+            {
+                isActiveState = true;
+            }
+            else if (cardManager.CurrentCard.cardColor == cardData.cardColor)
+            {
+                if (cardData.cardColor == eCardColor.Red || cardData.cardColor == eCardColor.Yellow)
+                {
+                    if (attackCounter.CurrentAttackCount < 1)
+                    {
+                        isActiveState = true;
+                    }
+                    else
+                    {
+                        isActiveState = false;
+                    }
+                }
+            }
+            else
+            {
+                isActiveState = false;
+            }
+        }        
+        else if(cardData.number == 14)
         {
             isActiveState = true;
+        }
+        else if(cardData.number == 13)
+        {
+            if(attackCounter.CurrentAttackCount == 0)
+            {
+                isActiveState = true;
+            }
+            else
+            {
+                isActiveState = false;
+            }
         }
         else
         {
@@ -126,10 +162,17 @@ public class Card : MonoBehaviour
             {
                 isActiveState = true;
             }
-            else if (cardManager.CurrentCard.cardColor == cardData.cardColor || cardManager.CurrentCard.number == cardData.number && attackCounter.CurrentAttackCount == 0)
+            else if (cardManager.CurrentCard.cardColor == cardData.cardColor || cardManager.CurrentCard.number == cardData.number)
             {
-                isActiveState = true;
-            }
+                if(attackCounter.CurrentAttackCount < 1)
+                {
+                    isActiveState = true;
+                }
+                else
+                {
+                    isActiveState = false;
+                }
+            }            
             else
             {
                 isActiveState = false;

@@ -5,10 +5,12 @@ using UnityEngine;
 public class Defence : Card
 {
     private CardManager cardManager;
+    private AttackCounter attackCounter;
 
     private void Awake()
     {
         cardManager = FindObjectOfType<CardManager>();
+        attackCounter = FindObjectOfType<AttackCounter>();
     }
     protected override void Put()
     {
@@ -24,7 +26,7 @@ public class Defence : Card
 
     private void RemoveAttackCount()
     {
-        cardManager.CurrentAttackCount = 0;
+        attackCounter.CurrentAttackCount = 0;
     }
 
     private void DefenceCheck()

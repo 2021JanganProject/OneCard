@@ -408,7 +408,6 @@ MonoBehaviour:
   lastotherCards: []
   openedCardBase: {fileID: 993516385}
   closedCardBase: {fileID: 2062404219}
-  currentAttackCount: 0
 --- !u!4 &245939020
 Transform:
   m_ObjectHideFlags: 0
@@ -1052,7 +1051,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardDeck: []
-  eAiState: 0
+  cardDataDeck: []
+  eAiState: 1
 --- !u!1 &2022225481
 GameObject:
   m_ObjectHideFlags: 0

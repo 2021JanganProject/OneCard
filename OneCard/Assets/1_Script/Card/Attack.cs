@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Attack : Card
 {
-    [SerializeField] private int attackCount;
     private CardManager cardManager;
     private AttackCounter attackCounter;
 
@@ -19,7 +18,7 @@ public class Attack : Card
         Debug.Log("오버라이딩");
         base.Put();
         AddAttackCount();
-        Debug.Log(cardManager.CurrentAttackCount);
+        Debug.Log(attackCounter.CurrentAttackCount);
     }
 
     protected override void Checking()
@@ -34,9 +33,16 @@ public class Attack : Card
         if (cardData.number == 7)
         {
             // 공격받았을때 A면 카드를 못낸다.
-            if (cardManager.CurrentAttackCount > 1)
+            if (attackCounter.CurrentAttackCount > 1)
             {
-                isActiveState = false;
+                if(cardManager.CurrentCard.number == 7)
+                {
+                    isActiveState = true;                    
+                }
+                else
+                {
+                    isActiveState = false;
+                }
             }
         }
     }
