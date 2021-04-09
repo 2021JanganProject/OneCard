@@ -28,8 +28,8 @@ public struct CardData
 }
 public class Card : MonoBehaviour
 {
-    public PR CardPR { get => cardPR; set => cardPR = value; }
-    private PR cardPR;//원준
+    public PosRot CardPosRot { get => cardPosRot; set => cardPosRot = value; }
+    private PosRot cardPosRot;//원준
 
     // 주석
     public bool isActiveState = false;

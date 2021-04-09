@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 //ฟ๘มุ
 [System.Serializable]
-public class PR
+public class PosRot
 {
     public Vector3 position;
     public Quaternion rotation;
 
-    public PR(Vector3 position, Quaternion rotation)
+    public PosRot(Vector3 position, Quaternion rotation)
     {
         this.position = position;
         this.rotation = rotation;
