@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D;
 using DG.Tweening;
+using Photon.Pun;
 
-public class CardManager : MonoBehaviour
+public class CardManager : MonoBehaviourPun
 {
     public static CardManager instance = null;
     
@@ -14,6 +15,7 @@ public class CardManager : MonoBehaviour
     public List<GameObject> ClosedCardDeck { get => closedCardDeck; set => closedCardDeck = value; }
     public List<GameObject> OpenedCardDeck { get => openedCardDeck; set => openedCardDeck = value; }
     public int OpenedCardLayerOrder { get => openedCardLayerOrder; set => openedCardLayerOrder = value; }
+    public List<GameObject>[] AllPlayerHandsCards { get => allPlayerHandsCards; set => allPlayerHandsCards = value; }
 
     public CardManager(List<GameObject> openedCardDeck)
     {
@@ -51,7 +53,8 @@ public class CardManager : MonoBehaviour
     [SerializeField] private Transform lastCardStorage; //원준
     [SerializeField] private Transform lastHandLeft;//원준
     [SerializeField] private Transform lastHandRight;//원준
-    
+
+    [SerializeField] private List<GameObject>[] allPlayerHandsCards;
     [SerializeField] private List<GameObject> myCards = new List<GameObject>(); //원준
     [SerializeField] private List<GameObject> firstotherCards = new List<GameObject>();//원준
     [SerializeField] private List<GameObject> secondotherCards = new List<GameObject>();//원준
@@ -103,9 +106,8 @@ public class CardManager : MonoBehaviour
         maxCardLineForTest = 6; //원준
         maxCardNum = 13; // 중간에 0으로 초기화 되는 버그가 있어서 강제로 다시 설정함.
         maxCardColorNum = 5;
-
-        openedCard = closedCardDeck[0];
-        UpdateCardData();
+        AllPlayerHandsCards = new List<GameObject>[4];
+        // UpdateCardData(); @오류 : 0405 오류때문에 잠시 주석처리
     }
 
     private void Awake()
@@ -141,12 +143,24 @@ public class CardManager : MonoBehaviour
                 StartCoroutine(DrawAtStart());    
         }   
     }
+
     public void DrawCard(int turnIdx, bool isMine)
     {
         var card = closedCardDeck[0];//원준
+        // 내 턴이라면
+        if (TurnManager.instance.IsMyturn(turnIdx) == true)
+        {
+            photonView.RPC("InitCard", RpcTarget.All);
+            card.GetComponent<Card>().UpdateCardState(eCardState.Opend);
+        }
+        else if(TurnManager.instance.IsMyturn(turnIdx) == false)
+        {
+            card.GetComponent<Card>().UpdateCardState(eCardState.Closed);
+        }
         switch (turnIdx)
         {
             case 0:
+                GameManager.instance.PlayerObjArr[0].GetComponent<Player>().MyCards.Add(card);
                 myCards.Add(card);
                 card.transform.parent = myCardStorage;
                 card.AddComponent<PlayCard>();
@@ -173,8 +187,8 @@ public class CardManager : MonoBehaviour
                 break;
         }
         closedCardDeck.RemoveAt(0);
-        if (!isMine)
-            card.GetComponent<Card>().SetCardImage(closedSprite);
+        
+           
 
         //SetOrderLayer(card, cardHandOrderForTest);
         AlignCard(turnIdx);
@@ -198,7 +212,7 @@ public class CardManager : MonoBehaviour
     public void UpdateCardData()
     {
         // 카드 정보 업데이트 7카드 때문
-        currentCard = openedCard.GetComponent<Card>().cardData;        
+        currentCard = openedCard.GetComponent<Card>().currentCardData;        
     }
 
     public void ReduceMyCardHand()
@@ -269,6 +283,8 @@ public class CardManager : MonoBehaviour
     public void SettingCard()
     {
         InitCards();
+        openedCard = closedCardDeck[0];
+
     }
 
     private void InitCards()
@@ -279,7 +295,8 @@ public class CardManager : MonoBehaviour
             {
                 for (int j = 0; j < maxCardNum; j++)
                 {
-                    GameObject cardTemp = Instantiate(cardPrefab, closedCardBase.transform);
+                    // GameObject cardTemp = Instantiate(cardPrefab, closedCardBase.transform); // local
+                    GameObject cardTemp = PhotonNetwork.Instantiate(cardPrefab.name, closedCardBase.transform.position , closedCardBase.transform.rotation);// Instantiate(cardPrefab, closedCardBase.transform); // local
                     InitCard(cardTemp,i, j);
                     // 리스트에 추가
                     closedCardDeck.Add(cardTemp);
@@ -289,7 +306,8 @@ public class CardManager : MonoBehaviour
             {
                 for (int j = 0; j < 2; j++)
                 {
-                    GameObject cardTemp = Instantiate(cardPrefab , closedCardBase.transform);
+                    // GameObject cardTemp = Instantiate(cardPrefab , closedCardBase.transform); // local
+                    GameObject cardTemp = PhotonNetwork.Instantiate(cardPrefab.name, closedCardBase.transform.position, closedCardBase.transform.rotation);// Instantiate(cardPrefab, closedCardBase.transform); // local
                     InitCard(cardTemp, i, 13 + j);
                     // 리스트에 추가
                     closedCardDeck.Add(cardTemp);
@@ -298,7 +316,21 @@ public class CardManager : MonoBehaviour
         }
         ShuffleCards(closedCardDeck); //함수 하나당 하나의 작업 권장 - 박세찬 
     }
-
+    // 마스터에게 가지고 있는 정보를 가지고 오고 싶다. 
+    // 마스터만 가지고 있는 정보니까 마스터만 접근 가능해야함.
+    // 그리고 현재 주려는 카드를 생성해준다.
+    // 현재 주려는 카드? 맨 위에 있는 카드
+    // 주려는 카드의 정보를 복사해야한다. 
+    [PunRPC]
+    public void RPC_InitCard(GameObject cardTemp, int cardColorNum, int CardNum)
+    {
+        // 마스터만 가지고 있는 정보니까 마스터만 접근 가능해야함.
+        if (PhotonNetwork.IsMasterClient)
+        {
+            var card = closedCardDeck[0];
+        }
+        
+    }
     private void InitCard(GameObject cardTemp, int cardColorNum, int CardNum)
     {
         Card cardComponent = null;
@@ -307,28 +339,28 @@ public class CardManager : MonoBehaviour
             case 6:
                 cardTemp.AddComponent<ChageShape>();
                 cardComponent = cardTemp.GetComponent<ChageShape>();
-                cardComponent.cardData.eCardType = eCardType.ability;
+                cardComponent.currentCardData.cardType = eCardType.ability;
                 break;
             case 7:
             case 8:
                 cardTemp.AddComponent<Attack>();
                 cardComponent = cardTemp.GetComponent<Attack>();
-                cardComponent.cardData.eCardType = eCardType.ability;
+                cardComponent.currentCardData.cardType = eCardType.ability;
                 break;
             case 9:
                 cardTemp.AddComponent<Jump>();
                 cardComponent = cardTemp.GetComponent<Jump>();
-                cardComponent.cardData.eCardType = eCardType.ability;
+                cardComponent.currentCardData.cardType = eCardType.ability;
                 break;
             case 10:
                 cardTemp.AddComponent<Back>();
                 cardComponent = cardTemp.GetComponent<Back>();
-                cardComponent.cardData.eCardType = eCardType.ability;
+                cardComponent.currentCardData.cardType = eCardType.ability;
                 break;
             case 11:
                 cardTemp.AddComponent<OneMore>();
                 cardComponent = cardTemp.GetComponent<OneMore>();
-                cardComponent.cardData.eCardType = eCardType.ability;
+                cardComponent.currentCardData.cardType = eCardType.ability;
                 break;
             case 12:
                 switch(cardColorNum)
@@ -352,52 +384,52 @@ public class CardManager : MonoBehaviour
                     default:
                         break;
                 }
-                cardComponent.cardData.eCardType = eCardType.Special;
+                cardComponent.currentCardData.cardType = eCardType.Special;
                 break;
             case 13:
                 cardTemp.AddComponent<Attack>();
                 cardComponent = cardTemp.GetComponent<Attack>();
-                cardComponent.cardData.eCardType = eCardType.Special;
+                cardComponent.currentCardData.cardType = eCardType.Special;
                 break;
             case 14:
                 cardTemp.AddComponent<Smoke>();
                 cardComponent = cardTemp.GetComponent<Smoke>();
-                cardComponent.cardData.eCardType = eCardType.Special;
+                cardComponent.currentCardData.cardType = eCardType.Special;
                 break;
             default:
                 cardTemp.AddComponent<Card>();
                 cardComponent = cardTemp.GetComponent<Card>();
-                cardComponent.cardData.eCardType = eCardType.Normal;
+                cardComponent.currentCardData.cardType = eCardType.Normal;
                 break;
         }
         switch (cardColorNum)
         {
             case 0:
-                cardComponent.cardData.cardColor = eCardColor.Black;
+                cardComponent.currentCardData.cardColor = eCardColor.Black;
                 break;
             case 1:
-                cardComponent.cardData.cardColor = eCardColor.Blue;
+                cardComponent.currentCardData.cardColor = eCardColor.Blue;
                 break;
             case 2:
-                cardComponent.cardData.cardColor = eCardColor.Yellow;
+                cardComponent.currentCardData.cardColor = eCardColor.Yellow;
                 break;
             case 3:
-                cardComponent.cardData.cardColor = eCardColor.Red;
+                cardComponent.currentCardData.cardColor = eCardColor.Red;
                 break;
             case 4:
-                cardComponent.cardData.cardColor = eCardColor.Gray;
+                cardComponent.currentCardData.cardColor = eCardColor.Gray;
                 break;
             default:
                 return;
         }
-        cardComponent.cardData.number = CardNum;
-        cardTemp.transform.name = $"{cardComponent.cardData.cardColor}_{cardComponent.cardData.number+1}";
+        cardComponent.currentCardData.number = CardNum;
+        cardTemp.transform.name = $"{cardComponent.currentCardData.cardColor}_{cardComponent.currentCardData.number+1}";
         SetCardImage(cardComponent); // 카드 이미지 추가 로직
     }
     
     private void SetCardImage(Card card)
     {
-        Sprite spriteTemp = GetAtlasSprite(card.cardData);
+        Sprite spriteTemp = GetAtlasSprite(card.currentCardData);
         card.SetCardImage(spriteTemp);
     }
     private void ShuffleCards(List<GameObject> Card)
@@ -440,7 +472,7 @@ public class CardManager : MonoBehaviour
     private Sprite GetAtlasSprite(CardData cardData)
     {
         // 이름 규칙 노션 논의 참고 노말카드 : n_num_of_color
-        string atlasString = GetAtlasCardName(cardData.eCardType, cardData.number, cardData.cardColor);
+        string atlasString = GetAtlasCardName(cardData.cardType, cardData.number, cardData.cardColor);
         return cardAtlas.GetSprite(atlasString);
     }
 
@@ -646,7 +678,6 @@ public class CardManager : MonoBehaviour
                 myCards[i].GetComponent<SpriteRenderer>().sortingOrder -= 1;
             }
         }
-        
     }
     private void ResetCard()
     {

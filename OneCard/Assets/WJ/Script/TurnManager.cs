@@ -10,6 +10,7 @@ using UnityEngine;
  * -> 이렇게되면 비어있는 3번째에 currentPlayer를 넣어주는 방식으로 턴을 돌리는 기능까지 완료 */
 public class TurnManager : MonoBehaviour
 {
+    public static TurnManager instance;
     public int PlayerCount
     {
         get
@@ -40,7 +41,13 @@ public class TurnManager : MonoBehaviour
     private ePlayerState nextTurn = ePlayerState.NextTurn;
     private ePlayerState wait = ePlayerState.Wait;
 
-
+    private void Awake()
+    {
+        if(instance = null)
+        {
+            instance = this;
+        }
+    }
     private void Start()
     {
         //SetRandomOrderPlayers(GameManager.instance.Players);
@@ -82,6 +89,17 @@ public class TurnManager : MonoBehaviour
         currentPlayer = null;
         SettingTurn();
         clockUI.ResetCurrentTimeAndClockhand();
+    }
+    public bool IsMyturn(int turnIdx)
+    {
+        if (GameManager.instance.LocalPlayerActorIndex == turnIdx)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     private void SetCurrentPlayerAndRemoveList(int index)
     {
@@ -187,7 +205,7 @@ public class TurnManager : MonoBehaviour
         reversCurrentTurnPlayer = players.Count - 1;
         SettingTurn();
     }
-
+   
     /*public int CurrentTurnPlayer
     {
         get
@@ -200,10 +218,10 @@ public class TurnManager : MonoBehaviour
                 currentTurnPlayer = value;
         }
     }*/
-    
 
-    
-    
+
+
+
     /*void NextCurrentTrunPlayer()
     {
         if(orderDirection == true)
@@ -211,6 +229,6 @@ public class TurnManager : MonoBehaviour
 
         }
     }*/
-    
+
 }
 

@@ -2346,6 +2346,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 639137870}
   m_CullTransparentMesh: 0
+--- !u!1 &667414466 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6173934375162107482, guid: e5eb65aa77c1dc24e985263fe24b019c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1287594143}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &667414467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 667414466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 3
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!224 &680516941 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3113633873100820992, guid: 57044f5d2f5865b4e8c21f8f5cef1833,
@@ -3440,7 +3468,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 1287594143}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 667414466}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68cba22cd8819c340991915ca3debf38, type: 3}
@@ -5119,7 +5147,7 @@ GameObject:
   - component: {fileID: 2041089453}
   - component: {fileID: 2041089452}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: TurnManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5139,7 +5167,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxPlayerCount: 4
   orderList: []
-  clockUI: {fileID: 0}
+  clockUI: {fileID: 727360786}
 --- !u!4 &2041089453
 Transform:
   m_ObjectHideFlags: 0

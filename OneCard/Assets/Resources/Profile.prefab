@@ -674,6 +674,7 @@ MonoBehaviour:
   uIProfile: {fileID: 896289465813047005}
   playerState: 0
   profileScale: {x: 2, y: 2, z: 2}
+  myCards: []
 --- !u!114 &896289465813047005
 MonoBehaviour:
   m_ObjectHideFlags: 0

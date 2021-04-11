@@ -29,7 +29,7 @@ public class Attack : Card
 
     private void AttackCheck()
     {
-        if (cardData.number == 7)
+        if (currentCardData.number == 7)
         {
             // 공격받았을때 A면 카드를 못낸다.
             if (cardManager.CurrentAttackCount > 1)
@@ -42,7 +42,7 @@ public class Attack : Card
     private void AddAttackCount()
     {
         // attackCount만큼 어딘가에 있을 currentAttackCount에 추가
-        switch (cardData.number)
+        switch (currentCardData.number)
         {
             case 7:
                 attackCount = 2;
@@ -51,7 +51,7 @@ public class Attack : Card
                 attackCount = 3;
                 break;
             case 12:
-                if(cardData.cardColor == eCardColor.Black)
+                if(currentCardData.cardColor == eCardColor.Black)
                 {
                     attackCount = 5;
                 }

@@ -141,11 +141,9 @@ public class PlayCard : MonoBehaviour
                             CM.SetCardOrderFuck();
                             return;
                       }
-
                 }
             else
             {
-                
                 ReduceCard();
                 Invoke("SetIsDrop", 0.3f);
             }

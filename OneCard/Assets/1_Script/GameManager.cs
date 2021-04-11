@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
-
 // 역할 : 전체적인 게임의 설정과 관리를 담당
-
 public enum eGameFlowState
 {
     InitPlayer,
@@ -17,7 +15,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public static GameManager instance = null;
     public int MaxPlayerCount { get => MaxPlayerCount; set => MaxPlayerCount = value; }
     /// <summary>
-    /// PlayerActorNumber는 방에 들어온 순서대로 할당되는 플레이어 Number이다. Ex ) 첫번쨰로 들어오면 0  두번쨰로 들어오면 1
+    /// PlayerActorNumber는 방에 들어온 순서대로 할당되는 플레이어 Number이다. 현재 나의 PlayerActorNumberIndex이다.
     /// </summary>
     public int LocalPlayerActorIndex
     {
@@ -29,7 +27,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
     /// <summary>
-    ///  
+    /// 
     /// </summary>
     public int [] CurrentPlayerActorNumberArr
     {
@@ -85,7 +83,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         playerObjArr = new GameObject[maxPlayerCount];
         remotePlayerObjArr = new GameObject[maxPlayerCount - 1];
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
         SpawnLocalPlayer();
         //SpawnPlayer();
         
@@ -101,7 +99,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         while(true)
         {
-            if (IsTheRoomFull() && IsNotNullPlayerObjArr()) // 예외처리 : RPC로 Player들을 삽입 하기 때문에 들어오는 순서가 때마다 다름 
+            if (IsTheRoomFull() && IsNotNullPlayerObjArr()) // 예외처리 : RPC로 Player들을 삽입 하기 때문에 들어오는 순서가 때마다 다름  
             {
                 SetRemotePlayer();
                 SetPlayersPosition();

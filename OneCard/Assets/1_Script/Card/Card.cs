@@ -29,20 +29,30 @@ public enum eCardState
 public struct CardData
 {
     [SerializeField] public eCardColor cardColor;
-    [SerializeField] public eCardType eCardType;
-    [SerializeField] public eCardState CardState;
+    [SerializeField] public eCardType cardType;
+    [SerializeField] public eCardState cardState;
     [SerializeField] public int number;
 }
 public class Card : MonoBehaviour
 {
     public PR CardPR { get => cardPR; set => cardPR = value; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public bool IsMine { get => isMine; set => isMine = value; }
+
     private PR cardPR;//원준
 
     public bool isActiveState = false;
-    [SerializeField] public CardData cardData;
-    [SerializeField] private SpriteRenderer cardImage;   
+    [SerializeField] public CardData currentCardData;
+    [SerializeField] private SpriteRenderer cardImage; 
+    [SerializeField] private Sprite cardSpriteTemp;
+    [SerializeField] private Sprite closedSprite;
+
     private CardManager cardManager;
     private GameManager gameManager;
+
+    private bool isMine;
 
     void Start()
     {
@@ -52,6 +62,29 @@ public class Card : MonoBehaviour
     void Update()
     {
         Checking();
+    }
+
+    public void UpdateCardState(eCardState cardState)
+    {
+        currentCardData.cardState = cardState;
+        CardOpendClosedImageUpdate();
+
+    }
+
+    private void CardOpendClosedImageUpdate()
+    {
+        switch(currentCardData.cardState)
+        {
+            case eCardState.Closed:
+                cardImage.sprite = closedSprite;
+                break;
+            case eCardState.Opend:
+                cardImage.sprite = cardSpriteTemp;
+                break;
+            default:
+                Debug.Log("CardOpendClosedImageUpdate Error");
+                break;
+        }
     }
 
     void OnMouseDown()
@@ -68,6 +101,7 @@ public class Card : MonoBehaviour
             cardImage = GetComponent<SpriteRenderer>();
         }
         cardImage.sprite = sprite;
+        cardSpriteTemp = sprite;
     }
 
     protected virtual void Put()
@@ -85,9 +119,9 @@ public class Card : MonoBehaviour
     /// </summary>
     protected virtual void Checking()
     {
-        if(cardData.number == 12)
+        if(currentCardData.number == 12)
         {
-            if (cardManager.CurrentCard.cardColor == cardData.cardColor)
+            if (cardManager.CurrentCard.cardColor == currentCardData.cardColor)
             {
                 isActiveState = true;
             }
@@ -96,13 +130,13 @@ public class Card : MonoBehaviour
                 isActiveState = false;
             }
         }
-        else if(cardData.number == 13 || cardData.number == 14)
+        else if(currentCardData.number == 13 || currentCardData.number == 14)
         {
             isActiveState = true;
         }
         else
         {
-            if (cardManager.CurrentCard.cardColor == cardData.cardColor || cardManager.CurrentCard.number == cardData.number)
+            if (cardManager.CurrentCard.cardColor == currentCardData.cardColor || cardManager.CurrentCard.number == currentCardData.number)
             {
                 isActiveState = true;
             }
