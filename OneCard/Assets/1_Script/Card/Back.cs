@@ -23,6 +23,6 @@ public class Back : Card
 
     private void ReverseOrderDirection()
     {
-        gameManager.ReverseTurn();
+        //gameManager.ReverseTurn();
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
 public class UIClock : MonoBehaviour
 {
     public float CurrentTime
@@ -20,6 +20,7 @@ public class UIClock : MonoBehaviour
     }
     [SerializeField] private float maxTime = 12f; //시계가 한바퀴 도는데 걸릴 시간 / 
     [SerializeField] private Transform clockHandTransform; // 초침 트랜스폼 넣을 변수
+    private RectTransform rectTransform;
 
     private float currentTimeForClockhand; // 인게임시간 / 상수값 넣을 변수 
     private float currentTime;
@@ -47,15 +48,42 @@ public class UIClock : MonoBehaviour
     private void Awake()
     {
         currentTime = maxTime;
+        rectTransform = GetComponent<RectTransform>();
     }
    
     private void Update()
     {
         currentTime -= Time.deltaTime;
-
+        Debug.Log(currentTime);
         if (currentTime > 0) 
         {
             RotateClockHand();
         }
+        if(currentTime <= 0)
+        {
+            currentTime = maxTime;
+        }
+        if(currentTime <= 10)
+        {
+            while(currentTime <= 0)
+            {
+                rectTransform.DOMoveX(-2, 0.2f);
+                rectTransform.DOMoveX(4, 0.3f);
+                rectTransform.DOMoveX(2, 0.4f);
+            }
+            
+        }
+       
     } 
+    IEnumerator MoveClock()
+    {
+        while (currentTime <= 0)
+        {
+            rectTransform.DOMoveX(-2, 0.1f);
+            rectTransform.DOMoveX(4, 0.1f);
+            rectTransform.DOMoveX(2, 0.1f);
+
+            yield return new WaitForSeconds(0.2f);
+        }
+    }
 }

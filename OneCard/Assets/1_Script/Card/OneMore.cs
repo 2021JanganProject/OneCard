@@ -7,6 +7,7 @@ public class OneMore : Card
 
     protected override void Put()
     {
+        base.Put();
         OneMoreMyTurn();
     }
 

@@ -9,7 +9,8 @@ public class CardManager : MonoBehaviour
     public static CardManager instance = null;
     
     public List<GameObject> MyCards { get => myCards; set => myCards = value; }
-    public int CurrentAttackCount { get => currentAttackCount; set => currentAttackCount = value; }
+
+
     public GameObject OpenedCard { get => openedCard; set => openedCard = value; }
     public CardData CurrentCard { get => currentCard; set => currentCard = value; }
     public List<GameObject> ClosedCardDeck { get => closedCardDeck; set => closedCardDeck = value; }
@@ -57,7 +58,6 @@ public class CardManager : MonoBehaviour
     [SerializeField] private GameObject closedCardBase;
     private int maxCardNum = 13;
     private int maxCardColorNum = 5;
-    [SerializeField] private int currentAttackCount = 0;
     private GameObject openedCard;
     private UIManager uiManager;
 

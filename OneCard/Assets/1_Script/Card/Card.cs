@@ -16,8 +16,8 @@ public enum eCardType
     Normal,
     ability,
     Special
-
 }
+
 
 [System.Serializable]
 public struct CardData
@@ -37,23 +37,41 @@ public class Card : MonoBehaviour
     [SerializeField] private SpriteRenderer cardImage;   
     private CardManager cardManager;
     private GameManager gameManager;
+    private SpriteRenderer renderer;
+    [SerializeField] private bool isEfficient = false;
+    private AttackCounter attackCounter;
     public CardData CardData1 { get => cardData; set => cardData = value; }
+    public bool IsEfficient { get => isEfficient; set => isEfficient = value; }
 
     void Start()
     {
         cardManager = FindObjectOfType<CardManager>();
         gameManager = FindObjectOfType<GameManager>();
+        renderer = GetComponent<SpriteRenderer>();
+        attackCounter = FindObjectOfType<AttackCounter>();
     }
     void Update()
     {
         Checking();
+        if(isActiveState)
+        {
+            renderer.color = new Color(1, 1, 1, 1);
+        }
+        else
+        {
+            renderer.color = new Color(0.25f, 0.25f, 0.25f, 1);
+        }
+        if(isEfficient)
+        {
+            Put();
+        }
     }
 
     void OnMouseDown()
     {
         if (isActiveState)
         {
-            //Put();
+            Put();
         }
     }
     public void SetCardImage(Sprite sprite)
@@ -69,10 +87,11 @@ public class Card : MonoBehaviour
     {
         // 카드 매니저에 openedCardDeck 리스트에 추가
         cardManager.OpenedCardDeck.Add(this.gameObject);
-        transform.position = new Vector3(0, 10, 0);
+        transform.position = new Vector3(0, 3, 0);
         cardManager.OpenedCard = this.gameObject;
         cardManager.UpdateCardData();
         //gameManager.TurnEnd();
+        isEfficient = false;
         Debug.Log(cardManager.OpenedCardDeck.Count);
     }
     /// <summary>
@@ -82,9 +101,13 @@ public class Card : MonoBehaviour
 
     protected virtual void Checking()
     {
-        if(cardData.number == 12)
+        if (cardData.number == 7 || cardData.number == 8)
         {
-            if (cardManager.CurrentCard.cardColor == cardData.cardColor)
+            if (cardManager.CurrentCard.number == 14)
+            {
+                isActiveState = true;
+            }
+            else if (cardManager.CurrentCard.cardColor == cardData.cardColor || cardManager.CurrentCard.number == cardData.number)
             {
                 isActiveState = true;
             }
@@ -93,16 +116,63 @@ public class Card : MonoBehaviour
                 isActiveState = false;
             }
         }
-        else if(cardData.number == 13 || cardData.number == 14)
+        else if(cardData.number == 12)
         {
-            isActiveState = true;
-        }
-        else
-        {
-            if (cardManager.CurrentCard.cardColor == cardData.cardColor || cardManager.CurrentCard.number == cardData.number)
+            if (cardManager.CurrentCard.number == 14)
             {
                 isActiveState = true;
             }
+            else if (cardManager.CurrentCard.cardColor == cardData.cardColor)
+            {
+                if (cardData.cardColor == eCardColor.Red || cardData.cardColor == eCardColor.Yellow)
+                {
+                    if (attackCounter.CurrentAttackCount < 1)
+                    {
+                        isActiveState = true;
+                    }
+                    else
+                    {
+                        isActiveState = false;
+                    }
+                }
+            }
+            else
+            {
+                isActiveState = false;
+            }
+        }        
+        else if(cardData.number == 14)
+        {
+            isActiveState = true;
+        }
+        else if(cardData.number == 13)
+        {
+            if(attackCounter.CurrentAttackCount == 0)
+            {
+                isActiveState = true;
+            }
+            else
+            {
+                isActiveState = false;
+            }
+        }
+        else
+        {
+            if (cardManager.CurrentCard.number == 14)
+            {
+                isActiveState = true;
+            }
+            else if (cardManager.CurrentCard.cardColor == cardData.cardColor || cardManager.CurrentCard.number == cardData.number)
+            {
+                if(attackCounter.CurrentAttackCount < 1)
+                {
+                    isActiveState = true;
+                }
+                else
+                {
+                    isActiveState = false;
+                }
+            }            
             else
             {
                 isActiveState = false;
