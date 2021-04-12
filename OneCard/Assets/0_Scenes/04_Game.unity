@@ -3400,6 +3400,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6173934373716359601, guid: e5eb65aa77c1dc24e985263fe24b019c,
+        type: 3}
+      propertyPath: m_Color.a
+      value: 0.16470589
+      objectReference: {fileID: 0}
+    - target: {fileID: 6173934374703926908, guid: e5eb65aa77c1dc24e985263fe24b019c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6173934374703926910, guid: e5eb65aa77c1dc24e985263fe24b019c,
+        type: 3}
+      propertyPath: m_Color.a
+      value: 0.12156863
+      objectReference: {fileID: 0}
     - target: {fileID: 6173934375162107482, guid: e5eb65aa77c1dc24e985263fe24b019c,
         type: 3}
       propertyPath: m_Name
@@ -4844,9 +4859,10 @@ GameObject:
   - component: {fileID: 1869094340}
   - component: {fileID: 1869094341}
   - component: {fileID: 1869094342}
+  - component: {fileID: 1869094344}
   - component: {fileID: 1869094343}
   m_Layer: 0
-  m_Name: GamaManager
+  m_Name: Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4892,7 +4908,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardManager: {fileID: 1287594144}
-  turnManager: {fileID: 2041089452}
+  turnManager: {fileID: 1869094344}
   spawnPositions:
   - {fileID: 2086424387}
   - {fileID: 935374495}
@@ -4930,6 +4946,21 @@ MonoBehaviour:
   sceneViewId: 2
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &1869094344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869094339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 693eade5cf30b4d4ead1e16fad74e580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxPlayerCount: 4
+  orderList: []
+  clockUI: {fileID: 727360786}
 --- !u!1001 &1882680763
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5136,52 +5167,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2009132412}
   m_CullTransparentMesh: 1
---- !u!1 &2041089451
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2041089453}
-  - component: {fileID: 2041089452}
-  m_Layer: 0
-  m_Name: TurnManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2041089452
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2041089451}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 693eade5cf30b4d4ead1e16fad74e580, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxPlayerCount: 4
-  orderList: []
-  clockUI: {fileID: 727360786}
---- !u!4 &2041089453
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2041089451}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.9622553, y: 2.9271023, z: 0.9276755}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2043274842
 GameObject:
   m_ObjectHideFlags: 0

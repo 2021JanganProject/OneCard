@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 /* 3.11 현재까지 턴매니저 기능
  * 플레이어 정보 받을 플레이어 배열 -> 들어온 플레이어들을 플레이어 리스트에 랜덤으로 쏴줌
@@ -8,7 +9,7 @@ using UnityEngine;
  * -> 턴이 끝났을 시(카드를 내거나(= 스페이스바로 임시 사용중)제한시간이 다되면 다음 플레이어 턴으로 넘어감
  * -> 리스트 0번째에 있는(마이턴) 플레이어를 currentPlayer에 넣어주고 리스트 0번째 삭제 -> 1,2,3번째 플레이어들 한칸씩 앞으로 떙겨짐(리스트는 가변적이라)
  * -> 이렇게되면 비어있는 3번째에 currentPlayer를 넣어주는 방식으로 턴을 돌리는 기능까지 완료 */
-public class TurnManager : MonoBehaviour
+public class TurnManager : MonoBehaviourPun
 {
     public static TurnManager instance;
     public int PlayerCount
@@ -25,17 +26,22 @@ public class TurnManager : MonoBehaviour
             }
         }
     }
+
+    public int CurrentTurnIdx { get => CurrentTurnPlayer.PlayerActorIndex; }
+    public Player CurrentTurnPlayer { get => orderList[0]; set => orderList[0] = value; } // 현재 턴인 플레이어 받을 변수 -> 리스트0번쨰 플레이어가 계속 들어갈거임
+    public List<Player> OrderList { get => orderList; set => orderList = value; }
+
+    private const int CURRENT_TURN_PLAYER_IDX = 0;//현재 턴인 플레이어 인덱스 -> List첫번쨰 플레이어가 턴이니깐 계속 0이면 될듯 
+
     [SerializeField] private int maxPlayerCount = 4;
-    
     [SerializeField] private List<Player> orderList = new List<Player>();  // 실질적인 턴을 결정함
     [SerializeField] private UIClock clockUI;
 
     private int playerCount = 0;
-    private const int CURRENT_TURN_PLAYER_IDX = 0;//현재 턴인 플레이어 인덱스 -> List첫번쨰 플레이어가 턴이니깐 계속 0이면 될듯 
     private int reversCurrentTurnPlayer;
+    private int currentTurnIdx;
     private bool isOrderDirection = true; // true면 시계 방향
 
-    private Player currentPlayer; // 현재 턴인 플레이어 받을 변수 -> 리스트0번쨰 플레이어가 계속 들어갈거임
 
     private ePlayerState myTurn = ePlayerState.myTurn;
     private ePlayerState nextTurn = ePlayerState.NextTurn;
@@ -43,7 +49,7 @@ public class TurnManager : MonoBehaviour
 
     private void Awake()
     {
-        if(instance = null)
+        if (instance == null)
         {
             instance = this;
         }
@@ -53,10 +59,11 @@ public class TurnManager : MonoBehaviour
         //SetRandomOrderPlayers(GameManager.instance.Players);
         //SetRandomOrderPlayers(GameManager.instance.Players);
     }
+
     private void Update()
     {
         QuitTurn();
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             if (isOrderDirection == true)
             {
@@ -74,25 +81,30 @@ public class TurnManager : MonoBehaviour
         }
     }
 
+    public void RPC_M_ChangeOrderPlayer()
+    {
+        photonView.RPC(nameof(ChangeOrderPlayer), RpcTarget.MasterClient);
+    }
+    [PunRPC]
     public void ChangeOrderPlayer() // 플레이어 순서 바꿔주기
     {
         SetCurrentPlayerAndRemoveList(CURRENT_TURN_PLAYER_IDX);
-        orderList.Add(currentPlayer);
-        currentPlayer = null;
+        orderList.Add(CurrentTurnPlayer);
+        CurrentTurnPlayer = null;
         SettingTurn();
         clockUI.ResetCurrentTimeAndClockhand();
     }
     public void ChangeOrderRevers()//턴 순서 거꾸로
     {
         SetCurrentPlayerAndRemoveList(reversCurrentTurnPlayer);
-        orderList.Insert(0, currentPlayer);
-        currentPlayer = null;
+        orderList.Insert(0, CurrentTurnPlayer);
+        CurrentTurnPlayer = null;
         SettingTurn();
         clockUI.ResetCurrentTimeAndClockhand();
     }
-    public bool IsMyturn(int turnIdx)
+    public bool IsMyturn()
     {
-        if (GameManager.instance.LocalPlayerActorIndex == turnIdx)
+        if (GameManager.instance.LocalPlayerActorIndex == CurrentTurnIdx)
         {
             return true;
         }
@@ -103,9 +115,9 @@ public class TurnManager : MonoBehaviour
     }
     private void SetCurrentPlayerAndRemoveList(int index)
     {
-        if(currentPlayer = null)
+        if(CurrentTurnPlayer = null)
         {
-            currentPlayer = orderList[index];
+            CurrentTurnPlayer = orderList[index];
             orderList.RemoveAt(index);
         }
        

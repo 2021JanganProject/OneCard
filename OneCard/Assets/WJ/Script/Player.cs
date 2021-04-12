@@ -59,6 +59,16 @@ public class Player : MonoBehaviourPunCallbacks
     private void Update()
     {
         uIProfile.Playerstate = PlayerState;
+        
+        if (Input.GetKeyDown(KeyCode.Space))//원준
+        {
+            if(photonView.IsMine)
+            {
+                Debug.Log($"playerActorNumber:{playerActorNumber}");
+                CardManager.instance.RPC_ReQuest_DrawCard(playerActorNumber);
+            }
+             
+        }
     }
 
     public void RPC_T()

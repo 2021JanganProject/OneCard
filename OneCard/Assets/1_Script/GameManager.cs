@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public static GameManager instance = null;
     public int MaxPlayerCount { get => MaxPlayerCount; set => MaxPlayerCount = value; }
     /// <summary>
-    /// PlayerActorNumber는 방에 들어온 순서대로 할당되는 플레이어 Number이다. 현재 나의 PlayerActorNumberIndex이다.
+    /// 현재 나의 PlayerActorNumberIndex이다. PlayerActorNumber는 방에 들어온 순서대로 할당되는 플레이어 Number이다. 
     /// </summary>
     public int LocalPlayerActorIndex
     {
@@ -26,26 +26,18 @@ public class GameManager : MonoBehaviourPunCallbacks
             return actorNum;
         }
     }
-    /// <summary>
-    /// 
-    /// </summary>
-    public int [] CurrentPlayerActorNumberArr
-    {
-        get
-        {
-            int[] playerListActorNum = new int[PhotonNetwork.PlayerList.Length];
 
-            for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
-            {
-                playerListActorNum[i] = PhotonNetwork.PlayerList[i].ActorNumber-1;
-            }
-            return playerListActorNum;
-        }
-    }
-
-    public GameObject[] PlayerObjArr { get => playerObjArr; set => playerObjArr = value; }
+    public GameObject[] PlayerObjArr { get => playerObjArr; set => playerObjArr = value; } // 체크 필요 
     public GameObject PlayerProfileBase { get => playerProfileBase;}
+    /// <summary>
+    /// 나를 제외한 다른 플레이어들의 
+    /// </summary>
     public GameObject[] RemotePlayerObjArr { get => remotePlayerObjArr; set => remotePlayerObjArr = value; }
+    /// <summary>
+    /// 나의 PlayerObj
+    /// </summary>
+    public GameObject LocalPlayerObj { get => localPlayerObj; set => localPlayerObj = value; }
+    
 
     [SerializeField] private CardManager cardManager;
     [SerializeField] private TurnManager turnManager;
@@ -84,16 +76,28 @@ public class GameManager : MonoBehaviourPunCallbacks
         playerObjArr = new GameObject[maxPlayerCount];
         remotePlayerObjArr = new GameObject[maxPlayerCount - 1];
         yield return new WaitForSeconds(2f);
+
         SpawnLocalPlayer();
         //SpawnPlayer();
-        
+
         StartCoroutine(CoCheckingRoomFull());
         if(PhotonNetwork.IsMasterClient)
         {
             CardManager.instance.SettingCard();
         }
+
        
 
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Q))
+        {
+            SetPlayerObjArrAndRemotePlayerObjArr();
+            AddOrderPlayer();
+        }
+        
     }
     IEnumerator CoCheckingRoomFull()
     {
@@ -101,23 +105,18 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             if (IsTheRoomFull() && IsNotNullPlayerObjArr()) // 예외처리 : RPC로 Player들을 삽입 하기 때문에 들어오는 순서가 때마다 다름  
             {
-                SetRemotePlayer();
+                SetPlayerObjArrAndRemotePlayerObjArr();
                 SetPlayersPosition();
+                AddOrderPlayer();
                 break;
             }
             yield return null;
         }
     }
     
-    private void SetRemotePlayer()
+    private void SetPlayerObjArrAndRemotePlayerObjArr()
     {
-        List<GameObject> playerList = new List<GameObject>();
-        for (int i = 0; i < maxPlayerCount; i++)
-        {
-            playerList.Add(playerObjArr[i]);
-        }
-        playerList.RemoveAt(LocalPlayerActorIndex);
-        remotePlayerObjArr = playerList.ToArray();
+        playerObjArr = GameObject.FindGameObjectsWithTag("Player");
     }
     bool IsTheRoomFull()
     {
@@ -248,9 +247,14 @@ public class GameManager : MonoBehaviourPunCallbacks
      
     }
 
-    private void OrderPlayer()
+    private void AddOrderPlayer()
     {
-
+        for (int i = 0; i < playerObjArr.Length; i++)
+        {
+            Player player =  playerObjArr[i].GetComponent<Player>();
+            TurnManager.instance.OrderList.Add(player);
+        }
+        
     }
 
 

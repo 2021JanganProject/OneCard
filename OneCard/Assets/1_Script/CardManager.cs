@@ -29,6 +29,7 @@ public class CardManager : MonoBehaviourPun
     [SerializeField] private GameObject cardPrefab;
     [SerializeField] private CardData currentCard;
 
+    #region  == 카드패 Tranforms ==
     [Header("카드패 위치 (임시)")]
     [SerializeField] private Transform handLeft;//원준
     [SerializeField] private Transform handRight;//원준
@@ -53,12 +54,14 @@ public class CardManager : MonoBehaviourPun
     [SerializeField] private Transform lastCardStorage; //원준
     [SerializeField] private Transform lastHandLeft;//원준
     [SerializeField] private Transform lastHandRight;//원준
+    #endregion
 
     [SerializeField] private List<GameObject>[] allPlayerHandsCards;
-    [SerializeField] private List<GameObject> myCards = new List<GameObject>(); //원준
-    [SerializeField] private List<GameObject> firstotherCards = new List<GameObject>();//원준
-    [SerializeField] private List<GameObject> secondotherCards = new List<GameObject>();//원준
-    [SerializeField] private List<GameObject> lastotherCards = new List<GameObject>();//원준
+    [SerializeField] private List<GameObject> localCards;
+    //[SerializeField] private List<GameObject> firstotherCards = new List<GameObject>();//원준
+    //[SerializeField] private List<GameObject> secondotherCards = new List<GameObject>();//원준
+    //[SerializeField] private List<GameObject> lastotherCards = new List<GameObject>();//원준
+
 
     [Header("Card 상위 개체")]
     [SerializeField] private GameObject openedCardBase;
@@ -72,7 +75,7 @@ public class CardManager : MonoBehaviourPun
     // private float cardPosZ = 0f;
     private int openedCardLayerOrder = 1;
     private int layerIdx = 0;
-    private int turnIdxForTest = 0;
+    
     private int cardHandOrderForTest = 1; //원준
     private int maxCardLineForTest = 6; //원준
     private bool isMineForTest = false; //원준
@@ -107,6 +110,7 @@ public class CardManager : MonoBehaviourPun
         maxCardNum = 13; // 중간에 0으로 초기화 되는 버그가 있어서 강제로 다시 설정함.
         maxCardColorNum = 5;
         AllPlayerHandsCards = new List<GameObject>[4];
+        // localCards = GameManager.instance.LocalPlayerObj.GetComponent<Player>().MyCards; => Q 
         // UpdateCardData(); @오류 : 0405 오류때문에 잠시 주석처리
     }
 
@@ -124,94 +128,95 @@ public class CardManager : MonoBehaviourPun
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))//원준
         {
-            if (turnIdxForTest == 0)
-                isMineForTest = true;
-            else
-                isMineForTest = false;
-            DrawCard(turnIdxForTest, isMineForTest);
-            turnIdxForTest++;
-            if (turnIdxForTest > 3)
-            {
-                turnIdxForTest = 0;
-                //cardHandOrderForTest++;
-            }
-                
-            
+            //@Need rework
+            //if (turnIdxForTest == 0)
+            //    isMineForTest = true;
+            //else
+            //    isMineForTest = false;
+            //DrawCard(turnIdxForTest, isMineForTest);
+            //turnIdxForTest++;
+            //if (turnIdxForTest > 3)
+            //{
+            //    turnIdxForTest = 0;
+            //    //cardHandOrderForTest++;
+            //}
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))//원준
         {
                 StartCoroutine(DrawAtStart());    
-        }   
+        }
+        if(Input.GetKeyDown(KeyCode.Q))
+        {
+            localCards = GameManager.instance.LocalPlayerObj.GetComponent<Player>().MyCards; //@NeedRewok
+        }
     }
 
-    public void DrawCard(int turnIdx, bool isMine)
+    public void FIndPlayers()
+    {
+
+    }
+    public void RPC_ReQuest_DrawCard(int requestActorNum)
+    {
+        photonView.RPC(nameof(DrawCard), RpcTarget.MasterClient, requestActorNum);
+        TurnManager.instance.RPC_M_ChangeOrderPlayer();
+    }
+    [PunRPC]
+    public void DrawCard(int requestActorNum)
     {
         var card = closedCardDeck[0];//원준
-        // 내 턴이라면
-        if (TurnManager.instance.IsMyturn(turnIdx) == true)
+        closedCardDeck.RemoveAt(0);
+
+        #region 일단 생략
+
+        #endregion
+        // # 지금 턴의 플레이어를 찾아서 거기 핸드로 넘기면 됨
+        // 지금 턴 구하기 
+        // 턴과 맞는 플레이어 구하기 => 플레이어 목록 필요 => 더 나아가서 현재 턴의 플레이어 
+
+        // 플레이어 스크립트 접근하기 
+        // 플레이어 핸드 접근하기 => 근데 그 전에 가드 매니저에서 가지고 있는 로직부터 수정 해야함. 
+
+        // TurnManager.instance.CurrentTurnIdx
+        // 
+        if (TurnManager.instance.IsMyturn() == true)
         {
-            photonView.RPC("InitCard", RpcTarget.All);
             card.GetComponent<Card>().UpdateCardState(eCardState.Opend);
+            TurnManager.instance.CurrentTurnPlayer.MyCards.Add(card);
+            card.transform.parent = myCardStorage;
+            card.AddComponent<PlayCard>();
+            card.tag = "MyCard";
+            SetCardOrder(localCards, cardHandOrderForTest);
         }
-        else if(TurnManager.instance.IsMyturn(turnIdx) == false)
+        else if (TurnManager.instance.IsMyturn() == false)
         {
             card.GetComponent<Card>().UpdateCardState(eCardState.Closed);
+            TurnManager.instance.CurrentTurnPlayer.MyCards.Add(card);
+            card.transform.parent = firstCardStorage;
+            SetCardOrder(TurnManager.instance.CurrentTurnPlayer.MyCards, cardHandOrderForTest);
         }
-        switch (turnIdx)
-        {
-            case 0:
-                GameManager.instance.PlayerObjArr[0].GetComponent<Player>().MyCards.Add(card);
-                myCards.Add(card);
-                card.transform.parent = myCardStorage;
-                card.AddComponent<PlayCard>();
-                card.tag = "MyCard";
-                SetCardOrder(myCards, cardHandOrderForTest);
-                break;
-            case 1:
-                firstotherCards.Add(card);
-                card.transform.parent = firstCardStorage;
-                SetCardOrder(firstotherCards, cardHandOrderForTest);
-                break;
-            case 2:
-                secondotherCards.Add(card);
-                card.transform.parent = secondCardStorage;
-                SetCardOrder(secondotherCards, cardHandOrderForTest);
-                break;
-            case 3:
-                lastotherCards.Add(card);
-                card.transform.parent = lastCardStorage;
-                SetCardOrder(lastotherCards, cardHandOrderForTest);
-                break;
-            default:
-                Debug.Log("에러");
-                break;
-        }
-        closedCardDeck.RemoveAt(0);
-        
-           
 
         //SetOrderLayer(card, cardHandOrderForTest);
-        AlignCard(turnIdx);
+        AlignCard(TurnManager.instance.CurrentTurnIdx);
     }
     public IEnumerator DrawAtStart()
     {
         for (int i = 0; i < 20; i++)
         {
             yield return new WaitForSeconds(0.2f);
-            if (turnIdxForTest == 0)
-                isMineForTest = true;
-            else
-                isMineForTest = false;
-            DrawCard(turnIdxForTest, isMineForTest);
-            turnIdxForTest++;
-            if (turnIdxForTest > 3)
-                turnIdxForTest = 0;
+            //if (turnIdxForTest == 0)
+            //    isMineForTest = true;
+            //else
+            //    isMineForTest = false;
+            //DrawCard(turnIdxForTest, isMineForTest);
+            //turnIdxForTest++;
+            //if (turnIdxForTest > 3)
+            //    turnIdxForTest = 0;
         }
 
     }
-    public void UpdateCardData()
+    public void UpdateCardData() // 카드 정보 업데이트 7카드 때문
     {
-        // 카드 정보 업데이트 7카드 때문
+        
         currentCard = openedCard.GetComponent<Card>().currentCardData;        
     }
 
@@ -220,14 +225,14 @@ public class CardManager : MonoBehaviourPun
         List<PR> cardPRs = new List<PR>();
 
         List<GameObject> targetCards = new List<GameObject>();
-        targetCards = myCards;
+        targetCards = localCards;
 
         cardPRs = AlignCards(myHandLeft, myHandRight, targetCards.Count);
         AlignOtherCardsToPR(targetCards, cardPRs);
-        for (int i = 0; i < myCards.Count; i++)
+        for (int i = 0; i < localCards.Count; i++)
         {
-            myCards[i].GetComponent<PlayCard>().IsEnlarge = false;
-            myCards[i].tag = "MyCard";
+            localCards[i].GetComponent<PlayCard>().IsEnlarge = false;
+            localCards[i].tag = "MyCard";
             
         }
     }
@@ -239,45 +244,45 @@ public class CardManager : MonoBehaviourPun
 
         float zPos = 0f;
         float zPosForSecondCard = -0.06f;
-        int count = myCards.Count;
+        int count = localCards.Count;
         int secondCount = 6;
         if (count <= maxCardLineForTest)
         {
-            cardPRs = AlignMyCardRound(handLeft, handRight, myCards.Count, 0.5f, zPos);
-            targetCards = myCards;
+            cardPRs = AlignMyCardRound(handLeft, handRight, localCards.Count, 0.5f, zPos);
+            targetCards = localCards;
         }
         else
         {
             cardPRs = AlignMyCardRound(handLeft, handRight, secondCount, 0.5f, zPos);
-            secondCardPRs = AlignMyCardRound(mySecondHandLeft, mySecondHandRight, myCards.Count - maxCardLineForTest, 0.5f, zPosForSecondCard);
+            secondCardPRs = AlignMyCardRound(mySecondHandLeft, mySecondHandRight, localCards.Count - maxCardLineForTest, 0.5f, zPosForSecondCard);
             Debug.Log("넘음");
-            Debug.Log(myCards.Count);
+            Debug.Log(localCards.Count);
             for (int i = 0; i < secondCount; i++)
             {
-                targetCards.Add(myCards[i]);
+                targetCards.Add(localCards[i]);
             }
         }
 
         AlignMyCardForLines(0, targetCards, cardPRs);
 
-        if (myCards.Count > maxCardLineForTest)
+        if (localCards.Count > maxCardLineForTest)
         {
-            AlignMyCardForLines(maxCardLineForTest, myCards, secondCardPRs);
+            AlignMyCardForLines(maxCardLineForTest, localCards, secondCardPRs);
         }
-        for (int i = 0; i < myCards.Count; i++)
+        for (int i = 0; i < localCards.Count; i++)
         {
-            myCards[i].GetComponent<PlayCard>().IsEnlarge = true;
-            myCards[i].tag = "MyCardEnlarge";
+            localCards[i].GetComponent<PlayCard>().IsEnlarge = true;
+            localCards[i].tag = "MyCardEnlarge";
         }
         Invoke("Tlqkf", 0.3f);
     }
 
     private void Tlqkf()
     {
-        for (int i = 0; i < myCards.Count; i++)
+        for (int i = 0; i < localCards.Count; i++)
         {
 
-            myCards[i].GetComponent<PlayCard>().SetPosAndRot();
+            localCards[i].GetComponent<PlayCard>().SetPosAndRot();
         }
     }
     public void SettingCard()
@@ -334,6 +339,7 @@ public class CardManager : MonoBehaviourPun
     private void InitCard(GameObject cardTemp, int cardColorNum, int CardNum)
     {
         Card cardComponent = null;
+        #region == Card Info Init Logic ==
         switch (CardNum)
         {
             case 6:
@@ -423,6 +429,7 @@ public class CardManager : MonoBehaviourPun
                 return;
         }
         cardComponent.currentCardData.number = CardNum;
+        #endregion
         cardTemp.transform.name = $"{cardComponent.currentCardData.cardColor}_{cardComponent.currentCardData.number+1}";
         SetCardImage(cardComponent); // 카드 이미지 추가 로직
     }
@@ -519,7 +526,7 @@ public class CardManager : MonoBehaviourPun
     }
     public void SetCardOrderFuck()
     {
-        SetCardOrder(myCards, cardHandOrderForTest);
+        SetCardOrder(localCards, cardHandOrderForTest);
     }
     private void SetCardOrder(List<GameObject> cards, int cardHandOrderForTest)
     {
@@ -539,25 +546,25 @@ public class CardManager : MonoBehaviourPun
         switch (turnIdxForTest)
         {
             case 0:
-                targetCards = myCards;
+                targetCards = localCards;
                 cardPRs = AlignCards(myHandLeft, myHandRight, targetCards.Count);
                 AlignOtherCardsToPR(targetCards, cardPRs);
                 break;
-            case 1:
-                targetCards = firstotherCards;
-                cardPRs = AlignCards(firstHandLeft, firstHandRight, targetCards.Count);
-                AlignOtherCardsToPR(targetCards, cardPRs);
-                break;
-            case 2:
-                targetCards = secondotherCards;
-                cardPRs = AlignCards(secondHandLeft, secondHandRight, targetCards.Count);
-                AlignOtherCardsToPR(targetCards, cardPRs);
-                break;
-            case 3:
-                targetCards = lastotherCards;
-                cardPRs = AlignCards(lastHandLeft, lastHandRight, targetCards.Count);
-                AlignOtherCardsToPR(targetCards, cardPRs);
-                break;
+            //case 1: @Need rework
+            //    targetCards = firstotherCards;
+            //    cardPRs = AlignCards(firstHandLeft, firstHandRight, targetCards.Count);
+            //    AlignOtherCardsToPR(targetCards, cardPRs);
+            //    break;
+            //case 2:
+            //    targetCards = secondotherCards;
+            //    cardPRs = AlignCards(secondHandLeft, secondHandRight, targetCards.Count);
+            //    AlignOtherCardsToPR(targetCards, cardPRs);
+            //    break;
+            //case 3:
+            //    targetCards = lastotherCards;
+            //    cardPRs = AlignCards(lastHandLeft, lastHandRight, targetCards.Count);
+            //    AlignOtherCardsToPR(targetCards, cardPRs);
+            //    break;
             default:
                 Debug.Log("에러"); break;
         } 
@@ -670,12 +677,12 @@ public class CardManager : MonoBehaviourPun
     }
     public void RemoveCard(int index)
     {
-        myCards.RemoveAt(index);
-        if (myCards != null)
+        localCards.RemoveAt(index);
+        if (localCards != null)
         {
-            for (int i = 0; i < myCards.Count; i++)
+            for (int i = 0; i < localCards.Count; i++)
             {
-                myCards[i].GetComponent<SpriteRenderer>().sortingOrder -= 1;
+                localCards[i].GetComponent<SpriteRenderer>().sortingOrder -= 1;
             }
         }
     }
