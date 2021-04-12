@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class Attack : Card
 {
-    [SerializeField] private int attackCount;
     private CardManager cardManager;
+    private AttackCounter attackCounter;
 
     private void Awake()
     {
         cardManager = FindObjectOfType<CardManager>();
+        attackCounter = FindObjectOfType<AttackCounter>();
     }
 
     protected override void Put()
@@ -17,7 +18,7 @@ public class Attack : Card
         Debug.Log("오버라이딩");
         base.Put();
         AddAttackCount();
-        Debug.Log(cardManager.CurrentAttackCount);
+        Debug.Log(attackCounter.CurrentAttackCount);
     }
 
     protected override void Checking()
@@ -32,9 +33,16 @@ public class Attack : Card
         if (currentCardData.number == 7)
         {
             // 공격받았을때 A면 카드를 못낸다.
-            if (cardManager.CurrentAttackCount > 1)
+            if (attackCounter.CurrentAttackCount > 1)
             {
-                isActiveState = false;
+                if(cardManager.CurrentCard.number == 7)
+                {
+                    isActiveState = true;                    
+                }
+                else
+                {
+                    isActiveState = false;
+                }
             }
         }
     }
@@ -45,21 +53,21 @@ public class Attack : Card
         switch (currentCardData.number)
         {
             case 7:
-                attackCount = 2;
+                attackCounter.CurrentAttackCount += 2;
                 break;
             case 8:
-                attackCount = 3;
+                attackCounter.CurrentAttackCount += 3;
                 break;
             case 12:
                 if(currentCardData.cardColor == eCardColor.Black)
                 {
-                    attackCount = 5;
+                    attackCounter.CurrentAttackCount += 5;
                 }
                 break;
             default:
                 break;
         }
 
-        cardManager.CurrentAttackCount += attackCount;
+        //cardManager.CurrentAttackCount += attackCount;
     }
 }
