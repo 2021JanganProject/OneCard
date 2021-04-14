@@ -35,14 +35,14 @@ public struct CardData
 }
 public class Card : MonoBehaviour
 {
-    public PR CardPR { get => cardPR; set => cardPR = value; }
+    public PosRot CardPosRot { get => cardPosRot; set => cardPosRot = value; }
     private PosRot cardPosRot;//원준
     /// <summary>
     /// 
     /// </summary>
     public bool IsMine { get => isMine; set => isMine = value; }
 
-    private PR cardPR;//원준
+    private PosRot cardPR;//원준
 
     public bool isActiveState = false;
     [SerializeField] public CardData currentCardData;
@@ -55,7 +55,7 @@ public class Card : MonoBehaviour
     private SpriteRenderer renderer;
     [SerializeField] private bool isEfficient = false;
     private AttackCounter attackCounter;
-    public CardData CardData1 { get => cardData; set => cardData = value; }
+    //public CardData currentCardData { get => cardData; set => cardData = value; }
     public bool IsEfficient { get => isEfficient; set => isEfficient = value; }
 
     private bool isMine;
@@ -140,13 +140,13 @@ public class Card : MonoBehaviour
     /// </summary>
     protected virtual void Checking()
     {
-        if (cardData.number == 7 || cardData.number == 8)
+        if (currentCardData.number == 7 || currentCardData.number == 8)
         {
             if (cardManager.CurrentCard.number == 14)
             {
                 isActiveState = true;
             }
-            else if (cardManager.CurrentCard.cardColor == cardData.cardColor || cardManager.CurrentCard.number == cardData.number)
+            else if (cardManager.CurrentCard.cardColor == currentCardData.cardColor || cardManager.CurrentCard.number == currentCardData.number)
             {
                 isActiveState = true;
             }
@@ -155,15 +155,15 @@ public class Card : MonoBehaviour
                 isActiveState = false;
             }
         }
-        else if(cardData.number == 12)
+        else if(currentCardData.number == 12)
         {
             if (cardManager.CurrentCard.number == 14)
             {
                 isActiveState = true;
             }
-            else if (cardManager.CurrentCard.cardColor == cardData.cardColor)
+            else if (cardManager.CurrentCard.cardColor == currentCardData.cardColor)
             {
-                if (cardData.cardColor == eCardColor.Red || cardData.cardColor == eCardColor.Yellow)
+                if (currentCardData.cardColor == eCardColor.Red || currentCardData.cardColor == eCardColor.Yellow)
                 {
                     if (attackCounter.CurrentAttackCount < 1)
                     {
@@ -180,11 +180,11 @@ public class Card : MonoBehaviour
                 isActiveState = false;
             }
         }        
-        else if(cardData.number == 14)
+        else if(currentCardData.number == 14)
         {
             isActiveState = true;
         }
-        else if(cardData.number == 13)
+        else if(currentCardData.number == 13)
         {
             if(attackCounter.CurrentAttackCount == 0)
             {
@@ -201,7 +201,7 @@ public class Card : MonoBehaviour
             {
                 isActiveState = true;
             }
-            else if (cardManager.CurrentCard.cardColor == cardData.cardColor || cardManager.CurrentCard.number == cardData.number)
+            else if (cardManager.CurrentCard.cardColor == currentCardData.cardColor || cardManager.CurrentCard.number == currentCardData.number)
             {
                 if(attackCounter.CurrentAttackCount < 1)
                 {

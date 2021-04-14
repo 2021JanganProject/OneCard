@@ -13,7 +13,7 @@ public enum eGameFlowState
 public class GameManager : MonoBehaviourPunCallbacks
 {
     public static GameManager instance = null;
-    public int MaxPlayerCount { get => MaxPlayerCount; set => MaxPlayerCount = value; }
+    public int MaxPlayerCount { get => maxPlayerCount; set => maxPlayerCount = value; }
     /// <summary>
     /// 현재 나의 PlayerActorNumberIndex이다. PlayerActorNumber는 방에 들어온 순서대로 할당되는 플레이어 Number이다. 
     /// </summary>
@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     /// 나의 PlayerObj
     /// </summary>
     public GameObject LocalPlayerObj { get => localPlayerObj; set => localPlayerObj = value; }
-    
+    public Player[] PlayerArr { get => playerArr; set => playerArr = value; }
 
     [SerializeField] private CardManager cardManager;
     [SerializeField] private TurnManager turnManager;
@@ -46,7 +46,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     [SerializeField] private GameObject playerProfilePrefab;
     [SerializeField] private GameObject playerProfileBase;
-    [SerializeField] private GameObject[] playerObjArr;
+    [SerializeField] private GameObject[] playerObjArr; // GameObj
+    [SerializeField] private Player[] playerArr; // Player
 
     [SerializeField] private GameObject localPlayerObj;
     [SerializeField] private GameObject[] remotePlayerObjArr;
@@ -74,6 +75,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     IEnumerator Start()
     {
         playerObjArr = new GameObject[maxPlayerCount];
+        playerArr = new Player[maxPlayerCount];
         remotePlayerObjArr = new GameObject[maxPlayerCount - 1];
         yield return new WaitForSeconds(2f);
 
@@ -81,10 +83,15 @@ public class GameManager : MonoBehaviourPunCallbacks
         //SpawnPlayer();
 
         StartCoroutine(CoCheckingRoomFull());
-        if(PhotonNetwork.IsMasterClient)
+        if(PhotonNetwork.IsMasterClient == true)
         {
             CardManager.instance.SettingCard();
         }
+        else if(PhotonNetwork.IsMasterClient == false)
+        {
+            CardManager.instance.AddCloseCards();
+        }
+        
 
        
 
@@ -94,11 +101,18 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         if(Input.GetKeyDown(KeyCode.Q))
         {
-            SetPlayerObjArrAndRemotePlayerObjArr();
-            AddOrderPlayer();
+            InitOfflineDataForDebug();
         }
-        
     }
+    private void InitOfflineDataForDebug()
+    {
+        SetPlayerObjArrAndRemotePlayerObjArr();
+        AddOrderPlayer();
+        SetOrderList();
+        SetPlayerArr();
+    }
+
+    
     IEnumerator CoCheckingRoomFull()
     {
         while(true)
@@ -117,6 +131,25 @@ public class GameManager : MonoBehaviourPunCallbacks
     private void SetPlayerObjArrAndRemotePlayerObjArr()
     {
         playerObjArr = GameObject.FindGameObjectsWithTag("Player");
+        //RemotePlayerSet...
+       
+    }
+    private void SetPlayerArr()
+    {
+        for (int i = 0; i < playerObjArr.Length; i++)
+        {
+            playerArr[i] =  playerObjArr[i].GetComponent<Player>();
+        }
+        
+    }
+    private void SetOrderList()
+    {
+        for (int i = 0; i < PhotonNetwork.CountOfPlayersInRooms; i++)
+        {
+            TurnManager.instance.OrderList[i] = playerObjArr[i].GetComponent<Player>();
+        }
+        
+
     }
     bool IsTheRoomFull()
     {

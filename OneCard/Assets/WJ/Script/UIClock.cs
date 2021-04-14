@@ -54,7 +54,7 @@ public class UIClock : MonoBehaviour
     private void Update()
     {
         currentTime -= Time.deltaTime;
-        Debug.Log(currentTime);
+        //Debug.Log(currentTime);
         if (currentTime > 0) 
         {
             RotateClockHand();

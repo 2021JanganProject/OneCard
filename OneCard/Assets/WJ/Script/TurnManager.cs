@@ -86,7 +86,7 @@ public class TurnManager : MonoBehaviourPun
         photonView.RPC(nameof(ChangeOrderPlayer), RpcTarget.MasterClient);
     }
     [PunRPC]
-    public void ChangeOrderPlayer() // 플레이어 순서 바꿔주기
+    public void ChangeOrderPlayer() // 플레이어 순서 바꿔주기 
     {
         SetCurrentPlayerAndRemoveList(CURRENT_TURN_PLAYER_IDX);
         orderList.Add(CurrentTurnPlayer);

@@ -52,9 +52,9 @@ public class Player : MonoBehaviourPunCallbacks
     private void Start()
     {
         uIProfile.Playerstate = PlayerState;
-        photonView.RPC("RPC_SetTransform", RpcTarget.All);
-        photonView.RPC("RPC_InitPlayer", RpcTarget.All);
-        photonView.RPC("RPC_SetPlayerArr", RpcTarget.All);
+        photonView.RPC(nameof(RPC_SetTransform), RpcTarget.All);
+        photonView.RPC(nameof(RPC_InitPlayer), RpcTarget.All);
+        photonView.RPC(nameof(RPC_SetPlayerArr), RpcTarget.All);
     }
     private void Update()
     {
@@ -70,12 +70,6 @@ public class Player : MonoBehaviourPunCallbacks
              
         }
     }
-
-    public void RPC_T()
-    {
-
-    }
-    
     [PunRPC]
     private void RPC_InitPlayer()
     {
