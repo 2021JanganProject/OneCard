@@ -203,7 +203,7 @@ public class CardManager : MonoBehaviourPun
             SetCardSortingOrderAndSortingLayerName(TurnManager.instance.CurrentTurnPlayer.MyCards, cardHandSortingOrderForTest);
         }
         AlignCard(TurnManager.instance.CurrentTurnIdx);
-        photonView.RPC(nameof(SendToPlayer_DrawCardInfo), RpcTarget.All, requestActorNum, cardScript.currentCardData.cardColor, cardScript.currentCardData.number);
+        photonView.RPC(nameof(SendToPlayer_DrawCardInfo), RpcTarget.All, requestActorNum, cardScript.currentCardData.cardColor, cardScript.currentCardData.cardNumberIndex);
     }
 
     [PunRPC]
@@ -370,8 +370,8 @@ public class CardManager : MonoBehaviourPun
             default:
                 return;
         }
-        cardComponent.currentCardData.number = CardNum;
-        cardTemp.transform.name = $"{cardComponent.currentCardData.cardColor}_{cardComponent.currentCardData.number + 1}";
+        cardComponent.currentCardData.cardNumberIndex = CardNum;
+        cardTemp.transform.name = $"{cardComponent.currentCardData.cardColor}_{cardComponent.currentCardData.cardNumberIndex + 1}";
         SetCardImage(cardComponent); // 카드 이미지 추가 로직
     }
 
@@ -420,7 +420,7 @@ public class CardManager : MonoBehaviourPun
     private Sprite GetAtlasSprite(CardData cardData)
     {
         // 이름 규칙 노션 논의 참고 노말카드 : n_num_of_color
-        string atlasString = GetAtlasCardName(cardData.cardType, cardData.number, cardData.cardColor);
+        string atlasString = GetAtlasCardName(cardData.cardType, cardData.cardNumberIndex, cardData.cardColor);
         return cardAtlas.GetSprite(atlasString);
     }
     #region  == CardChage Logic == 
