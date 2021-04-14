@@ -154,6 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentAttackCount: 0
   CountImage: []
+  baseTransform: {fileID: 0}
 --- !u!4 &32127288
 Transform:
   m_ObjectHideFlags: 0
@@ -295,7 +296,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1948859991}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: AiManager, Assembly-CSharp
         m_MethodName: BtnEvt_PutTest
         m_Mode: 1
@@ -403,9 +404,9 @@ MonoBehaviour:
   lastHandLeft: {fileID: 0}
   lastHandRight: {fileID: 0}
   myCards: []
-  firstotherCards: []
-  secondotherCards: []
-  lastotherCards: []
+  firstOtherCards: []
+  secondOtherCards: []
+  lastOtherCards: []
   openedCardBase: {fileID: 993516385}
   closedCardBase: {fileID: 2062404219}
 --- !u!4 &245939020
@@ -891,7 +892,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1948859991}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: AiManager, Assembly-CSharp
         m_MethodName: BtnEvt_DrawTest
         m_Mode: 1
@@ -1047,12 +1048,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1948859989}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: adb19de2e3c5dca4e8111a232c0fe8e9, type: 3}
+  m_Script: {fileID: 11500000, guid: 25f2bf9c549667542bb25a787d01e508, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   cardDeck: []
   cardDataDeck: []
-  eAiState: 1
+  eAiState: 0
 --- !u!1 &2022225481
 GameObject:
   m_ObjectHideFlags: 0
