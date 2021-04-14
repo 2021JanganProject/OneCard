@@ -6,16 +6,23 @@ using UnityEngine.SceneManagement;
 public class GameStartManager : MonoBehaviour
 {
     public bool isTest = false;
+    public bool isHojun = false;
     [SerializeField] float waitTime;
     // Start is called before the first frame update
     [SerializeField] DataManager dataManagerForDebug;
     void Start()
     {
-        
+        if (isHojun == true)
+        {
+            Instantiate(dataManagerForDebug).InitPlayerInfoForNoUseFirebaseDebug();
+            Screen.SetResolution(640, 360, false);
+            StartCoroutine(WaitForSecTest("Game_Test"));
+            return;
+        }
         if (isTest == true)
         {
             Instantiate(dataManagerForDebug).InitPlayerInfoForNoUseFirebaseDebug();
-            StartCoroutine(WaitForSecTest());
+            StartCoroutine(WaitForSecTest("03_Main"));
 
             Screen.SetResolution(640,360, false);
         }
@@ -31,10 +38,10 @@ public class GameStartManager : MonoBehaviour
     {
         
     }
-    IEnumerator WaitForSecTest()
+    IEnumerator WaitForSecTest(string name)
     {
         yield return new WaitForSeconds(waitTime);
-        SceneManager.LoadScene("03_Main");
+        SceneManager.LoadScene(name);
         
     }
     IEnumerator WaitForSec()
