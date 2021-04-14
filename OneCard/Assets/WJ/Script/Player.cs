@@ -21,6 +21,7 @@ public class Player : MonoBehaviourPunCallbacks
     public string PlayerNickname { get => playerNickname;}
     public string PlayerRank { get => playerRank;}
     public Image PlayerImage { get => playerImage;}
+    public List<GameObject> MyCards { get => myCards; set => myCards = value; }
     public ePlayerState PlayerState
     {
         get
@@ -34,6 +35,8 @@ public class Player : MonoBehaviourPunCallbacks
         }
     }
 
+    
+
     private string playerUniqueID;
     [SerializeField] private int playerActorNumber;
     [SerializeField] private string playerNickname;
@@ -44,19 +47,29 @@ public class Player : MonoBehaviourPunCallbacks
     [SerializeField] private ePlayerState playerState;
     [SerializeField] private Vector3 profileScale = new Vector3(2, 2, 2);
 
+    [SerializeField] private List<GameObject> myCards = new List<GameObject>(); //원준
+
     private void Start()
     {
         uIProfile.Playerstate = PlayerState;
-        photonView.RPC("RPC_SetTransform", RpcTarget.All);
-        photonView.RPC("RPC_InitPlayer", RpcTarget.All);
-        photonView.RPC("RPC_SetPlayerArr", RpcTarget.All);
+        photonView.RPC(nameof(RPC_SetTransform), RpcTarget.All);
+        photonView.RPC(nameof(RPC_InitPlayer), RpcTarget.All);
+        photonView.RPC(nameof(RPC_SetPlayerArr), RpcTarget.All);
     }
     private void Update()
     {
         uIProfile.Playerstate = PlayerState;
+        
+        if (Input.GetKeyDown(KeyCode.Space))//원준
+        {
+            if(photonView.IsMine)
+            {
+                Debug.Log($"playerActorNumber:{playerActorNumber}");
+                CardManager.instance.RPC_ReQuest_DrawCard(playerActorNumber);
+            }
+             
+        }
     }
-   
-    
     [PunRPC]
     private void RPC_InitPlayer()
     {
@@ -69,6 +82,7 @@ public class Player : MonoBehaviourPunCallbacks
         playerUniqueID = playerInfo.uniqueID;
         playerActorNumber = ActorNumber;
         uIProfile.InitUIProfile(this);
+
     }
     [PunRPC]
     private void RPC_SetTransform()
@@ -80,6 +94,29 @@ public class Player : MonoBehaviourPunCallbacks
         transform.parent = GameManager.instance.PlayerProfileBase.transform;
         transform.localScale = profileScale;
         transform.name = $"Player_{photonView.Controller.ActorNumber}";
+        SetColorForTest(photonView.Controller.ActorNumber);
+    }
+
+    private void SetColorForTest(int actnum)
+    {
+        switch (actnum)
+        {
+            case 0:
+                playerImage.color = Color.red;
+                break;
+            case 1:
+                playerImage.color = Color.yellow;
+                break;
+            case 2:
+                playerImage.color = Color.green;
+                break;
+            case 3:
+                playerImage.color = Color.blue;
+                break;
+            default:
+                playerImage.color = Color.black;
+                break;
+        }
     }
     [PunRPC]
     private void RPC_SetPlayerArr()
@@ -89,6 +126,7 @@ public class Player : MonoBehaviourPunCallbacks
     private void SetPlayerArr()
     {
         GameManager.instance.PlayerObjArr[PlayerActorIndex] = gameObject;
+        CardManager.instance.AllPlayerHandsCards[PlayerActorIndex] = myCards;
     }
    
     public void DoSwitchPlayerState()

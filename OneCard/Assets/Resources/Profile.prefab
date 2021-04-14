@@ -588,7 +588,7 @@ GameObject:
   - component: {fileID: 3320520651725914673}
   m_Layer: 5
   m_Name: Profile
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -674,6 +674,7 @@ MonoBehaviour:
   uIProfile: {fileID: 896289465813047005}
   playerState: 0
   profileScale: {x: 2, y: 2, z: 2}
+  myCards: []
 --- !u!114 &896289465813047005
 MonoBehaviour:
   m_ObjectHideFlags: 0

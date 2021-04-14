@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D;
 using DG.Tweening;
+using Photon.Pun;
+using LitJson;
 
-public class CardManager : MonoBehaviour
+public class CardManager : MonoBehaviourPun
 {
     public static CardManager instance = null;
-    
-    public List<GameObject> MyCards { get => myCards; set => myCards = value; }
+
+    public List<GameObject> MyCards { get => localCards; set => localCards = value; }
 
 
     public GameObject OpenedCard { get => openedCard; set => openedCard = value; }
@@ -21,10 +23,10 @@ public class CardManager : MonoBehaviour
     [SerializeField] private SpriteAtlas cardAtlas;
     [SerializeField] private List<GameObject> closedCardDeck = new List<GameObject>();
     [SerializeField] private List<GameObject> openedCardDeck = new List<GameObject>();
-
+    public List<GameObject>[] AllPlayerHandsCards { get => allPlayerHandsCards; set => allPlayerHandsCards = value; }
     [SerializeField] private GameObject cardPrefab;
     [SerializeField] private CardData currentCard;
-
+    #region  == 카드패 Tranforms ==
     [Header("카드패 위치 (임시)")]
     [SerializeField] private Transform handLeft;// 카드패 확대 시 보간을 위한 왼쪽 기준점
     [SerializeField] private Transform handRight;// 카드패 확대 시 보간을 위한 오른쪽 기준점
@@ -47,11 +49,9 @@ public class CardManager : MonoBehaviour
     [SerializeField] private Transform lastCardStorage; // 다른 플레이어3 이 드로우한 카드를 담을 부모 게임오브젝트 
     [SerializeField] private Transform lastHandLeft;// 다른 플레이어3 의 카드패 보간을 위한 왼쪽 기준점
     [SerializeField] private Transform lastHandRight;// 다른 플레이어3 의 카드패 보간을 위한 오른쪽 기준점
-
-    [SerializeField] private List<GameObject> myCards = new List<GameObject>(); // 내가 뽑은 카드들을 담고있는 리스트
-    [SerializeField] private List<GameObject> firstOtherCards = new List<GameObject>();// 다른 플레이어1 이 뽑은 카드들을 담을 리스트
-    [SerializeField] private List<GameObject> secondOtherCards = new List<GameObject>();// 다른 플레이어2 가 뽑은 카드들을 담을 리스트
-    [SerializeField] private List<GameObject> lastOtherCards = new List<GameObject>();// 다른 플레이어3 이 뽑은 카드들을 담을 리스트
+    #endregion
+    [SerializeField] private List<GameObject> localCards = new List<GameObject>(); // 내가 뽑은 카드들을 담고있는 리스트
+    [SerializeField] private List<GameObject>[] allPlayerHandsCards;
 
     [Header("Card 상위 개체")]
     [SerializeField] private GameObject openedCardBase;
@@ -59,13 +59,14 @@ public class CardManager : MonoBehaviour
     private int maxCardNum = 13;
     private int maxCardColorNum = 5;
     private GameObject openedCard;
+    private GameObject topClosedCard; // 뒤집혀져있는 카드중 제일 위에 있는 카드
     private UIManager uiManager;
 
 
     private string myCardTag = "MyCard"; // 내가 드로우한 카드의 태그를 바꿔주기 위한 변수
     private string myCardEnlargeTag = "MyCardEnlarge"; // 내 카드패를 확대했을 때 카드들의 태그를 바꿔주기 위한 변수
     private int openedCardSortingOrder = 1; // 낸 카드들의 소팅오더값을 증가시켜줄 변수
-   
+
     private int turnIdxForTest = 0; // 턴에 따른 드로우 테스트 변수
     private int cardHandSortingOrderForTest = 1; // 카드패에 있는 카드들의 소팅오더 변수
     private int maxCardLineForTest = 6; // 내 카드패 확대 시 줄바꿈이 일어날 카드 갯수
@@ -102,8 +103,8 @@ public class CardManager : MonoBehaviour
         maxCardLineForTest = 6; //원준
         maxCardNum = 13; // 중간에 0으로 초기화 되는 버그가 있어서 강제로 다시 설정함.
         maxCardColorNum = 5;
-        SettingCard();
-
+        //SettingCard();
+        allPlayerHandsCards = new List<GameObject>[GameManager.instance.MaxPlayerCount];
         StartCoroutine(DrawAtStart());
 
         openedCard = closedCardDeck[0];
@@ -124,96 +125,358 @@ public class CardManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))// 카드 드로우 테스트
         {
-            if (turnIdxForTest == 0)
-                isMineForTest = true;
-            else
-                isMineForTest = false;
-            DrawCard(turnIdxForTest, isMineForTest);
-            turnIdxForTest++;
-            if (turnIdxForTest > 3)
-            {
-                turnIdxForTest = 0;
-            }
-                
-            
+            //if (turnIdxForTest == 0)
+            //    isMineForTest = true;
+            //else
+            //    isMineForTest = false;
+            //DrawCard(turnIdxForTest, isMineForTest);
+            //turnIdxForTest++;
+            //if (turnIdxForTest > 3)
+            //{
+            //    turnIdxForTest = 0;
+            //}
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))// 카드 드로우 테스트 (시작 시)
         {
-                StartCoroutine(DrawAtStart());    
-        }   
-    }
-    public void UpdateCardData()
-    {
-        // 카드 정보 업데이트 7카드 때문
-        currentCard = openedCard.GetComponent<Card>().cardData;
-    }
-    public void DrawCard(int turnIdx, bool isMine) // 카드 드로우. 누구의 턴인가에 따라서 턴인 사람에게 카드가 추가됨 
-    {
-        var card = closedCardDeck[0];
-        switch (turnIdx)
-        {
-            case 0:
-                myCards.Add(card);
-                card.transform.parent = myCardStorage;
-                card.AddComponent<CardInteraction>();
-                card.tag = myCardTag;
-                SetCardSortingOrderAndSortingLayerName(myCards, cardHandSortingOrderForTest);
-                break;
-            case 1:
-                firstOtherCards.Add(card);
-                card.transform.parent = firstCardStorage;
-                SetCardSortingOrderAndSortingLayerName(firstOtherCards, cardHandSortingOrderForTest);
-                break;
-            case 2:
-                secondOtherCards.Add(card);
-                card.transform.parent = secondCardStorage;
-                SetCardSortingOrderAndSortingLayerName(secondOtherCards, cardHandSortingOrderForTest);
-                break;
-            case 3:
-                lastOtherCards.Add(card);
-                card.transform.parent = lastCardStorage;
-                SetCardSortingOrderAndSortingLayerName(lastOtherCards, cardHandSortingOrderForTest);
-                break;
-            default:
-                Debug.Log("에러");
-                break;
+            StartCoroutine(DrawAtStart());
         }
-        closedCardDeck.RemoveAt(0);
-        if (!isMine)
-            card.GetComponent<Card>().SetCardImage(closedSprite);
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            localCards = GameManager.instance.LocalPlayerObj.GetComponent<Player>().MyCards; //@NeedRewok
+        }
+    }
 
-        AlignCard(turnIdx);
+    public void AddCloseCards()
+    {
+        GameObject[] cardsTemp = GameObject.FindGameObjectsWithTag("Card");
+        for (int i = 0; i < cardsTemp.Length; i++)
+        {
+            closedCardDeck.Add(cardsTemp[i]);
+        }
+    }
+    public void UpdateCardData() // 카드 정보 업데이트 7카드 때문
+    {
+        currentCard = openedCard.GetComponent<Card>().currentCardData;
+    }
+    public void RPC_ReQuest_DrawCard(int requestActorNum)
+    {
+        photonView.RPC(nameof(DrawCard), RpcTarget.MasterClient, requestActorNum);
+        //TurnManager.instance.RPC_M_ChangeOrderPlayer();
+    }
+    [PunRPC]
+    public void DrawCard(int requestActorNum) // 카드 드로우. 누구의 턴인가에 따라서 턴인 사람에게 카드가 추가됨 
+    {
+        var cardObj = closedCardDeck[0];
+        //@원준: 마스터에서 뽑은 카드 => cardObj
+        Card cardScript = cardObj.GetComponent<Card>();
+        closedCardDeck.RemoveAt(0); // 마스터에서 지운다.
+        
+
+        #region 일단 생략
+
+        #endregion
+        // # 지금 턴의 플레이어를 찾아서 거기 핸드로 넘기면 됨
+        // 지금 턴 구하기 
+        // 턴과 맞는 플레이어 구하기 => 플레이어 목록 필요 => 더 나아가서 현재 턴의 플레이어 
+
+        // 플레이어 스크립트 접근하기 
+        // 플레이어 핸드 접근하기 => 근데 그 전에 가드 매니저에서 가지고 있는 로직부터 수정 해야함.
+
+        // 마스터가 가지고 있는 정보 전달하기 => 클래스를 직렬화 해서 전송
+
+        // TurnManager.instance.CurrentTurnIdx
+        // 
+        if (TurnManager.instance.IsMyturn() == true)
+        {
+            cardScript.UpdateCardState(eCardState.Opend);
+            TurnManager.instance.CurrentTurnPlayer.MyCards.Add(cardObj);
+            cardObj.transform.parent = myCardStorage;
+            cardObj.AddComponent<CardInteraction>();
+            cardObj.tag = "MyCard";
+            SetCardSortingOrderAndSortingLayerName(localCards, cardHandSortingOrderForTest);
+        }
+        else if (TurnManager.instance.IsMyturn() == false)
+        {
+            cardScript.UpdateCardState(eCardState.Closed);
+            TurnManager.instance.CurrentTurnPlayer.MyCards.Add(cardObj);
+            cardObj.transform.parent = firstCardStorage;
+            SetCardSortingOrderAndSortingLayerName(TurnManager.instance.CurrentTurnPlayer.MyCards, cardHandSortingOrderForTest);
+        }
+        AlignCard(TurnManager.instance.CurrentTurnIdx);
+        photonView.RPC(nameof(SendToPlayer_DrawCardInfo), RpcTarget.All, requestActorNum, cardScript.currentCardData.cardColor, cardScript.currentCardData.number);
+    }
+
+    [PunRPC]
+    private void SendToPlayer_DrawCardInfo(int actorNum, int cardColorNum, int CardNum)
+    {
+        // 요청한 플레이어에게만 
+        // 카드를 전달
+       
+        for (int i = 0; i < GameManager.instance.PlayerObjArr.Length; i++)
+        {
+            int targetActorNumber = GameManager.instance.PlayerArr[i].PlayerActorIndex;
+            Debug.Log(targetActorNumber);
+            if (actorNum == targetActorNumber) // 요청 한 playerActorNum와 내가 가지고 있는 Player 목록과 일치했을 때만
+            {
+                // 카드 정보를 통해 다시 컴포넌트 생성
+                GameObject drawCardObj = closedCardDeck[0]; //@원준:요청한 클라이언트가 뽑은 카드  => drawCardObj 
+                InitCard(drawCardObj, cardColorNum, CardNum);
+                closedCardDeck.RemoveAt(0);
+            }
+        }
+        
     }
     public IEnumerator DrawAtStart()//처음 시작할 때 각 플레이어들이 5장씩 카드를 뽑는 함수(코루틴)
     {
         for (int i = 0; i < 25; i++)
         {
             yield return new WaitForSeconds(0.2f);
-            if (turnIdxForTest == 0)
-                isMineForTest = true;
-            else
-                isMineForTest = false;
-            DrawCard(turnIdxForTest, isMineForTest);
-            turnIdxForTest++;
-            if (turnIdxForTest > 3)
-                turnIdxForTest = 0;
+            //if (turnIdxForTest == 0)
+            //    isMineForTest = true;
+            //else
+            //    isMineForTest = false;
+            //DrawCard(turnIdxForTest, isMineForTest);
+            //turnIdxForTest++;
+            //if (turnIdxForTest > 3)
+            //    turnIdxForTest = 0;
         }
 
     }
+   
+    public void SettingCard()
+    {
+        InitCards();
+    }
+    
+    private void InitCards()
+    {
+        for (int i = 0; i < maxCardColorNum; i++)
+        {
+            if (i < 4)
+            {
+                for (int j = 0; j < maxCardNum; j++)
+                {
+                    
+                    //GameObject cardTemp = Instantiate(cardPrefab, closedCardBase.transform); // OfflineCode
+                    GameObject cardTemp = PhotonNetwork.Instantiate(cardPrefab.name, closedCardBase.transform.position , closedCardBase.transform.rotation);
+                    InitCard(cardTemp, i, j);
+                    // 리스트에 추가
+                    closedCardDeck.Add(cardTemp);
+                }
+            }
+            else
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    //GameObject cardTemp = Instantiate(cardPrefab, closedCardBase.transform); // OfflineCode
+                    GameObject cardTemp = PhotonNetwork.Instantiate(cardPrefab.name, closedCardBase.transform.position, closedCardBase.transform.rotation);
+                    InitCard(cardTemp, i, 13 + j);
+                    // 리스트에 추가
+                    closedCardDeck.Add(cardTemp);
+                }
+            }
+        }
+        ShuffleCards(closedCardDeck); //함수 하나당 하나의 작업 권장 - 박세찬 
+    }
+
+    private void InitCard(GameObject cardTemp, int cardColorNum, int CardNum)
+    {
+        Card cardComponent = null;
+        switch (CardNum)
+        {
+            case 6:
+                cardTemp.AddComponent<ChageShape>();
+                cardComponent = cardTemp.GetComponent<ChageShape>();
+                cardComponent.currentCardData.cardType = eCardType.ability;
+                break;
+            case 7:
+            case 8:
+                cardTemp.AddComponent<Attack>();
+                cardComponent = cardTemp.GetComponent<Attack>();
+                cardComponent.currentCardData.cardType = eCardType.ability;
+                break;
+            case 9:
+                cardTemp.AddComponent<Jump>();
+                cardComponent = cardTemp.GetComponent<Jump>();
+                cardComponent.currentCardData.cardType = eCardType.ability;
+                break;
+            case 10:
+                cardTemp.AddComponent<Back>();
+                cardComponent = cardTemp.GetComponent<Back>();
+                cardComponent.currentCardData.cardType = eCardType.ability;
+                break;
+            case 11:
+                cardTemp.AddComponent<OneMore>();
+                cardComponent = cardTemp.GetComponent<OneMore>();
+                cardComponent.currentCardData.cardType = eCardType.ability;
+                break;
+            case 12:
+                switch (cardColorNum)
+                {
+                    case 0:
+                        cardTemp.AddComponent<Attack>();
+                        cardComponent = cardTemp.GetComponent<Attack>();
+                        break;
+                    case 1:
+                        cardTemp.AddComponent<Defence>();
+                        cardComponent = cardTemp.GetComponent<Defence>();
+                        break;
+                    case 2:
+                        cardTemp.AddComponent<Card>();
+                        cardComponent = cardTemp.GetComponent<Card>();
+                        break;
+                    case 3:
+                        cardTemp.AddComponent<Card>();
+                        cardComponent = cardTemp.GetComponent<Card>();
+                        break;
+                    default:
+                        break;
+                }
+                cardComponent.currentCardData.cardType = eCardType.Special;
+                break;
+            case 13:
+                cardTemp.AddComponent<Attack>();
+                cardComponent = cardTemp.GetComponent<Attack>();
+                cardComponent.currentCardData.cardType = eCardType.Special;
+                break;
+            case 14:
+                cardTemp.AddComponent<Smoke>();
+                cardComponent = cardTemp.GetComponent<Smoke>();
+                cardComponent.currentCardData.cardType = eCardType.Special;
+                break;
+            default:
+                cardTemp.AddComponent<Card>();
+                cardComponent = cardTemp.GetComponent<Card>();
+                cardComponent.currentCardData.cardType = eCardType.Normal;
+                break;
+        }
+        switch (cardColorNum)
+        {
+            case 0:
+                cardComponent.currentCardData.cardColor = eCardColor.Black;
+                break;
+            case 1:
+                cardComponent.currentCardData.cardColor = eCardColor.Blue;
+                break;
+            case 2:
+                cardComponent.currentCardData.cardColor = eCardColor.Yellow;
+                break;
+            case 3:
+                cardComponent.currentCardData.cardColor = eCardColor.Red;
+                break;
+            case 4:
+                cardComponent.currentCardData.cardColor = eCardColor.Gray;
+                break;
+            default:
+                return;
+        }
+        cardComponent.currentCardData.number = CardNum;
+        cardTemp.transform.name = $"{cardComponent.currentCardData.cardColor}_{cardComponent.currentCardData.number + 1}";
+        SetCardImage(cardComponent); // 카드 이미지 추가 로직
+    }
+
+    private void SetCardImage(Card card)
+    {
+        Sprite spriteTemp = GetAtlasSprite(card.currentCardData);
+        card.SetCardImage(spriteTemp);
+    }
+    private void ShuffleCards(List<GameObject> Card)
+    {
+        int rnd1;
+        int rnd2;
+
+        for (int i = 0; i < Card.Count; i++)
+        {
+            rnd1 = Random.Range(0, Card.Count);
+            rnd2 = Random.Range(0, Card.Count);
+
+            var tmp = Card[rnd1];
+            Card[rnd1] = Card[rnd2];
+            Card[rnd2] = tmp;
+        }
+    }
+
+    private string GetAtlasCardName(eCardType eCardType, int num, eCardColor eCardColor)
+    {
+        string cardTypeString = null;
+        switch (eCardType)
+        {
+            case eCardType.Normal:
+                cardTypeString = "n";
+                break;
+            case eCardType.ability:
+                cardTypeString = "ab";
+                break;
+            case eCardType.Special:
+                cardTypeString = "spc";
+                break;
+            default:
+                Debug.Assert(false, " ?? GetAtlasCardName Default");
+                break;
+        }
+        string atlasName = $"{cardTypeString}_{num + 1}_of_{eCardColor.ToString().ToLower()}";
+        return atlasName;
+    }
+    private Sprite GetAtlasSprite(CardData cardData)
+    {
+        // 이름 규칙 노션 논의 참고 노말카드 : n_num_of_color
+        string atlasString = GetAtlasCardName(cardData.cardType, cardData.number, cardData.cardColor);
+        return cardAtlas.GetSprite(atlasString);
+    }
+    #region  == CardChage Logic == 
+    private void QuitChangeCardColor()
+    {
+        uiManager.ChangeShapeUI.SetActive(false);
+    }
+
+    private void ChangeBlack()
+    {
+        currentCard.cardColor = eCardColor.Black;
+    }
+    private void ChangeBlue()
+    {
+        currentCard.cardColor = eCardColor.Blue;
+    }
+    private void ChangeYellow()
+    {
+        currentCard.cardColor = eCardColor.Yellow;
+    }
+    private void ChangeRed()
+    {
+        currentCard.cardColor = eCardColor.Red;
+    }
+    #endregion
+    private void AddInitedCardsToColsedCardDeck()
+    {
+
+    }
+
+    private void AllocateCard()
+    {
+
+    }
+
+    private void AllocateCardAllPlayer()
+    {
+
+    }
+
+    #region ==카드 이동 로직==
+
     public void ReduceMyCardHand() // 확대된 내 카드패를 다시 축소시킨 후 정렬
     {
         List<PosRot> cardPosAndRots = new List<PosRot>();
 
         List<GameObject> targetCards = new List<GameObject>();
-        targetCards = myCards;
+        targetCards = localCards;
 
         cardPosAndRots = GetAlignCardsForCardPosRot(myHandLeft, myHandRight, targetCards.Count);
         SetAlignCardsToCardPosRots(targetCards, cardPosAndRots);
-        for (int i = 0; i < myCards.Count; i++)
+        for (int i = 0; i < localCards.Count; i++)
         {
-            myCards[i].GetComponent<CardInteraction>().Invoke("SetFalseIsEnlargeCardHand", 0.3f);
-            myCards[i].tag = myCardTag;
-            myCards[i].GetComponent<BoxCollider2D>().enabled = false;
+            localCards[i].GetComponent<CardInteraction>().Invoke("SetFalseIsEnlargeCardHand", 0.3f);
+            localCards[i].tag = myCardTag;
+            localCards[i].GetComponent<BoxCollider2D>().enabled = false;
         }
     }
     public void EnlargeMyCardHand() // 내 카드패를 확대시키고 갯수에 맞게 정렬
@@ -224,43 +487,43 @@ public class CardManager : MonoBehaviour
 
         float zPos = 0f;
         float zPosForSecondCard = -0.06f;
-        int count = myCards.Count;
+        int count = localCards.Count;
         int secondCount = 6;
         if (count <= maxCardLineForTest)
         {
-            cardPosAndRots = GetAlignMyCardRound(handLeft, handRight, myCards.Count, 0.5f, zPos);
-            targetCards = myCards;
+            cardPosAndRots = GetAlignMyCardRound(handLeft, handRight, localCards.Count, 0.5f, zPos);
+            targetCards = localCards;
         }
         else
         {
             cardPosAndRots = GetAlignMyCardRound(handLeft, handRight, secondCount, 0.5f, zPos);
-            secondCardPpsAndRots = GetAlignMyCardRound(mySecondHandLeft, mySecondHandRight, myCards.Count - maxCardLineForTest, 0.5f, zPosForSecondCard);
+            secondCardPpsAndRots = GetAlignMyCardRound(mySecondHandLeft, mySecondHandRight, localCards.Count - maxCardLineForTest, 0.5f, zPosForSecondCard);
             Debug.Log("넘음");
-            Debug.Log(myCards.Count);
+            Debug.Log(localCards.Count);
             for (int i = 0; i < secondCount; i++)
             {
-                targetCards.Add(myCards[i]);
+                targetCards.Add(localCards[i]);
             }
         }
 
         AlignMyCardsForLines(0, targetCards, cardPosAndRots);
 
-        if (myCards.Count > maxCardLineForTest)
+        if (localCards.Count > maxCardLineForTest)
         {
-            AlignMyCardsForLines(maxCardLineForTest, myCards, secondCardPpsAndRots);
+            AlignMyCardsForLines(maxCardLineForTest, localCards, secondCardPpsAndRots);
         }
-        for (int i = 0; i < myCards.Count; i++)
+        for (int i = 0; i < localCards.Count; i++)
         {
-            myCards[i].GetComponent<CardInteraction>().Invoke("SetTrueIsEnlargeCardHand", 0.3f);
-            myCards[i].GetComponent<CardInteraction>().Invoke("SetOnColliderForInvoke", 0.3f);
-            myCards[i].tag = myCardEnlargeTag;
-            
+            localCards[i].GetComponent<CardInteraction>().Invoke("SetTrueIsEnlargeCardHand", 0.3f);
+            localCards[i].GetComponent<CardInteraction>().Invoke("SetOnColliderForInvoke", 0.3f);
+            localCards[i].tag = myCardEnlargeTag;
+
         }
         Invoke("RememberCardPosAndRotSelfForInvoke", 0.3f);//DOTween함수가 끝난 후에 실행되도록 인보크로 호출
     }
     public void CallSetCardSortingOrderAndSortingLayerName()//카드의 소팅오더와 소팅레이어네임 변경
     {
-        SetCardSortingOrderAndSortingLayerName(myCards, cardHandSortingOrderForTest);
+        SetCardSortingOrderAndSortingLayerName(localCards, cardHandSortingOrderForTest);
     }
     //내 카드패 확대된 상태에서 각 카드를 꾹 누르면 해당 카드를 확대구역으로 이동시킴
     public void MoveCardToEnlargeArea(Transform cardTransform)
@@ -300,226 +563,13 @@ public class CardManager : MonoBehaviour
     }
     private void RememberCardPosAndRotSelfForInvoke() // 카드가 현재 있는 위치를 기억하게함. 카드를 드래그, 꾹 눌러 확대 했을 때 제자리로 돌아오기 위해
     {
-        for (int i = 0; i < myCards.Count; i++)
+        for (int i = 0; i < localCards.Count; i++)
         {
 
-            myCards[i].GetComponent<CardInteraction>().SetPosAndRot();
-        }
-    }
-    private void SettingCard()
-    {
-        InitCards();
-    }
-
-    private void InitCards()
-    {
-        for (int i = 0; i < maxCardColorNum; i++)
-        {
-            if (i < 4)
-            {
-                for (int j = 0; j < maxCardNum; j++)
-                {
-                    GameObject cardTemp = Instantiate(cardPrefab, closedCardBase.transform);
-                    InitCard(cardTemp,i, j);
-                    // 리스트에 추가
-                    closedCardDeck.Add(cardTemp);
-                }
-            }
-            else
-            {
-                for (int j = 0; j < 2; j++)
-                {
-                    GameObject cardTemp = Instantiate(cardPrefab , closedCardBase.transform);
-                    InitCard(cardTemp, i, 13 + j);
-                    // 리스트에 추가
-                    closedCardDeck.Add(cardTemp);
-                }
-            }
-        }
-        ShuffleCards(closedCardDeck); //함수 하나당 하나의 작업 권장 - 박세찬 
-    }
-
-    private void InitCard(GameObject cardTemp, int cardColorNum, int CardNum)
-    {
-        Card cardComponent = null;
-        switch (CardNum)
-        {
-            case 6:
-                cardTemp.AddComponent<ChageShape>();
-                cardComponent = cardTemp.GetComponent<ChageShape>();
-                cardComponent.cardData.eCardType = eCardType.ability;
-                break;
-            case 7:
-            case 8:
-                cardTemp.AddComponent<Attack>();
-                cardComponent = cardTemp.GetComponent<Attack>();
-                cardComponent.cardData.eCardType = eCardType.ability;
-                break;
-            case 9:
-                cardTemp.AddComponent<Jump>();
-                cardComponent = cardTemp.GetComponent<Jump>();
-                cardComponent.cardData.eCardType = eCardType.ability;
-                break;
-            case 10:
-                cardTemp.AddComponent<Back>();
-                cardComponent = cardTemp.GetComponent<Back>();
-                cardComponent.cardData.eCardType = eCardType.ability;
-                break;
-            case 11:
-                cardTemp.AddComponent<OneMore>();
-                cardComponent = cardTemp.GetComponent<OneMore>();
-                cardComponent.cardData.eCardType = eCardType.ability;
-                break;
-            case 12:
-                switch(cardColorNum)
-                {
-                    case 0:
-                        cardTemp.AddComponent<Attack>();
-                        cardComponent = cardTemp.GetComponent<Attack>();
-                        break;
-                    case 1:
-                        cardTemp.AddComponent<Defence>();
-                        cardComponent = cardTemp.GetComponent<Defence>();
-                        break;
-                    case 2:
-                        cardTemp.AddComponent<Card>();
-                        cardComponent = cardTemp.GetComponent<Card>();
-                        break;
-                    case 3:
-                        cardTemp.AddComponent<Card>();
-                        cardComponent = cardTemp.GetComponent<Card>();
-                        break;
-                    default:
-                        break;
-                }
-                cardComponent.cardData.eCardType = eCardType.Special;
-                break;
-            case 13:
-                cardTemp.AddComponent<Attack>();
-                cardComponent = cardTemp.GetComponent<Attack>();
-                cardComponent.cardData.eCardType = eCardType.Special;
-                break;
-            case 14:
-                cardTemp.AddComponent<Smoke>();
-                cardComponent = cardTemp.GetComponent<Smoke>();
-                cardComponent.cardData.eCardType = eCardType.Special;
-                break;
-            default:
-                cardTemp.AddComponent<Card>();
-                cardComponent = cardTemp.GetComponent<Card>();
-                cardComponent.cardData.eCardType = eCardType.Normal;
-                break;
-        }
-        switch (cardColorNum)
-        {
-            case 0:
-                cardComponent.cardData.cardColor = eCardColor.Black;
-                break;
-            case 1:
-                cardComponent.cardData.cardColor = eCardColor.Blue;
-                break;
-            case 2:
-                cardComponent.cardData.cardColor = eCardColor.Yellow;
-                break;
-            case 3:
-                cardComponent.cardData.cardColor = eCardColor.Red;
-                break;
-            case 4:
-                cardComponent.cardData.cardColor = eCardColor.Gray;
-                break;
-            default:
-                return;
-        }
-        cardComponent.cardData.number = CardNum;
-        cardTemp.transform.name = $"{cardComponent.cardData.cardColor}_{cardComponent.cardData.number+1}";
-        SetCardImage(cardComponent); // 카드 이미지 추가 로직
-    }
-    
-    private void SetCardImage(Card card)
-    {
-        Sprite spriteTemp = GetAtlasSprite(card.cardData);
-        card.SetCardImage(spriteTemp);
-    }
-    private void ShuffleCards(List<GameObject> Card)
-    {
-        int rnd1;
-        int rnd2;
-
-        for (int i = 0; i < Card.Count; i++)
-        {
-            rnd1 = Random.Range(0, Card.Count);
-            rnd2 = Random.Range(0, Card.Count);
-
-            var tmp = Card[rnd1];
-            Card[rnd1] = Card[rnd2];
-            Card[rnd2] = tmp;
+            localCards[i].GetComponent<CardInteraction>().SetPosAndRot();
         }
     }
 
-    private string GetAtlasCardName(eCardType eCardType, int num, eCardColor eCardColor)
-    {
-        string cardTypeString = null;
-        switch (eCardType)
-        {
-            case eCardType.Normal:
-                cardTypeString = "n";
-                break;
-            case eCardType.ability:
-                cardTypeString = "ab";
-                break;
-            case eCardType.Special:
-                cardTypeString = "spc";
-                break;
-            default:
-                Debug.Assert(false, " ?? GetAtlasCardName Default");
-                break;
-        }
-        string atlasName = $"{cardTypeString}_{num+1}_of_{eCardColor.ToString().ToLower()}";        
-        return atlasName;
-    }
-    private Sprite GetAtlasSprite(CardData cardData)
-    {
-        // 이름 규칙 노션 논의 참고 노말카드 : n_num_of_color
-        string atlasString = GetAtlasCardName(cardData.eCardType, cardData.number, cardData.cardColor);
-        return cardAtlas.GetSprite(atlasString);
-    }
-
-    private void QuitChangeCardColor()
-    {
-        uiManager.ChangeShapeUI.SetActive(false);
-    }
-
-    private void ChangeBlack()
-    {
-        currentCard.cardColor = eCardColor.Black;
-    }
-    private void ChangeBlue()
-    {
-        currentCard.cardColor = eCardColor.Blue;
-    }
-    private void ChangeYellow()
-    {
-        currentCard.cardColor = eCardColor.Yellow;
-    }
-    private void ChangeRed()
-    {
-        currentCard.cardColor = eCardColor.Red;
-    }
-
-    private void AddInitedCardsToColsedCardDeck()
-    {
-
-    }
-
-    private void AllocateCard()
-    {
-
-    }
-
-    private void AllocateCardAllPlayer()
-    {
-
-    }
     //카드패의 카드들의 소팅오더,소팅레이어네임을 변경해줌. 카드를 뽑을 때, 카드를 냈을 때 호출되어 조정
     private void SetCardSortingOrderAndSortingLayerName(List<GameObject> cards, int cardHandOrderForTest)
     {
@@ -539,28 +589,28 @@ public class CardManager : MonoBehaviour
         switch (turnIdxForTest)
         {
             case 0:
-                targetCards = myCards;
+                targetCards = localCards;
                 cardPosRots = GetAlignCardsForCardPosRot(myHandLeft, myHandRight, targetCards.Count);
                 SetAlignCardsToCardPosRots(targetCards, cardPosRots);
                 break;
-            case 1:
-                targetCards = firstOtherCards;
-                cardPosRots = GetAlignCardsForCardPosRot(firstHandLeft, firstHandRight, targetCards.Count);
-                SetAlignCardsToCardPosRots(targetCards, cardPosRots);
-                break;
-            case 2:
-                targetCards = secondOtherCards;
-                cardPosRots = GetAlignCardsForCardPosRot(secondHandLeft, secondHandRight, targetCards.Count);
-                SetAlignCardsToCardPosRots(targetCards, cardPosRots);
-                break;
-            case 3:
-                targetCards = lastOtherCards;
-                cardPosRots = GetAlignCardsForCardPosRot(lastHandLeft, lastHandRight, targetCards.Count);
-                SetAlignCardsToCardPosRots(targetCards, cardPosRots);
-                break;
+            //case 1:
+            //    targetCards = firstOtherCards;
+            //    cardPosRots = GetAlignCardsForCardPosRot(firstHandLeft, firstHandRight, targetCards.Count);
+            //    SetAlignCardsToCardPosRots(targetCards, cardPosRots);
+            //    break;
+            //case 2:
+            //    targetCards = secondOtherCards;
+            //    cardPosRots = GetAlignCardsForCardPosRot(secondHandLeft, secondHandRight, targetCards.Count);
+            //    SetAlignCardsToCardPosRots(targetCards, cardPosRots);
+            //    break;
+            //case 3:
+            //    targetCards = lastOtherCards;
+            //    cardPosRots = GetAlignCardsForCardPosRot(lastHandLeft, lastHandRight, targetCards.Count);
+            //    SetAlignCardsToCardPosRots(targetCards, cardPosRots);
+            //    break;
             default:
                 Debug.Log("에러"); break;
-        } 
+        }
     }
     //각 플레이어들의 카드패를 각각의 PRs 위치로 정렬시켜줌
     private void SetAlignCardsToCardPosRots(List<GameObject> myCards, List<PosRot> PRs)
@@ -624,7 +674,7 @@ public class CardManager : MonoBehaviour
         {
             var targetPos = Vector3.Lerp(leftTr.position, rightTr.position, cardLerps[i]);
             var targetRot = Quaternion.identity;
-            if(cardCount >= 6)
+            if (cardCount >= 6)
             {
                 float curve = Mathf.Sqrt(Mathf.Pow(height, 2) - Mathf.Pow(cardLerps[i] - 0.5f, 2));
                 curve = height >= 0 ? curve : -curve;
@@ -638,9 +688,10 @@ public class CardManager : MonoBehaviour
         return resultsCardPR;
     }
 
-    
+    #endregion
+
     private void ResetCard()
     {
-       
+
     }
 }
