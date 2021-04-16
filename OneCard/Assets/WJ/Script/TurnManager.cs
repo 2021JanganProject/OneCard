@@ -67,7 +67,7 @@ public class TurnManager : MonoBehaviourPun
         {
             if (isOrderDirection == true)
             {
-                ChangeOrderPlayer();
+                RPC_M_ChangeOrderPlayer();
             }
             else
             {
@@ -83,7 +83,7 @@ public class TurnManager : MonoBehaviourPun
 
     public void RPC_M_ChangeOrderPlayer()
     {
-        photonView.RPC(nameof(ChangeOrderPlayer), RpcTarget.MasterClient);
+        photonView.RPC(nameof(ChangeOrderPlayer), RpcTarget.AllViaServer);
     }
     [PunRPC]
     public void ChangeOrderPlayer() // 플레이어 순서 바꿔주기 
