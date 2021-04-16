@@ -9,6 +9,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 {
     private readonly string gameVersion = "1"; // 게임 버전이 다르면 같이 매칭이 안되게 해야하기 떄문이다. 
     [SerializeField] private Button joinButton;
+    public bool IsHojunForDebug= false;
 
     // Start is called before the first frame update
     void Start()
@@ -42,8 +43,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public void BtnEvt_Connect() // BtnEvnt 접속
     {
-       
-        //
         joinButton.interactable = false;
         if (PhotonNetwork.IsConnected)
         {
@@ -69,6 +68,14 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("접속 완료!");
         // 일반적인 씬매니저로 씬 이동을 하면 해당 사용자만 넘어간다.
+        
+        if(IsHojunForDebug) // 호준 테스트 코드
+        {
+            PhotonNetwork.LoadLevel("Game_Test");
+            return;
+        }
         PhotonNetwork.LoadLevel("04_Game"); // player 모두 같은 씬으로 넘어갈 수 있게끔 자동으로 동기화 
     }
+
+ 
 }

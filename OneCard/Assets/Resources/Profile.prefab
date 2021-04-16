@@ -666,7 +666,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cf5b095d00560c48ac20ffb12fc4a1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerActorNumber: 0
+  playerActorNumberIndex: 0
   playerNickname: "\uC544"
   playerRank: "\uC544"
   playerImage: {fileID: 1420339093459406345, guid: e5482df7d5d1f4f49b2809b36f79d8e5,

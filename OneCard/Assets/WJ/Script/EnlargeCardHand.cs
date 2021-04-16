@@ -43,6 +43,11 @@ public class EnlargeCardHand : MonoBehaviour
                 ModulateCardHandSize(isEnlarge);
                 
             }
+
+            if(hit.collider != null && hit.collider.gameObject.tag == "ClosedCardDeck")
+            {
+                //@DrawLogic...
+            }
         }
 //#else
         /*if (Input.touchCount > 0)

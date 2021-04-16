@@ -88,9 +88,9 @@ public class TurnManager : MonoBehaviourPun
     [PunRPC]
     public void ChangeOrderPlayer() // 플레이어 순서 바꿔주기 
     {
-        SetCurrentPlayerAndRemoveList(CURRENT_TURN_PLAYER_IDX);
-        orderList.Add(CurrentTurnPlayer);
-        CurrentTurnPlayer = null;
+        Player currentTurnPlayer = CurrentTurnPlayer;
+        orderList.RemoveAt(CURRENT_TURN_PLAYER_IDX);
+        orderList.Add(currentTurnPlayer);
         SettingTurn();
         clockUI.ResetCurrentTimeAndClockhand();
     }
@@ -98,12 +98,12 @@ public class TurnManager : MonoBehaviourPun
     {
         SetCurrentPlayerAndRemoveList(reversCurrentTurnPlayer);
         orderList.Insert(0, CurrentTurnPlayer);
-        CurrentTurnPlayer = null;
         SettingTurn();
         clockUI.ResetCurrentTimeAndClockhand();
     }
     public bool IsMyturn()
     {
+        Debug.Log($"GameManager.instance.LocalPlayerActorIndex_{GameManager.instance.LocalPlayerActorIndex } == CurrentTurnIdx_{CurrentTurnIdx}");
         if (GameManager.instance.LocalPlayerActorIndex == CurrentTurnIdx)
         {
             return true;
@@ -115,10 +115,10 @@ public class TurnManager : MonoBehaviourPun
     }
     private void SetCurrentPlayerAndRemoveList(int index)
     {
-        if(CurrentTurnPlayer = null)
+        if(CurrentTurnPlayer == null)
         {
             CurrentTurnPlayer = orderList[index];
-            orderList.RemoveAt(index);
+            
         }
        
     }
@@ -141,6 +141,9 @@ public class TurnManager : MonoBehaviourPun
         {
             switch (count)
             {
+                case 1:
+                    orderList[0].PlayerState = myTurn;
+                    break;
                 case 2:
                     orderList[0].PlayerState = myTurn;
                     orderList[1].PlayerState = nextTurn;
@@ -165,6 +168,9 @@ public class TurnManager : MonoBehaviourPun
         {
             switch (orderList.Count)
             {
+                case 1:
+                    orderList[0].PlayerState = myTurn;
+                    break;
                 case 2:
                     orderList[0].PlayerState = myTurn;
                     orderList[1].PlayerState = nextTurn;
@@ -202,12 +208,24 @@ public class TurnManager : MonoBehaviourPun
             }
         }
     }
-  
-    private void SetRandomOrderPlayers(List<Player> players)
+    
+    public void SetRandomOrderPlayersArrToList(Player [] playerArr)
+    {
+        List<Player> playerList = new List<Player>();
+        for (int i = 0; i < playerArr.Length; i++)
+        {
+            playerList.Add(playerArr[i]);
+        }
+        SetRandomOrderPlayers(playerList);
+    }
+
+
+    public void SetRandomOrderPlayers(List<Player> players)
     {
         int randomPlayerIndex = Random.Range(0, players.Count); //4명이면 0123
         for (int i = 0; i < players.Count; i++)
         {
+            Debug.Log(randomPlayerIndex);
             orderList.Add(players[randomPlayerIndex--]);
             if(randomPlayerIndex < 0)
             {
@@ -217,30 +235,5 @@ public class TurnManager : MonoBehaviourPun
         reversCurrentTurnPlayer = players.Count - 1;
         SettingTurn();
     }
-   
-    /*public int CurrentTurnPlayer
-    {
-        get
-        {
-            return currentTurnPlayer;
-        }
-        set
-        {
-            if (currentTurnPlayer > 0 && currentTurnPlayer <= MaxPlayerCount)
-                currentTurnPlayer = value;
-        }
-    }*/
-
-
-
-
-    /*void NextCurrentTrunPlayer()
-    {
-        if(orderDirection == true)
-        {
-
-        }
-    }*/
-
 }
 

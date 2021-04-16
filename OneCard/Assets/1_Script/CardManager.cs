@@ -6,6 +6,20 @@ using DG.Tweening;
 using Photon.Pun;
 using LitJson;
 
+[System.Serializable]
+public struct CardPos
+{
+    [SerializeField] public Transform CardStorage; // 다른 플레이어1 이 드로우한 카드를 담을 부모 게임오브젝트 
+    [SerializeField] public Transform HandLeft;// 다른 플레이어1 의 카드패 보간을 위한 왼쪽 기준점
+    [SerializeField] public Transform HandRight;// 다른 플레이어1 의 카드패 보간을 위한 오른쪽 기준점
+
+    public CardPos(Transform cardStorage, Transform handLeft, Transform handRight)
+    {
+        CardStorage = cardStorage;
+        HandLeft = handLeft;
+        HandRight = handRight;
+    }
+}
 public class CardManager : MonoBehaviourPun
 {
     public static CardManager instance = null;
@@ -38,17 +52,8 @@ public class CardManager : MonoBehaviourPun
     [SerializeField] private Transform myHandLeft;// 확대 전 내 카드패 보간을 위한 왼쪽 기준점
     [SerializeField] private Transform myHandRight;// 확대 전 내 카드패 보간을 위한 오른쪽 기준점
 
-    [SerializeField] private Transform firstCardStorage; // 다른 플레이어1 이 드로우한 카드를 담을 부모 게임오브젝트 
-    [SerializeField] private Transform firstHandLeft;// 다른 플레이어1 의 카드패 보간을 위한 왼쪽 기준점
-    [SerializeField] private Transform firstHandRight;// 다른 플레이어1 의 카드패 보간을 위한 오른쪽 기준점
+    [SerializeField] private CardPos[] remoteCardPosArr = new CardPos[3];
 
-    [SerializeField] private Transform secondCardStorage; // 다른 플레이어2 가 드로우한 카드를 담을 부모 게임오브젝트 
-    [SerializeField] private Transform secondHandLeft;// 다른 플레이어2 의 카드패 보간을 위한 왼쪽 기준점
-    [SerializeField] private Transform secondHandRight;// 다른 플레이어2 의 카드패 보간을 위한 오른쪽 기준점
-
-    [SerializeField] private Transform lastCardStorage; // 다른 플레이어3 이 드로우한 카드를 담을 부모 게임오브젝트 
-    [SerializeField] private Transform lastHandLeft;// 다른 플레이어3 의 카드패 보간을 위한 왼쪽 기준점
-    [SerializeField] private Transform lastHandRight;// 다른 플레이어3 의 카드패 보간을 위한 오른쪽 기준점
     #endregion
     [SerializeField] private List<GameObject> localCards = new List<GameObject>(); // 내가 뽑은 카드들을 담고있는 리스트
     [SerializeField] private List<GameObject>[] allPlayerHandsCards;
@@ -106,9 +111,10 @@ public class CardManager : MonoBehaviourPun
         //SettingCard();
         allPlayerHandsCards = new List<GameObject>[GameManager.instance.MaxPlayerCount];
         StartCoroutine(DrawAtStart());
+        StartCoroutine(AwaitInitlocalCards());
 
-        openedCard = closedCardDeck[0];
-        UpdateCardData();
+        //openedCard = closedCardDeck[0]; // @0415 버그로 임시 주석처리
+        //UpdateCardData(); // @0415 버그로 임시 주석처리
     }
 
     private void Awake()
@@ -145,6 +151,20 @@ public class CardManager : MonoBehaviourPun
             localCards = GameManager.instance.LocalPlayerObj.GetComponent<Player>().MyCards; //@NeedRewok
         }
     }
+    IEnumerator AwaitInitlocalCards()
+    {
+        while(true)
+        {
+            Debug.Log("AwaitInitMyCard...");
+            if (GameManager.instance.LocalPlayerObj != null)
+            {
+                localCards = GameManager.instance.LocalPlayerObj.GetComponent<Player>().MyCards;
+                Debug.Log("AwaitInitMyCard...");
+                break;
+            }
+            yield return null;
+        }
+    }
 
     public void AddCloseCards()
     {
@@ -161,20 +181,20 @@ public class CardManager : MonoBehaviourPun
     public void RPC_ReQuest_DrawCard(int requestActorNum)
     {
         photonView.RPC(nameof(DrawCard), RpcTarget.MasterClient, requestActorNum);
-        //TurnManager.instance.RPC_M_ChangeOrderPlayer();
+        
+        if (TurnManager.instance.IsMyturn())
+        {
+           
+        }
     }
     [PunRPC]
-    public void DrawCard(int requestActorNum) // 카드 드로우. 누구의 턴인가에 따라서 턴인 사람에게 카드가 추가됨 
+    private void DrawCard(int requestActorNum) // 카드 드로우. 누구의 턴인가에 따라서 턴인 사람에게 카드가 추가됨 
     {
         var cardObj = closedCardDeck[0];
         //@원준: 마스터에서 뽑은 카드 => cardObj
         Card cardScript = cardObj.GetComponent<Card>();
         closedCardDeck.RemoveAt(0); // 마스터에서 지운다.
-        
 
-        #region 일단 생략
-
-        #endregion
         // # 지금 턴의 플레이어를 찾아서 거기 핸드로 넘기면 됨
         // 지금 턴 구하기 
         // 턴과 맞는 플레이어 구하기 => 플레이어 목록 필요 => 더 나아가서 현재 턴의 플레이어 
@@ -184,47 +204,68 @@ public class CardManager : MonoBehaviourPun
 
         // 마스터가 가지고 있는 정보 전달하기 => 클래스를 직렬화 해서 전송
 
-        // TurnManager.instance.CurrentTurnIdx
-        // 
-        if (TurnManager.instance.IsMyturn() == true)
-        {
-            cardScript.UpdateCardState(eCardState.Opend);
-            TurnManager.instance.CurrentTurnPlayer.MyCards.Add(cardObj);
-            cardObj.transform.parent = myCardStorage;
-            cardObj.AddComponent<CardInteraction>();
-            cardObj.tag = "MyCard";
-            SetCardSortingOrderAndSortingLayerName(localCards, cardHandSortingOrderForTest);
-        }
-        else if (TurnManager.instance.IsMyturn() == false)
-        {
-            cardScript.UpdateCardState(eCardState.Closed);
-            TurnManager.instance.CurrentTurnPlayer.MyCards.Add(cardObj);
-            cardObj.transform.parent = firstCardStorage;
-            SetCardSortingOrderAndSortingLayerName(TurnManager.instance.CurrentTurnPlayer.MyCards, cardHandSortingOrderForTest);
-        }
-        AlignCard(TurnManager.instance.CurrentTurnIdx);
+        //if (TurnManager.instance.IsMyturn() == true)
+        //{
+        //    cardScript.UpdateCardState(eCardState.Opend);
+        //    TurnManager.instance.CurrentTurnPlayer.MyCards.Add(cardObj); //
+        //    cardObj.transform.parent = myCardStorage;
+        //    cardObj.AddComponent<CardInteraction>();
+        //    cardObj.tag = "MyCard";
+        //    SetCardSortingOrderAndSortingLayerName(localCards, cardHandSortingOrderForTest);
+        //    Debug.Log("true");
+        //}
+        //else if (TurnManager.instance.IsMyturn() == false)
+        //{
+        //    cardScript.UpdateCardState(eCardState.Closed);
+        //    TurnManager.instance.CurrentTurnPlayer.MyCards.Add(cardObj);
+        //    cardObj.transform.parent = remoteCardPosArr[requestActorNum].CardStorage;
+        //    SetCardSortingOrderAndSortingLayerName(TurnManager.instance.CurrentTurnPlayer.MyCards, cardHandSortingOrderForTest);
+        //    Debug.Log("false");
+        //}
+        AlignCard(requestActorNum);
         photonView.RPC(nameof(SendToPlayer_DrawCardInfo), RpcTarget.All, requestActorNum, cardScript.currentCardData.cardColor, cardScript.currentCardData.number);
     }
 
     [PunRPC]
     private void SendToPlayer_DrawCardInfo(int actorNum, int cardColorNum, int CardNum)
     {
-        // 요청한 플레이어에게만 
-        // 카드를 전달
-       
-        for (int i = 0; i < GameManager.instance.PlayerObjArr.Length; i++)
+        // 요청한 플레이어에게만 카드를 전달
+        GameObject drawCardObj = closedCardDeck[0]; ;
+
+        for (int i = 0; i < GameManager.instance.PlayerArr.Length; i++)
         {
             int targetActorNumber = GameManager.instance.PlayerArr[i].PlayerActorIndex;
             Debug.Log(targetActorNumber);
+
             if (actorNum == targetActorNumber) // 요청 한 playerActorNum와 내가 가지고 있는 Player 목록과 일치했을 때만
             {
                 // 카드 정보를 통해 다시 컴포넌트 생성
-                GameObject drawCardObj = closedCardDeck[0]; //@원준:요청한 클라이언트가 뽑은 카드  => drawCardObj 
                 InitCard(drawCardObj, cardColorNum, CardNum);
                 closedCardDeck.RemoveAt(0);
             }
         }
-        
+        HandOutDrawCard(drawCardObj, actorNum);
+    }
+    private void HandOutDrawCard(GameObject cardObj , int requestActorNum)
+    {
+        if (TurnManager.instance.IsMyturn() == true)
+        {
+            //cardScript.UpdateCardState(eCardState.Opend);
+            TurnManager.instance.CurrentTurnPlayer.MyCards.Add(cardObj); //
+            cardObj.transform.parent = myCardStorage;
+            cardObj.AddComponent<CardInteraction>();
+            cardObj.tag = "MyCard";
+            SetCardSortingOrderAndSortingLayerName(localCards, cardHandSortingOrderForTest);
+            Debug.Log("true");
+        }
+        else if (TurnManager.instance.IsMyturn() == false)
+        {
+            //cardScript.UpdateCardState(eCardState.Closed);
+            TurnManager.instance.CurrentTurnPlayer.MyCards.Add(cardObj);
+            cardObj.transform.parent = remoteCardPosArr[requestActorNum].CardStorage;
+            SetCardSortingOrderAndSortingLayerName(TurnManager.instance.CurrentTurnPlayer.MyCards, cardHandSortingOrderForTest);
+            Debug.Log("false");
+        }
     }
     public IEnumerator DrawAtStart()//처음 시작할 때 각 플레이어들이 5장씩 카드를 뽑는 함수(코루틴)
     {
@@ -585,31 +626,18 @@ public class CardManager : MonoBehaviourPun
     {
         List<PosRot> cardPosRots = new List<PosRot>();
 
-        List<GameObject> targetCards = new List<GameObject>();
-        switch (turnIdxForTest)
+        List<GameObject> targetCards = new List<GameObject>(); // 자신의 카드패 
+        if(TurnManager.instance.IsMyturn() == true) 
         {
-            case 0:
-                targetCards = localCards;
-                cardPosRots = GetAlignCardsForCardPosRot(myHandLeft, myHandRight, targetCards.Count);
-                SetAlignCardsToCardPosRots(targetCards, cardPosRots);
-                break;
-            //case 1:
-            //    targetCards = firstOtherCards;
-            //    cardPosRots = GetAlignCardsForCardPosRot(firstHandLeft, firstHandRight, targetCards.Count);
-            //    SetAlignCardsToCardPosRots(targetCards, cardPosRots);
-            //    break;
-            //case 2:
-            //    targetCards = secondOtherCards;
-            //    cardPosRots = GetAlignCardsForCardPosRot(secondHandLeft, secondHandRight, targetCards.Count);
-            //    SetAlignCardsToCardPosRots(targetCards, cardPosRots);
-            //    break;
-            //case 3:
-            //    targetCards = lastOtherCards;
-            //    cardPosRots = GetAlignCardsForCardPosRot(lastHandLeft, lastHandRight, targetCards.Count);
-            //    SetAlignCardsToCardPosRots(targetCards, cardPosRots);
-            //    break;
-            default:
-                Debug.Log("에러"); break;
+            targetCards = localCards;
+            cardPosRots = GetAlignCardsForCardPosRot(myHandLeft, myHandRight, targetCards.Count);
+            SetAlignCardsToCardPosRots(targetCards, cardPosRots);
+        }
+        else if (TurnManager.instance.IsMyturn() == false)
+        {
+            targetCards = allPlayerHandsCards[turnIdxForTest];
+            cardPosRots = GetAlignCardsForCardPosRot(remoteCardPosArr[turnIdxForTest].HandLeft, remoteCardPosArr[turnIdxForTest].HandRight, targetCards.Count);
+            SetAlignCardsToCardPosRots(targetCards, cardPosRots);
         }
     }
     //각 플레이어들의 카드패를 각각의 PRs 위치로 정렬시켜줌

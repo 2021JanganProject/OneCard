@@ -17,6 +17,7 @@ public class UIProfile : MonoBehaviour
     private ePlayerState playerstate;
 
     public ePlayerState Playerstate { get => playerstate; set => playerstate = value; }
+    public Image PlayerImageSprite { get => playerImageSprite; set => playerImageSprite = value; }
 
     private void ChangeTurnImageForPlayerState()
     {
