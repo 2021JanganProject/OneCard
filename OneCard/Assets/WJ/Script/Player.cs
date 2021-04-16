@@ -117,6 +117,7 @@ public class Player : MonoBehaviourPunCallbacks
                 uIProfile.PlayerImageSprite.color = Color.blue;
                 break;
             default:
+                Debug.Assert(false, "unknow type");
                 uIProfile.PlayerImageSprite.color = Color.black;
                 break;
         }

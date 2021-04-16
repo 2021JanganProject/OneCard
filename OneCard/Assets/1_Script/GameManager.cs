@@ -240,7 +240,6 @@ public class GameManager : MonoBehaviourPunCallbacks
             Debug.Log($"startRemoteIndex{startRemoteIndex}");
             GameObject player = remotePlayerObjArr[startRemoteIndex];
             player.transform.position = spawnPositions[i].position;
-            
         }
     }
 
