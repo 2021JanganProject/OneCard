@@ -260,7 +260,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isTest: 1
-  isHojun: 1
   waitTime: 1
   dataManagerForDebug: {fileID: 5392784382372890806, guid: fcb4effe394877f4ca9af28f898ac9c5,
     type: 3}
