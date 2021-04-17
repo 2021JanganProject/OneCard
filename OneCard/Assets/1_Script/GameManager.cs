@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject[] remotePlayerObjArr;
 
 
-    private int maxPlayerCount = 2;
+    private int maxPlayerCount = 4;
     private int playerCount = 0;
     private int currentTurnPlayer;
 
@@ -240,7 +240,8 @@ public class GameManager : MonoBehaviourPunCallbacks
             Debug.Log($"startRemoteIndex{startRemoteIndex}");
             GameObject player = remotePlayerObjArr[startRemoteIndex];
             player.transform.position = spawnPositions[i].position;
-            
+            //player.GetComponent<Player>().CardHandPos = CardManager.instance.RemoteCardPosArr[i].CardStorage;
+
         }
     }
 

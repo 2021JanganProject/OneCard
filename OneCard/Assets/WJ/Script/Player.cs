@@ -22,6 +22,8 @@ public class Player : MonoBehaviourPunCallbacks
     public string PlayerRank { get => playerRank;}
     public Image PlayerImage { get => playerImage;}
     public List<GameObject> MyCards { get => myCards; set => myCards = value; }
+
+
     public ePlayerState PlayerState
     {
         get
@@ -35,7 +37,7 @@ public class Player : MonoBehaviourPunCallbacks
         }
     }
 
-    
+    public Transform CardHandPos { get => cardHandPos; set => cardHandPos = value; }
 
     private string playerUniqueID;
     [SerializeField] private int playerActorNumberIndex;
@@ -46,6 +48,7 @@ public class Player : MonoBehaviourPunCallbacks
 
     [SerializeField] private ePlayerState playerState;
     [SerializeField] private Vector3 profileScale = new Vector3(2, 2, 2);
+    [SerializeField] private Transform cardHandPos;
 
     [SerializeField] private List<GameObject> myCards = new List<GameObject>(); //원준
 
@@ -117,6 +120,7 @@ public class Player : MonoBehaviourPunCallbacks
                 uIProfile.PlayerImageSprite.color = Color.blue;
                 break;
             default:
+                Debug.Assert(false, "unknow type");
                 uIProfile.PlayerImageSprite.color = Color.black;
                 break;
         }

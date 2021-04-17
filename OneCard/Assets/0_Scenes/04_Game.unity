@@ -3375,6 +3375,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6173934374740083337, guid: e5eb65aa77c1dc24e985263fe24b019c,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 15.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6173934374740083337, guid: e5eb65aa77c1dc24e985263fe24b019c,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 10.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6173934375148848857, guid: e5eb65aa77c1dc24e985263fe24b019c,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -16.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6173934375148848857, guid: e5eb65aa77c1dc24e985263fe24b019c,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -7.3
+      objectReference: {fileID: 0}
     - target: {fileID: 6173934375162107482, guid: e5eb65aa77c1dc24e985263fe24b019c,
         type: 3}
       propertyPath: m_Name
@@ -4867,6 +4887,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c0d1b4967a54fa4a81bc9a98c0be670, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameFlowState: 0
   cardManager: {fileID: 1287594144}
   turnManager: {fileID: 1869094344}
   spawnPositions:
