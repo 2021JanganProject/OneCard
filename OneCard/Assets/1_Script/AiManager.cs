@@ -79,42 +79,42 @@ public class AiManager : MonoBehaviour
                     {
                         // 공격받지 않은경우
 
-                        if (cardDataDeck[i].currentCardData.number == 11)
+                        if (cardDataDeck[i].currentCardData.cardNumberIndex == 11)
                         {
                             cardNum = i;
                             cardRank = 8;
                         }
-                        else if (cardRank < 8 && cardDataDeck[i].currentCardData.number == 14)
+                        else if (cardRank < 8 && cardDataDeck[i].currentCardData.cardNumberIndex == 14)
                         {
                             cardNum = i;
                             cardRank = 7;
                         }
-                        else if (cardRank < 7 && (cardDataDeck[i].currentCardData.number == 6 || cardDataDeck[i].currentCardData.number == 9 || cardDataDeck[i].currentCardData.number == 10))
+                        else if (cardRank < 7 && (cardDataDeck[i].currentCardData.cardNumberIndex == 6 || cardDataDeck[i].currentCardData.cardNumberIndex == 9 || cardDataDeck[i].currentCardData.cardNumberIndex == 10))
                         {
                             cardNum = i;
                             cardRank = 6;
                         }
-                        else if (cardRank < 6 && cardDataDeck[i].currentCardData.number > 0 && cardDataDeck[i].currentCardData.number < 5)
+                        else if (cardRank < 6 && cardDataDeck[i].currentCardData.cardNumberIndex > 0 && cardDataDeck[i].currentCardData.cardNumberIndex < 5)
                         {
                             cardNum = i;
                             cardRank = 5;
                         }
-                        else if (cardRank < 5 && (cardDataDeck[i].currentCardData.number == 13 || (cardDataDeck[i].currentCardData.number == 12 && cardDataDeck[i].currentCardData.cardColor != eCardColor.Blue)))
+                        else if (cardRank < 5 && (cardDataDeck[i].currentCardData.cardNumberIndex == 13 || (cardDataDeck[i].currentCardData.cardNumberIndex == 12 && cardDataDeck[i].currentCardData.cardColor != eCardColor.Blue)))
                         {
                             cardNum = i;
                             cardRank = 4;
                         }
-                        else if (cardRank < 4 && cardDataDeck[i].currentCardData.number == 8)
+                        else if (cardRank < 4 && cardDataDeck[i].currentCardData.cardNumberIndex == 8)
                         {
                             cardNum = i;
                             cardRank = 3;
                         }
-                        else if (cardRank < 3 && cardDataDeck[i].currentCardData.number == 7)
+                        else if (cardRank < 3 && cardDataDeck[i].currentCardData.cardNumberIndex == 7)
                         {
                             cardNum = i;
                             cardRank = 2;
                         }
-                        else if (cardRank < 2 && cardDataDeck[i].currentCardData.number == 12 && cardDataDeck[i].currentCardData.cardColor == eCardColor.Blue)
+                        else if (cardRank < 2 && cardDataDeck[i].currentCardData.cardNumberIndex == 12 && cardDataDeck[i].currentCardData.cardColor == eCardColor.Blue)
                         {
                             cardNum = i;
                             cardRank = 1;
@@ -133,27 +133,27 @@ public class AiManager : MonoBehaviour
                     else if(attackCounter.CurrentAttackCount > 0)
                     {
                         // 공격을 받은 경우
-                        if(cardDataDeck[i].currentCardData.number == 7)
+                        if(cardDataDeck[i].currentCardData.cardNumberIndex == 7)
                         {
                             cardNum = i;
                             cardRank = 5;
                         }
-                        else if(cardRank < 5 && cardDataDeck[i].currentCardData.number == 8)
+                        else if(cardRank < 5 && cardDataDeck[i].currentCardData.cardNumberIndex == 8)
                         {
                             cardNum = i;
                             cardRank = 4;
                         }
-                        else if (cardRank < 4 && (cardDataDeck[i].currentCardData.number == 12 && cardDataDeck[i].currentCardData.cardColor == eCardColor.Black))
+                        else if (cardRank < 4 && (cardDataDeck[i].currentCardData.cardNumberIndex == 12 && cardDataDeck[i].currentCardData.cardColor == eCardColor.Black))
                         {
                             cardNum = i;
                             cardRank = 3;
                         }
-                        else if (cardRank < 3 && (cardDataDeck[i].currentCardData.number == 12 && cardDataDeck[i].currentCardData.cardColor == eCardColor.Blue))
+                        else if (cardRank < 3 && (cardDataDeck[i].currentCardData.cardNumberIndex == 12 && cardDataDeck[i].currentCardData.cardColor == eCardColor.Blue))
                         {
                             cardNum = i;
                             cardRank = 2;
                         }
-                        else if (cardRank < 2 && cardDataDeck[i].currentCardData.number == 14)
+                        else if (cardRank < 2 && cardDataDeck[i].currentCardData.cardNumberIndex == 14)
                         {
                             cardNum = i;
                             cardRank = 1;
@@ -193,47 +193,47 @@ public class AiManager : MonoBehaviour
                 {            
                     if (attackCounter.CurrentAttackCount == 0)
                     {
-                        if (cardDataDeck[i].currentCardData.number == 11)
+                        if (cardDataDeck[i].currentCardData.cardNumberIndex == 11)
                         {
                             cardNum = i;
                             cardRank = 9;
                         }
-                        else if (cardRank < 9 && (cardDataDeck[i].currentCardData.number == 12 && cardDataDeck[i].currentCardData.cardColor == eCardColor.Black))
+                        else if (cardRank < 9 && (cardDataDeck[i].currentCardData.cardNumberIndex == 12 && cardDataDeck[i].currentCardData.cardColor == eCardColor.Black))
                         {
                             cardNum = i;
                             cardRank = 8;
                         }
-                        else if (cardRank < 8 && cardDataDeck[i].currentCardData.number == 8)
+                        else if (cardRank < 8 && cardDataDeck[i].currentCardData.cardNumberIndex == 8)
                         {
                             cardNum = i;
                             cardRank = 7;
                         }
-                        else if (cardRank < 7 && cardDataDeck[i].currentCardData.number == 7)
+                        else if (cardRank < 7 && cardDataDeck[i].currentCardData.cardNumberIndex == 7)
                         {
                             cardNum = i;
                             cardRank = 6;
                         }
-                        else if (cardRank < 6 && (cardDataDeck[i].currentCardData.number == 6 || cardDataDeck[i].currentCardData.number == 9 || cardDataDeck[i].currentCardData.number == 10))
+                        else if (cardRank < 6 && (cardDataDeck[i].currentCardData.cardNumberIndex == 6 || cardDataDeck[i].currentCardData.cardNumberIndex == 9 || cardDataDeck[i].currentCardData.cardNumberIndex == 10))
                         {
                             cardNum = i;
                             cardRank = 5;
                         }
-                        else if (cardRank < 5 && cardDataDeck[i].currentCardData.number > 0 && cardDataDeck[i].currentCardData.number < 5)
+                        else if (cardRank < 5 && cardDataDeck[i].currentCardData.cardNumberIndex > 0 && cardDataDeck[i].currentCardData.cardNumberIndex < 5)
                         {
                             cardNum = i;
                             cardRank = 4;
                         }
-                        else if (cardRank < 4 && (cardDataDeck[i].currentCardData.number == 13 || (cardDataDeck[i].currentCardData.number == 12 && cardDataDeck[i].currentCardData.cardColor != eCardColor.Blue && cardDataDeck[i].currentCardData.cardColor != eCardColor.Black)))
+                        else if (cardRank < 4 && (cardDataDeck[i].currentCardData.cardNumberIndex == 13 || (cardDataDeck[i].currentCardData.cardNumberIndex == 12 && cardDataDeck[i].currentCardData.cardColor != eCardColor.Blue && cardDataDeck[i].currentCardData.cardColor != eCardColor.Black)))
                         {
                             cardNum = i;
                             cardRank = 3;
                         }
-                        else if (cardRank < 3 && cardDataDeck[i].currentCardData.number == 14)
+                        else if (cardRank < 3 && cardDataDeck[i].currentCardData.cardNumberIndex == 14)
                         {
                             cardNum = i;
                             cardRank = 2;
                         }
-                        else if (cardRank < 2 && cardDataDeck[i].currentCardData.number == 12 && cardDataDeck[i].currentCardData.cardColor == eCardColor.Blue)
+                        else if (cardRank < 2 && cardDataDeck[i].currentCardData.cardNumberIndex == 12 && cardDataDeck[i].currentCardData.cardColor == eCardColor.Blue)
                         {
                             cardNum = i;
                             cardRank = 1;
@@ -242,27 +242,27 @@ public class AiManager : MonoBehaviour
                     }
                     else if (attackCounter.CurrentAttackCount > 0)
                     {
-                        if (cardDataDeck[i].currentCardData.number == 7)
+                        if (cardDataDeck[i].currentCardData.cardNumberIndex == 7)
                         {
                             cardNum = i;
                             cardRank = 5;
                         }
-                        else if (cardRank < 5 && cardDataDeck[i].currentCardData.number == 8)
+                        else if (cardRank < 5 && cardDataDeck[i].currentCardData.cardNumberIndex == 8)
                         {
                             cardNum = i;
                             cardRank = 4;
                         }
-                        else if (cardRank < 4 && (cardDataDeck[i].currentCardData.number == 12 && cardDataDeck[i].currentCardData.cardColor == eCardColor.Black))
+                        else if (cardRank < 4 && (cardDataDeck[i].currentCardData.cardNumberIndex == 12 && cardDataDeck[i].currentCardData.cardColor == eCardColor.Black))
                         {
                             cardNum = i;
                             cardRank = 3;
                         }
-                        else if (cardRank < 3 && (cardDataDeck[i].currentCardData.number == 12 && cardDataDeck[i].currentCardData.cardColor == eCardColor.Blue))
+                        else if (cardRank < 3 && (cardDataDeck[i].currentCardData.cardNumberIndex == 12 && cardDataDeck[i].currentCardData.cardColor == eCardColor.Blue))
                         {
                             cardNum = i;
                             cardRank = 2;
                         }
-                        else if (cardRank < 2 && cardDataDeck[i].currentCardData.number == 14)
+                        else if (cardRank < 2 && cardDataDeck[i].currentCardData.cardNumberIndex == 14)
                         {
                             cardNum = i;
                             cardRank = 1;
