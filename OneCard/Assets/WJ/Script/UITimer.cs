@@ -12,15 +12,20 @@ public class UITimer : MonoBehaviour
 
     [SerializeField] private GameObject timeOver;
 
-    Vector3[] wayPoints;
+    private float rightMax = 1.0f;
+    private float leftMax = -1.0f;
+    private float currentPos;
+    [SerializeField] private float direction = 20.0f; //떨리는 속도
+
+    private Vector3 originPos;
     private float currentTime;
+    private float viberateTime = 10f; //시계가 떨리는 시점 설정
     // Start is called before the first frame update
     void Start()
     {
         currentTime = maxTime;
-        wayPoints[0] = new Vector3(transform.position.x - 4, transform.position.y, transform.position.z);
-        wayPoints[1] = new Vector3(transform.position.x + 4, transform.position.y, transform.position.z);
-
+        currentPos = transform.position.x;
+        originPos = transform.position;
     }
 
     // Update is called once per frame
@@ -38,19 +43,22 @@ public class UITimer : MonoBehaviour
             timeText.gameObject.SetActive(false);
             timeOver.SetActive(true);
         }
-        if(currentTime < 10)
+        if(currentTime < viberateTime && currentTime >= 0)
         {
-            StartCoroutine(MoveTimer());
+            currentPos += Time.deltaTime * direction;
+            if (currentPos >= rightMax)
+            {
+                direction *= -1;
+                currentPos = rightMax;
+            }
+            else if (currentPos <= leftMax)
+            {
+                direction *= -1;
+                currentPos = leftMax;
+            }
+            transform.position = new Vector3(currentPos, transform.position.y, transform.position.z);
         }
-    }
-    IEnumerator MoveTimer()
-    {
-        while(currentTime > 0)
-        {
-            transform.DOPath(wayPoints, 1f);
-
-            yield return new WaitForSeconds(5f);
-
-        }
+        if (currentTime <= 0)
+            transform.position = originPos;
     }
 }
