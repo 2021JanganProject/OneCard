@@ -38,6 +38,8 @@ public class CardManager : MonoBehaviourPun
     [SerializeField] private List<GameObject> closedCardDeck = new List<GameObject>();
     [SerializeField] private List<GameObject> openedCardDeck = new List<GameObject>();
     public List<GameObject>[] AllPlayerHandsCards { get => allPlayerHandsCards; set => allPlayerHandsCards = value; }
+    public CardPos[] RemoteCardPosArr { get => remoteCardPosArr; set => remoteCardPosArr = value; }
+
     [SerializeField] private GameObject cardPrefab;
     [SerializeField] private CardData currentCard;
     #region  == 카드패 Tranforms ==
@@ -206,13 +208,14 @@ public class CardManager : MonoBehaviourPun
 
         // 마스터가 가지고 있는 정보 전달하기 => 클래스를 직렬화 해서 전송
 
-        AlignCard(requestActorNum);
+        
         photonView.RPC(nameof(SendToPlayer_DrawCardInfo), RpcTarget.AllViaServer, requestActorNum, cardScript.currentCardData.cardColor, cardScript.currentCardData.number);
     }
 
     [PunRPC]
     private void SendToPlayer_DrawCardInfo(int actorNum, int cardColorNum, int CardNum)
     {
+        
         // 요청한 플레이어에게만 카드를 전달
         GameObject drawCardObj = closedCardDeck[0];
 
@@ -250,6 +253,7 @@ public class CardManager : MonoBehaviourPun
             SetCardSortingOrderAndSortingLayerName(TurnManager.instance.CurrentTurnPlayer.MyCards, cardHandSortingOrderForTest);
             Debug.Log("내턴 아님");
         }
+        AlignCard(requestActorNum);
     }
     public IEnumerator DrawAtStart()//처음 시작할 때 각 플레이어들이 5장씩 카드를 뽑는 함수(코루틴)
     {
@@ -619,6 +623,15 @@ public class CardManager : MonoBehaviourPun
         }
         else if (TurnManager.instance.IsMyturn() == false)
         {
+            //var remotePlayerArr = GameManager.instance.RemotePlayerObjArr;
+            //foreach (GameObject children in remotePlayerArr)
+            //{
+            //    var playerScript = children.GetComponent<Player>();
+            //    if (playerScript.PlayerActorIndex == turnIdxForTest)
+            //    {
+
+            //    }
+            //}
             targetCards = allPlayerHandsCards[turnIdxForTest];
             cardPosRots = GetAlignCardsForCardPosRot(remoteCardPosArr[turnIdxForTest].HandLeft, remoteCardPosArr[turnIdxForTest].HandRight, targetCards.Count);
             SetAlignCardsToCardPosRots(targetCards, cardPosRots);
@@ -638,6 +651,7 @@ public class CardManager : MonoBehaviourPun
     //카드 드로우, 카드패 확대, 카드패 축소 시에 카드들의 위치를 DOTween으로 이동시켜줌
     private void MoveTransformForCard(Transform card, PosRot cardPR, float duration = 0.3f)
     {
+        Debug.Log("카드 이동 호출");
         card.DOMove(cardPR.position, duration);
         card.DORotateQuaternion(cardPR.rotation, duration);
     }
