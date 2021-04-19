@@ -8,6 +8,7 @@ TagManager:
   - MyCardEnlarge
   - MyCard
   - OpenedCard
+  - ClosedCard
   layers:
   - Default
   - TransparentFX

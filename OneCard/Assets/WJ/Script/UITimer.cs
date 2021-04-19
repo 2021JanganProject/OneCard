@@ -6,22 +6,28 @@ using UnityEngine.UI;
 public class UITimer : MonoBehaviour
 {
     [SerializeField] private Text timeText;
+    [SerializeField] private Image timeBoad;
 
     [SerializeField] private float maxTime = 15f;
 
     [SerializeField] private GameObject timeOver;
 
+    //private TurnManager TM;
+    private Color viberateColor;
+    private Color originColor;
     private float rightMax = 1.0f;
     private float leftMax = -1.0f;
     private float currentPos;
     [SerializeField] private float direction = 20.0f; //떨리는 속도
-
+    [SerializeField] private float viberateTime = 10f; //시계가 떨리는 시점 설정
     private Vector3 originPos;
     private float currentTime;
-    private float viberateTime = 10f; //시계가 떨리는 시점 설정
     // Start is called before the first frame update
     void Start()
     {
+        
+        viberateColor = new Color(1, 0.48f, 0.48f, 1);
+        originColor = timeBoad.color;
         currentTime = maxTime;
         currentPos = transform.position.x;
         originPos = transform.position;
@@ -44,6 +50,7 @@ public class UITimer : MonoBehaviour
         }
         if(currentTime < viberateTime && currentTime >= 0)
         {
+            timeBoad.color = viberateColor;
             currentPos += Time.deltaTime * direction;
             if (currentPos >= rightMax)
             {
@@ -58,6 +65,23 @@ public class UITimer : MonoBehaviour
             transform.position = new Vector3(currentPos, transform.position.y, transform.position.z);
         }
         if (currentTime <= 0)
+        {
             transform.position = originPos;
+            ResetTimerForInvoke(); //@rework
+        }
+            
+    }
+    private void ResetTimerForInvoke()
+    {
+        timeBoad.color = originColor;
+        currentTime = maxTime;
+        timeText.gameObject.SetActive(true);
+        timeOver.SetActive(false);
+
+        TurnChange();
+    }
+    private void TurnChange()
+    {
+        Debug.Log("턴넘김");
     }
 }

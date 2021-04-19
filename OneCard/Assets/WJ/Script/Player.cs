@@ -39,6 +39,7 @@ public class Player : MonoBehaviourPunCallbacks
 
     public Transform CardHandPos { get => cardHandPos; set => cardHandPos = value; }
 
+    [SerializeField] private TouchManager touchManager;
     private string playerUniqueID;
     [SerializeField] private int playerActorNumberIndex;
     [SerializeField] private string playerNickname;
