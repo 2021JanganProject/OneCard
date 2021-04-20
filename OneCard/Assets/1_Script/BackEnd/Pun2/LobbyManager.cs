@@ -53,7 +53,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         {
             Debug.Log($"Offline! ToString()");
             joinButton.interactable = false;
-            PhotonNetwork.ConnectUsingSettings(); // 설정 정보(게임버전 등)를 가지고 마스터 서버에 접속  
+            PhotonNetwork.ConnectUsingSettings(); // 설정 정보(게임버전 등)를 가지고 마스터 서버에 재접속  
         }
     }
 
@@ -61,7 +61,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         // 빈방이 없을 때
         Debug.Log("빈방이 없습니다. 새로운 방을 만듭니다");
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 4 });
+        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 4 },null);
     }
 
     public override void OnJoinedRoom()// JoinRandomRoom 참가 완료 

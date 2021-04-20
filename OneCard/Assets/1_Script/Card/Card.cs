@@ -88,7 +88,6 @@ public class Card : MonoBehaviour
     {
         currentCardData.cardState = cardState;
         CardOpendClosedImageUpdate();
-
     }
 
     private void CardOpendClosedImageUpdate()

@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     /// </summary>
     public GameObject LocalPlayerObj { get => localPlayerObj; set => localPlayerObj = value; }
     public Player[] PlayerArr { get => playerArr; set => playerArr = value; }
+    public int RandomPlayerIndex { get => randomPlayerIndex; set => randomPlayerIndex = value; }
 
     public eGameFlowState gameFlowState = eGameFlowState.WaittingPlayer_0;
     [SerializeField] private CardManager cardManager;
@@ -56,9 +57,15 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject localPlayerObj;
     [SerializeField] private GameObject[] remotePlayerObjArr;
 
+    [SerializeField] Text currentTurnPlayerTextForDebug, currentTurnIndexTextForDebug;
+    [SerializeField] public Text [] playersActorNumDebug;
+
+
+
 
     private int maxPlayerCount = 4;
     private int playerCount = 0;
+    [SerializeField] private int randomPlayerIndex = -1;
     private int currentTurnPlayer;
 
     private bool isPlayerAllInTheRoom = false;
@@ -67,13 +74,10 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        
         if (instance == null)
         {
             instance = this;
         }
-        
-       
     }
     
     IEnumerator Start()
@@ -128,14 +132,14 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         if(Input.GetKeyDown(KeyCode.Q))
         {
-            //InitOfflineDataForDebug();
+            DebugGUI.Info($"Remote randomPlayerIndex : {randomPlayerIndex}");
         }
     }
     private void InitOfflineDataForDebug()
     {
         SetPlayerObjArrAndRemotePlayerObjArr();
         SetPlayerArr();
-        SetOrderList();
+        //SetOrderList();
     }
     
     
@@ -159,7 +163,12 @@ public class GameManager : MonoBehaviourPunCallbacks
             SetPlayerObjArrAndRemotePlayerObjArr();
             SetPlayerArr();
             SetPlayersPosition();
-            SetOrderList();
+            
+            RPC_M_SetRandomPlayerIndex();
+            DebugGUI.Info($"Remote randomPlayerIndex : {randomPlayerIndex}");
+            StartCoroutine(TurnManager.instance.CoSetRandomOrderPlayersArrToList());
+
+            //TurnManager.instance.CoSetRandomOrderPlayersArrToList(randomPlayerIndex);
             yield return null;
             break;
         }
@@ -181,8 +190,6 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
         }
         remotePlayerObjArr = remotePlayerObjListTemp.ToArray();
-
-
     }
     private void SetPlayerArr()
     {
@@ -191,10 +198,25 @@ public class GameManager : MonoBehaviourPunCallbacks
             playerArr[i] =  playerObjArr[i].GetComponent<Player>();
         }
     }
-    private void SetOrderList()
+    void RPC_M_SetRandomPlayerIndex()
     {
-        TurnManager.instance.SetRandomOrderPlayersArrToList(playerArr);
-
+        if (photonView.IsMine && PhotonNetwork.IsMasterClient) // 일단 남겨둠
+        {
+            photonView.RPC(nameof(SetRandomPlayerIndex), RpcTarget.MasterClient);
+        }
+    }
+   
+    [PunRPC]
+    private void SetRandomPlayerIndex() // 마스터만 하고 나머지 값은 참조 해야함
+    {
+        int randomPlayerIndex = Random.Range(0, playerArr.Length);
+        DebugGUI.Info($"Master RandomPlayerIndex : {randomPlayerIndex}");
+        photonView.RPC(nameof(SendRandomPlayerIndex), RpcTarget.AllViaServer , randomPlayerIndex);
+    }
+    [PunRPC]
+    private void SendRandomPlayerIndex(int randomPlayerIndex)
+    {
+        this.randomPlayerIndex = randomPlayerIndex;
     }
     bool IsTheRoomFull()
     {
@@ -240,72 +262,9 @@ public class GameManager : MonoBehaviourPunCallbacks
             Debug.Log($"startRemoteIndex{startRemoteIndex}");
             GameObject player = remotePlayerObjArr[startRemoteIndex];
             player.transform.position = spawnPositions[i].position;
-            //player.GetComponent<Player>().CardHandPos = CardManager.instance.RemoteCardPosArr[i].CardStorage;
+            player.GetComponent<Player>().CardHandPos = CardManager.instance.RemoteCardPosArr[i];
 
         }
-    }
-
-    void UpdatePlayerListLog()
-    {
-        DebugerManager.instance.ResetLog();
-        DebugerManager.instance.Log($"totalplayer: {PhotonNetwork.PlayerList.Length}__playerList : {LocalPlayerActorIndex}");
-       
-        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
-        {
-            DebugerManager.instance.Log($"_ {PhotonNetwork.PlayerList[i].ActorNumber-1}");
-        }
-    }
-
-
-    
-    /// <summary>
-    ///  해당 역할은 TrunManager로 이동함
-    /// </summary>
-    public void TurnEnd()
-    {
-        //if (orderDirection)
-        //{
-        //    if (playerCount < 3)
-        //    {
-        //        playerCount += 1;
-        //    }
-        //    else
-        //    {
-        //        playerCount -= 3;
-        //    }
-        //}
-        //else
-        //{
-        //    if (playerCount > 0)
-        //    {
-        //        playerCount -= 1;
-        //    }
-        //    else
-        //    {
-        //        playerCount += 3;
-        //    }
-        //}
-        //orderTest.text = orderPlayers[playerCount].ToString();
-    }
-
-    public void ReverseTurn()
-    {
-        //orderDirection = !orderDirection;
-    }
-
-
-    private void NextCurrentTurnPlayer()
-    {
-
-    }
-
-    [SerializeField] GameObject playerForTest;
-    [SerializeField] PhotonView pvForTest;
-    public GameObject baseForTest;
-    private void SpawnPlayerForDebug()
-    {
-        GameObject playerGameObj = PhotonNetwork.Instantiate(playerForTest.name , new Vector3(Random.Range(-2f,2f),0,0),  Quaternion.Euler(new Vector3(0, 0, 0))); // 리소스에서 이름값으로 가져옴. 알아서 동기화를 해준다. 
-        pvForTest = playerGameObj.GetComponent<PhotonView>();
     }
 
     [PunRPC]
@@ -325,6 +284,11 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
 
-
+    [PunRPC]
+    public void UpdateCurrentTurnUIForDebug()
+    {
+        currentTurnIndexTextForDebug.text = $"현재 턴 {TurnManager.instance.CurrentTurnIdx}";
+        currentTurnPlayerTextForDebug.text = $"현재 플레이어 ID {localPlayerObj.GetComponent<Player>().PlayerActorIndex}";
+    }
 
 }
