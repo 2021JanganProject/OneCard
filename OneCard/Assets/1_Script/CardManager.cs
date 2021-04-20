@@ -37,7 +37,6 @@ public class CardManager : MonoBehaviourPun
     [SerializeField] private SpriteAtlas cardAtlas;
     [SerializeField] private List<GameObject> closedCardDeck = new List<GameObject>();
     [SerializeField] private List<GameObject> openedCardDeck = new List<GameObject>();
-    public List<GameObject>[] AllPlayerHandsCards { get => allPlayerHandsCards; set => allPlayerHandsCards = value; }
     public CardPos[] RemoteCardPosArr { get => remoteCardPosArr; set => remoteCardPosArr = value; }
 
     [SerializeField] private GameObject cardPrefab;
@@ -58,7 +57,6 @@ public class CardManager : MonoBehaviourPun
 
     #endregion
     [SerializeField] private List<GameObject> localCards = new List<GameObject>(); // 내가 뽑은 카드들을 담고있는 리스트
-    [SerializeField] private List<GameObject>[] allPlayerHandsCards;
 
     [Header("Card 상위 개체")]
     [SerializeField] private GameObject openedCardBase;
@@ -111,7 +109,7 @@ public class CardManager : MonoBehaviourPun
         maxCardNum = 13; // 중간에 0으로 초기화 되는 버그가 있어서 강제로 다시 설정함.
         maxCardColorNum = 5;
         //SettingCard();
-        allPlayerHandsCards = new List<GameObject>[GameManager.instance.MaxPlayerCount];
+       
         StartCoroutine(DrawAtStart());
         StartCoroutine(AwaitInitlocalCards());
 
@@ -199,16 +197,6 @@ public class CardManager : MonoBehaviourPun
         Card cardScript = cardObj.GetComponent<Card>();
         closedCardDeck.RemoveAt(0); // 마스터에서 지운다.
 
-        // # 지금 턴의 플레이어를 찾아서 거기 핸드로 넘기면 됨
-        // 지금 턴 구하기 
-        // 턴과 맞는 플레이어 구하기 => 플레이어 목록 필요 => 더 나아가서 현재 턴의 플레이어 
-
-        // 플레이어 스크립트 접근하기 
-        // 플레이어 핸드 접근하기 => 근데 그 전에 가드 매니저에서 가지고 있는 로직부터 수정 해야함.
-
-        // 마스터가 가지고 있는 정보 전달하기 => 클래스를 직렬화 해서 전송
-
-        
         photonView.RPC(nameof(SendToPlayer_DrawCardInfo), RpcTarget.AllViaServer, requestActorNum, cardScript.currentCardData.cardColor, cardScript.currentCardData.number);
     }
 
@@ -235,6 +223,7 @@ public class CardManager : MonoBehaviourPun
     }
     private void HandOutDrawCard(GameObject cardObj, int requestActorNum)
     {
+        DebugGUI.Warn($"1_requestActorNum_{requestActorNum}");
         if (TurnManager.instance.IsMyturn() == true)
         {
             //cardScript.UpdateCardState(eCardState.Opend);
@@ -244,16 +233,30 @@ public class CardManager : MonoBehaviourPun
             cardObj.tag = "MyCard";
             SetCardSortingOrderAndSortingLayerName(localCards, cardHandSortingOrderForTest);
             Debug.Log("내턴");
+            AlignCard(requestActorNum);
         }
         else if (TurnManager.instance.IsMyturn() == false)
         {
+            Player currentTurnPlayer = TurnManager.instance.CurrentTurnPlayer;
+            GameObject [] remotePlayers = GameManager.instance.RemotePlayerObjArr;
+            int remotePlayersIndex = -1;
+            for (int i = 0; i < remotePlayers.Length; i++)
+            {
+                if(requestActorNum == remotePlayers[i].GetComponent<Player>().PlayerActorIndex)
+                {
+                    remotePlayersIndex = i;
+                    DebugGUI.Warn($"2_remoteActorIndex_{remotePlayersIndex}");
+                }
+            }
+            DebugGUI.Warn($"3_remoteActorIndex_{remotePlayersIndex}");
             //cardScript.UpdateCardState(eCardState.Closed);
-            TurnManager.instance.CurrentTurnPlayer.MyCards.Add(cardObj);
-            cardObj.transform.parent = remoteCardPosArr[requestActorNum].CardStorage;
+            currentTurnPlayer.MyCards.Add(cardObj);
+            cardObj.transform.parent = remoteCardPosArr[remotePlayersIndex].CardStorage; // @E
             SetCardSortingOrderAndSortingLayerName(TurnManager.instance.CurrentTurnPlayer.MyCards, cardHandSortingOrderForTest);
             Debug.Log("내턴 아님");
+            AlignCard(remotePlayersIndex);
         }
-        AlignCard(requestActorNum);
+       
     }
     public IEnumerator DrawAtStart()//처음 시작할 때 각 플레이어들이 5장씩 카드를 뽑는 함수(코루틴)
     {
@@ -610,12 +613,12 @@ public class CardManager : MonoBehaviourPun
         }
     }
     //현재 턴인 사람(드로우를 한 사람)의 카드패를 새롭게 정렬해줌
-    private void AlignCard(int turnIdxForTest)
+    private void AlignCard(int turnIdx)
     {
         List<PosRot> cardPosRots = new List<PosRot>();
         List<GameObject> targetCards = new List<GameObject>(); // 자신의 카드패 
-
-        if(TurnManager.instance.IsMyturn() == true) 
+        DebugGUI.Error($"AlignCard_1_turnIdx_{turnIdx}");
+        if (TurnManager.instance.IsMyturn() == true) 
         {
             targetCards = localCards;
             cardPosRots = GetAlignCardsForCardPosRot(myHandLeft, myHandRight, targetCards.Count);
@@ -623,18 +626,27 @@ public class CardManager : MonoBehaviourPun
         }
         else if (TurnManager.instance.IsMyturn() == false)
         {
-            //var remotePlayerArr = GameManager.instance.RemotePlayerObjArr;
-            //foreach (GameObject children in remotePlayerArr)
-            //{
-            //    var playerScript = children.GetComponent<Player>();
-            //    if (playerScript.PlayerActorIndex == turnIdxForTest)
-            //    {
+            var remotePlayerObj = GameManager.instance.RemotePlayerObjArr[turnIdx];
+            DebugGUI.Error($"remotePlayerObj_{remotePlayerObj.transform.name}");
+            var remotePlayerScript = remotePlayerObj.GetComponent<Player>();
+            
+            targetCards = remotePlayerScript.MyCards;
+            
+            cardPosRots = GetAlignCardsForCardPosRot(remotePlayerScript.CardHandPos.HandLeft, remotePlayerScript.CardHandPos.HandRight, targetCards.Count);
+            SetAlignCardsToCardPosRots(targetCards, cardPosRots);
 
+            //foreach (GameObject children in playerScripts)
+            //{
+            //    var remotePlayerScript = children.GetComponent<Player>();
+            //    if (remotePlayerScript == turnIdx)
+            //    {
+            //        targetCards = remotePlayerScript.MyCards;
+            //        DebugGUI.Info(remotePlayerScript.CardHandPos.HandLeft);
+            //        cardPosRots = GetAlignCardsForCardPosRot(remotePlayerScript.CardHandPos.HandLeft, remotePlayerScript.CardHandPos.HandRight, targetCards.Count);
+            //        SetAlignCardsToCardPosRots(targetCards, cardPosRots);
             //    }
             //}
-            targetCards = allPlayerHandsCards[turnIdxForTest];
-            cardPosRots = GetAlignCardsForCardPosRot(remoteCardPosArr[turnIdxForTest].HandLeft, remoteCardPosArr[turnIdxForTest].HandRight, targetCards.Count);
-            SetAlignCardsToCardPosRots(targetCards, cardPosRots);
+
         }
     }
     //각 플레이어들의 카드패를 각각의 PRs 위치로 정렬시켜줌

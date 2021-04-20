@@ -50,11 +50,7 @@ public class PhotonTest : MonoBehaviourPunCallbacks ,IPunObservable
         }
 
     }
-    [PunRPC]
-    private void RPC_SetProfileBase()
-    {
-        transform.parent = GameManager.instance.baseForTest.transform;
-    }
+   
     Vector3 testVec;
     int testInt;
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

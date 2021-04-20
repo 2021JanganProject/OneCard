@@ -37,7 +37,7 @@ public class Player : MonoBehaviourPunCallbacks
         }
     }
 
-    public Transform CardHandPos { get => cardHandPos; set => cardHandPos = value; }
+    public CardPos CardHandPos { get => cardPos; set => cardPos = value; }
 
     [SerializeField] private TouchManager touchManager;
     private string playerUniqueID;
@@ -49,7 +49,7 @@ public class Player : MonoBehaviourPunCallbacks
 
     [SerializeField] private ePlayerState playerState;
     [SerializeField] private Vector3 profileScale = new Vector3(2, 2, 2);
-    [SerializeField] private Transform cardHandPos;
+    [SerializeField] private CardPos cardPos;
 
     [SerializeField] private List<GameObject> myCards = new List<GameObject>(); //원준
 
@@ -134,7 +134,6 @@ public class Player : MonoBehaviourPunCallbacks
     private void SetPlayerArr()
     {
         GameManager.instance.PlayerObjArr[PlayerActorIndex] = gameObject;
-        CardManager.instance.AllPlayerHandsCards[PlayerActorIndex] = myCards;
     }
    
     public void DoSwitchPlayerState()
