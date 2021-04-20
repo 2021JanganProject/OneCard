@@ -46,7 +46,7 @@ public class EnlargeCardHand : MonoBehaviour
 
             if(hit.collider != null && hit.collider.gameObject.tag == "ClosedCardDeck")
             {
-                //@DrawLogic...
+                //@DrawLogic...Now Space
             }
         }
 //#else

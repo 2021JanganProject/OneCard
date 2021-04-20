@@ -29,7 +29,6 @@ public class GameManager : MonoBehaviourPunCallbacks
             return actorNum;
         }
     }
-
     public GameObject[] PlayerObjArr { get => playerObjArr; set => playerObjArr = value; } // 체크 필요 
     public GameObject PlayerProfileBase { get => playerProfileBase;}
     /// <summary>
