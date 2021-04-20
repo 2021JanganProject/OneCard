@@ -170,8 +170,8 @@ public class CardInteraction : MonoBehaviour
    
     private void DragCardToMouse()
     {
-        Vector3 touchPos = new Vector3(transform.position.x, transform.position.y, 11.89f);
-        Vector3 cardPos = Camera.main.ScreenToWorldPoint(touchPos);
+        Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 11.89f);
+        Vector3 cardPos = Camera.main.ScreenToWorldPoint(mousePos);
         Quaternion Rot = Quaternion.Euler(0, 0, 0);
         transform.position = cardPos;
         transform.rotation = Rot;
