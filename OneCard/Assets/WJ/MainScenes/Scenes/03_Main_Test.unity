@@ -1209,7 +1209,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1390541312
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1368,7 +1368,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1522176037
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1756,7 +1756,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1994479481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2766,6 +2766,21 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1271922765}
+    - target: {fileID: 3044356606432247268, guid: b7a2252a9076f914c9704e05094799fb,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044356606432247268, guid: b7a2252a9076f914c9704e05094799fb,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044356606432247268, guid: b7a2252a9076f914c9704e05094799fb,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3044356606708563408, guid: b7a2252a9076f914c9704e05094799fb,
         type: 3}
       propertyPath: m_Pivot.x
@@ -2919,7 +2934,7 @@ PrefabInstance:
     - target: {fileID: 7002827559154132452, guid: b7a2252a9076f914c9704e05094799fb,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.5790405
+      value: 0.5790367
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b7a2252a9076f914c9704e05094799fb, type: 3}
