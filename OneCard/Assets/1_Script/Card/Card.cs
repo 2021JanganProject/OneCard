@@ -106,13 +106,13 @@ public class Card : MonoBehaviour
         }
     }
 
-    void OnMouseDown()
+   /* void OnMouseDown()
     {
         if (isActiveState)
         {
-            Put();
+             Put();
         }
-    }
+    }*/
     public void SetCardImage(Sprite sprite)
     {
         if (cardImage == null)

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5405654940472380815}
   - component: {fileID: 5405654940472380817}
   - component: {fileID: 5405654940472380816}
-  - component: {fileID: 5405654940472380818}
+  - component: {fileID: 3254555055958776113}
   m_Layer: 5
   m_Name: Timer
   m_TagString: Untagged
@@ -77,7 +77,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5405654940472380818
+--- !u!114 &3254555055958776113
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -86,12 +86,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 5405654940472380814}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a3f17eed6ca14e489af0bdb4b07a6f6, type: 3}
+  m_Script: {fileID: 11500000, guid: 81a8f53757e153c40844e9aafb3c9713, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   timeText: {fileID: 5405654941366703555}
+  timeBoad: {fileID: 5405654940722088878}
   maxTime: 15
   timeOver: {fileID: 5405654941660450884}
+  direction: 20
+  viberateTime: 10
 --- !u!1 &5405654940722088876
 GameObject:
   m_ObjectHideFlags: 0

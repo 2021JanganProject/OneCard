@@ -12,11 +12,23 @@ public class AttackCounter : MonoBehaviour
     private int maxAttackCount = 12;
     private float currentRot = 0f;
     [SerializeField] private GameObject[] CountImage;
-    
+    [SerializeField] private Sprite spinCylinder;
+    [SerializeField] private Transform revolverBase;
     [SerializeField] private RectTransform baseTransform;
+    [SerializeField] private float direction = 20.0f; //떨리는 속도
+
+    private float rightMax = 1.0f;
+    private float leftMax = -1.0f;
+    private float currentPos;
+   
+    private Vector3 originPos;
     public int CurrentAttackCount { get => currentAttackCount; set => currentAttackCount = value; }
 
-    //15일때 2,3,5만큼 공격했을때 1만채워지는거 있어야함
+    private void Start()
+    {
+        currentPos = revolverBase.position.x;
+        originPos = revolverBase.position;
+    }
 
     public void SetAttackCount(int attackCount)
     {
@@ -73,20 +85,25 @@ public class AttackCounter : MonoBehaviour
             yield return new WaitForSeconds(0.2f);
         }
         currentAttackCount = 0;
+        
         baseTransform.rotation = Quaternion.Euler(0, 0, 0);
         currentRot = 0f;
     }
     IEnumerator Attack(int count)
     {
+        VibrateRevolver(revolverBase);
         for (int i = count; i < currentAttackCount; i++)
         {
             CountImage[i].SetActive(false);
             currentRot += 60f;
             baseTransform.DOLocalRotateQuaternion(Quaternion.Euler(0, 0, currentRot), 0.05f);
+            //revolverBase.DOMove(new Vector3(revolverBase.position.x - 1, revolverBase.position.y, revolverBase.position.z), 0.02f);//
+            //revolverBase.DOMove(new Vector3(revolverBase.position.x + 1, revolverBase.position.y, revolverBase.position.z), 0.02f);
             yield return new WaitForSeconds(0.2f);
         }
+        MoveOrigin(revolverBase);
         currentAttackCount = count;
-        baseTransform.rotation = Quaternion.Euler(0, 0, 0);
+        baseTransform.rotation = Quaternion.Euler(0, 0, 0);    
         currentRot = 0f;
     }
     public void BtnEvt_attackCount2UpForTest()
@@ -96,5 +113,25 @@ public class AttackCounter : MonoBehaviour
     public void BtnEvt_attackCount3UpForTest()
     {
         SetAttackCount(3);
+    }
+    private void VibrateRevolver(Transform transform)
+    {
+        currentPos += Time.deltaTime * direction;
+        if (currentPos >= rightMax)
+        {
+            direction *= -1;
+            currentPos = rightMax;
+        }
+        else if (currentPos <= leftMax)
+        {
+            direction *= -1;
+            currentPos = leftMax;
+        }
+        transform.position = new Vector3(currentPos, transform.position.y, transform.position.z);
+  
+    }
+    private void MoveOrigin(Transform transform)
+    {
+        transform.position = originPos;
     }
 }

@@ -586,6 +586,7 @@ GameObject:
   - component: {fileID: 896289465813047004}
   - component: {fileID: 896289465813047005}
   - component: {fileID: 3320520651725914673}
+  - component: {fileID: 554152695186185716}
   m_Layer: 5
   m_Name: Profile
   m_TagString: Player
@@ -666,6 +667,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cf5b095d00560c48ac20ffb12fc4a1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  touchManager: {fileID: 554152695186185716}
   playerActorNumberIndex: 0
   playerNickname: "\uC544"
   playerRank: "\uC544"
@@ -719,6 +721,19 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &554152695186185716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6312822393856757912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 268e881221a2a144caac5fe022a4c39e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myCardHand: {fileID: 0}
 --- !u!1 &8748208818518555848
 GameObject:
   m_ObjectHideFlags: 0
