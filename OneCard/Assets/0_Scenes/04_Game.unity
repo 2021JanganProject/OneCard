@@ -3096,7 +3096,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentAttackCount: 0
   CountImage: []
+  spinCylinder: {fileID: 0}
+  revolverBase: {fileID: 0}
   baseTransform: {fileID: 0}
+  direction: 20
 --- !u!224 &1145891602 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3113633873100820992, guid: 57044f5d2f5865b4e8c21f8f5cef1833,
@@ -3375,6 +3378,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1158382825255077579, guid: e5eb65aa77c1dc24e985263fe24b019c,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1158382825255077579, guid: e5eb65aa77c1dc24e985263fe24b019c,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1158382825255077579, guid: e5eb65aa77c1dc24e985263fe24b019c,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6173934374458657030, guid: e5eb65aa77c1dc24e985263fe24b019c,
         type: 3}
       propertyPath: m_Enabled
