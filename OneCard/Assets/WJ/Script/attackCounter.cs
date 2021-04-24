@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-
+using Photon.Pun;
 //필요한 거
 //맥스카운트 = 16, 공격 실행됬을 때 어택카운트 초기화/ 방어카드 나와도 어택카운트 초기화
-public class AttackCounter : MonoBehaviour
+public class AttackCounter : MonoBehaviourPun
 {
     [SerializeField] private int currentAttackCount = 0;
     private int maxAttackCount = 12;
@@ -20,7 +20,7 @@ public class AttackCounter : MonoBehaviour
     private float rightMax = 1.0f;
     private float leftMax = -1.0f;
     private float currentPos;
-   
+
     private Vector3 originPos;
     public int CurrentAttackCount { get => currentAttackCount; set => currentAttackCount = value; }
 
@@ -29,7 +29,11 @@ public class AttackCounter : MonoBehaviour
         currentPos = revolverBase.position.x;
         originPos = revolverBase.position;
     }
-
+    public void RPC_ALL_SetAttackCount(int attackCount)
+    {
+        photonView.RPC(nameof(SetAttackCount), RpcTarget.AllBufferedViaServer, attackCount);
+    }
+    [PunRPC]
     public void SetAttackCount(int attackCount)
     {
         if (CurrentAttackCount + attackCount <= maxAttackCount)
@@ -51,8 +55,13 @@ public class AttackCounter : MonoBehaviour
     }
     public void BtnEvt_StartAttack()
     {
-        StartAttack();
+        RPC_ALL_StartAttack();
     }
+    public void RPC_ALL_StartAttack()
+    {
+        photonView.RPC(nameof(StartAttack), RpcTarget.AllViaServer);
+    }
+    [PunRPC]
     private void StartAttack()
     {
         if(currentAttackCount > 6)
@@ -85,7 +94,6 @@ public class AttackCounter : MonoBehaviour
             yield return new WaitForSeconds(0.2f);
         }
         currentAttackCount = 0;
-        
         baseTransform.rotation = Quaternion.Euler(0, 0, 0);
         currentRot = 0f;
     }
@@ -108,11 +116,13 @@ public class AttackCounter : MonoBehaviour
     }
     public void BtnEvt_attackCount2UpForTest()
     {
-        SetAttackCount(2);
+        //SetAttackCount(2);
+        RPC_ALL_SetAttackCount(2);
     }
     public void BtnEvt_attackCount3UpForTest()
     {
-        SetAttackCount(3);
+        //SetAttackCount(3);
+        RPC_ALL_SetAttackCount(3);
     }
     private void VibrateRevolver(Transform transform)
     {

@@ -73,7 +73,6 @@ public class Player : MonoBehaviourPunCallbacks
                 {
                     CardManager.instance.RPC_ReQuest_DrawCard(playerActorNumberIndex);
                 }
-                
             }
         }
     }

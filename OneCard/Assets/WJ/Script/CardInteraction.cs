@@ -36,7 +36,7 @@ public class CardInteraction : MonoBehaviour
         if (GetComponent<Card>().isActiveState)
         {
             time += Time.deltaTime;
-            Debug.Log(time);
+            //Debug.Log(time);
             if (isEnlargeCardHand == true)
             {
                 if (time >= 2)
@@ -51,7 +51,6 @@ public class CardInteraction : MonoBehaviour
                 if (isEnlargeCard == false)
                 {
                     DragCardToMouse();
-
                 }
             }
         }

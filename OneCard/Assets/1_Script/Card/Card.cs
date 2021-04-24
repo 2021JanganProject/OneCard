@@ -33,7 +33,7 @@ public struct CardData
     [SerializeField] public eCardState cardState;
     [SerializeField] public int number;
 }
-public class Card : MonoBehaviour
+public class Card : MonoBehaviourPun
 {
     public PosRot CardPosRot { get => cardPosRot; set => cardPosRot = value; }
     private PosRot cardPosRot;//원준
@@ -130,9 +130,29 @@ public class Card : MonoBehaviour
         transform.position = new Vector3(0, 3, 0);
         cardManager.OpenedCard = this.gameObject;
         cardManager.UpdateCardData();
+
+        // ... 추후 CardManager.instance.RPC_ALL_Put(); 으로 변경
+        //
+
         //gameManager.TurnEnd();
         isEfficient = false;
         Debug.Log(cardManager.OpenedCardDeck.Count);
+        TurnManager.instance.RPC_ALL_EndTurn();
+
+        isEfficient = false;
+    }
+    public void RPC_ALL_Put()
+    {
+        photonView.RPC(nameof(AddOpendCardDeck), RpcTarget.All);
+    }
+    [PunRPC]
+    private void AddOpendCardDeck()
+    {
+        // 카드 매니저에 openedCardDeck 리스트에 추가
+        cardManager.OpenedCardDeck.Add(this.gameObject);
+        cardManager.transform.position = new Vector3(0, 3, 0);
+        cardManager.OpenedCard = this.gameObject;
+        cardManager.UpdateCardData();
     }
     /// <summary>
     /// 카드 이미지 셋팅

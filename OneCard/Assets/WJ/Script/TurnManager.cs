@@ -58,8 +58,7 @@ public class TurnManager : MonoBehaviourPun
     }
     private void Start()
     {
-        //SetRandomOrderPlayers(GameManager.instance.Players);
-        //SetRandomOrderPlayers(GameManager.instance.Players);
+      
     }
     void UpdatePlayers()
     {
@@ -69,20 +68,25 @@ public class TurnManager : MonoBehaviourPun
         }
     }
 
+    public void RPC_ALL_EndTurn()
+    {
+        if (isOrderDirection == true)
+        {
+            RPC_ALL_ChangeOrderPlayer();
+        }
+        else
+        {
+            ChangeOrderRevers();
+        }
+    }
+  
     private void Update()
     {
         
         QuitTurn();
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if (isOrderDirection == true)
-            {
-                RPC_ALL_ChangeOrderPlayer();
-            }
-            else
-            {
-                ChangeOrderRevers();
-            }
+            RPC_ALL_EndTurn();
         }
         if (Input.GetKeyDown(KeyCode.G))
         {
@@ -111,7 +115,7 @@ public class TurnManager : MonoBehaviourPun
         photonView.RPC(nameof(ChangeOrderPlayer), RpcTarget.All);
     }
     [PunRPC]
-    public void ChangeOrderPlayer() // 플레이어 순서 바꿔주기 
+    private void ChangeOrderPlayer() // 플레이어 순서 바꿔주기 
     {
         
         Player currentTurnPlayer = CurrentTurnPlayer;
@@ -119,7 +123,6 @@ public class TurnManager : MonoBehaviourPun
         orderList.Add(currentTurnPlayer);
         SettingTurn();
         clockUI.ResetCurrentTimeAndClockhand();
-        DebugGUI.Info($"Change OrderPlayer : {currentTurnPlayer.PlayerActorIndex}");
     }
     public void ChangeOrderRevers()//턴 순서 거꾸로
     {
@@ -251,7 +254,6 @@ public class TurnManager : MonoBehaviourPun
     [PunRPC]
     public void SetRandomOrderPlayers(int randomPlayerIndex)
     {
-         
         // #Arr => List
         List<Player> playerList = new List<Player>();
         for (int i = 0; i < GameManager.instance.PlayerArr.Length; i++)
@@ -263,7 +265,7 @@ public class TurnManager : MonoBehaviourPun
         List<Player> sortedPlayerList = playerList.OrderBy(x => x.PlayerActorIndex).ToList();
         foreach (var item in sortedPlayerList)
         {
-            DebugGUI.Info(item.transform.name);
+            DebugGUI.Log_White(item.transform.name);
         }
         playerList = sortedPlayerList;
         // # Logic
@@ -297,7 +299,5 @@ public class TurnManager : MonoBehaviourPun
         }
         reversCurrentTurnPlayer = players.Count - 1;
     }
-
-    
 }
 
