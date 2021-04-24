@@ -2,25 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
 
 public class UITimer : MonoBehaviour
 {
     [SerializeField] private Text timeText;
+    [SerializeField] private Image timeBoad;
 
     [SerializeField] private float maxTime = 15f;
 
     [SerializeField] private GameObject timeOver;
 
-    Vector3[] wayPoints;
+    //private TurnManager TM;
+    private Color viberateColor;
+    private Color originColor;
+    private float rightMax = 1.0f;
+    private float leftMax = -1.0f;
+    private float currentPos;
+    [SerializeField] private float direction = 20.0f; //떨리는 속도
+    [SerializeField] private float viberateTime = 10f; //시계가 떨리는 시점 설정
+    private Vector3 originPos;
     private float currentTime;
     // Start is called before the first frame update
     void Start()
     {
+        
+        viberateColor = new Color(1, 0.48f, 0.48f, 1);
+        originColor = timeBoad.color;
         currentTime = maxTime;
-        wayPoints[0] = new Vector3(transform.position.x - 4, transform.position.y, transform.position.z);
-        wayPoints[1] = new Vector3(transform.position.x + 4, transform.position.y, transform.position.z);
-
+        currentPos = transform.position.x;
+        originPos = transform.position;
     }
 
     // Update is called once per frame
@@ -38,19 +48,40 @@ public class UITimer : MonoBehaviour
             timeText.gameObject.SetActive(false);
             timeOver.SetActive(true);
         }
-        if(currentTime < 10)
+        if(currentTime < viberateTime && currentTime >= 0)
         {
-            StartCoroutine(MoveTimer());
+            timeBoad.color = viberateColor;
+            currentPos += Time.deltaTime * direction;
+            if (currentPos >= rightMax)
+            {
+                direction *= -1;
+                currentPos = rightMax;
+            }
+            else if (currentPos <= leftMax)
+            {
+                direction *= -1;
+                currentPos = leftMax;
+            }
+            transform.position = new Vector3(currentPos, transform.position.y, transform.position.z);
         }
+        if (currentTime <= 0)
+        {
+            transform.position = originPos;
+            ResetTimerForInvoke(); //@rework
+        }
+            
     }
-    IEnumerator MoveTimer()
+    private void ResetTimerForInvoke()
     {
-        while(currentTime > 0)
-        {
-            transform.DOPath(wayPoints, 1f);
+        timeBoad.color = originColor;
+        currentTime = maxTime;
+        timeText.gameObject.SetActive(true);
+        timeOver.SetActive(false);
 
-            yield return new WaitForSeconds(5f);
-
-        }
+        TurnChange();
+    }
+    private void TurnChange()
+    {
+        Debug.Log("턴넘김");
     }
 }

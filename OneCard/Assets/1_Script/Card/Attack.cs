@@ -30,12 +30,12 @@ public class Attack : Card
 
     private void AttackCheck()
     {
-        if (currentCardData.cardNumberIndex == 7)
+        if (currentCardData.number == 7)
         {
             // 공격받았을때 A면 카드를 못낸다.
             if (attackCounter.CurrentAttackCount > 1)
             {
-                if(cardManager.CurrentCard.cardNumberIndex == 7)
+                if(cardManager.CurrentCard.number == 7)
                 {
                     isActiveState = true;                    
                 }
@@ -50,7 +50,7 @@ public class Attack : Card
     private void AddAttackCount()
     {
         // attackCount만큼 어딘가에 있을 currentAttackCount에 추가
-        switch (currentCardData.cardNumberIndex)
+        switch (currentCardData.number)
         {
             case 7:
                 attackCounter.CurrentAttackCount += 2;

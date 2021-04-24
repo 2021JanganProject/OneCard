@@ -17,11 +17,13 @@ public class Player : MonoBehaviourPunCallbacks
     /// <summary>
     /// 룸에 들어온 순서대로 ActorIndex가 정해진다. ActorNum - 1 을 한 값
     /// </summary>
-    public int PlayerActorIndex { get => playerActorNumber; }
+    public int PlayerActorIndex { get => playerActorNumberIndex;}
     public string PlayerNickname { get => playerNickname;}
     public string PlayerRank { get => playerRank;}
     public Image PlayerImage { get => playerImage;}
     public List<GameObject> MyCards { get => myCards; set => myCards = value; }
+
+
     public ePlayerState PlayerState
     {
         get
@@ -35,10 +37,11 @@ public class Player : MonoBehaviourPunCallbacks
         }
     }
 
-    
+    public CardPos CardHandPos { get => cardPos; set => cardPos = value; }
 
+    [SerializeField] private TouchManager touchManager;
     private string playerUniqueID;
-    [SerializeField] private int playerActorNumber;
+    [SerializeField] private int playerActorNumberIndex;
     [SerializeField] private string playerNickname;
     [SerializeField] private string playerRank;
     [SerializeField] private Image playerImage;
@@ -46,6 +49,7 @@ public class Player : MonoBehaviourPunCallbacks
 
     [SerializeField] private ePlayerState playerState;
     [SerializeField] private Vector3 profileScale = new Vector3(2, 2, 2);
+    [SerializeField] private CardPos cardPos;
 
     [SerializeField] private List<GameObject> myCards = new List<GameObject>(); //원준
 
@@ -64,10 +68,13 @@ public class Player : MonoBehaviourPunCallbacks
         {
             if(photonView.IsMine)
             {
-                Debug.Log($"playerActorNumber:{playerActorNumber}");
-                CardManager.instance.RPC_ReQuest_DrawCard(playerActorNumber);
+                Debug.Log($"playerActorNumber:{playerActorNumberIndex}");
+                if(TurnManager.instance.IsMyturn())
+                {
+                    CardManager.instance.RPC_ReQuest_DrawCard(playerActorNumberIndex);
+                }
+                
             }
-             
         }
     }
     [PunRPC]
@@ -80,7 +87,7 @@ public class Player : MonoBehaviourPunCallbacks
         playerNickname = playerInfo.nickname;
         playerRank = playerInfo.rank.ToString();
         playerUniqueID = playerInfo.uniqueID;
-        playerActorNumber = ActorNumber;
+        playerActorNumberIndex = ActorNumber;
         uIProfile.InitUIProfile(this);
 
     }
@@ -93,8 +100,8 @@ public class Player : MonoBehaviourPunCallbacks
     {
         transform.parent = GameManager.instance.PlayerProfileBase.transform;
         transform.localScale = profileScale;
-        transform.name = $"Player_{photonView.Controller.ActorNumber}";
-        SetColorForTest(photonView.Controller.ActorNumber);
+        transform.name = $"Player_{photonView.Controller.ActorNumber-1}";
+        SetColorForTest(photonView.Controller.ActorNumber-1);
     }
 
     private void SetColorForTest(int actnum)
@@ -102,19 +109,20 @@ public class Player : MonoBehaviourPunCallbacks
         switch (actnum)
         {
             case 0:
-                playerImage.color = Color.red;
+                uIProfile.PlayerImageSprite.color = Color.red;
                 break;
             case 1:
-                playerImage.color = Color.yellow;
+                uIProfile.PlayerImageSprite.color = Color.yellow;
                 break;
             case 2:
-                playerImage.color = Color.green;
+                uIProfile.PlayerImageSprite.color = Color.green;
                 break;
             case 3:
-                playerImage.color = Color.blue;
+                uIProfile.PlayerImageSprite.color = Color.blue;
                 break;
             default:
-                playerImage.color = Color.black;
+                Debug.Assert(false, "unknow type");
+                uIProfile.PlayerImageSprite.color = Color.black;
                 break;
         }
     }
@@ -126,7 +134,6 @@ public class Player : MonoBehaviourPunCallbacks
     private void SetPlayerArr()
     {
         GameManager.instance.PlayerObjArr[PlayerActorIndex] = gameObject;
-        CardManager.instance.AllPlayerHandsCards[PlayerActorIndex] = myCards;
     }
    
     public void DoSwitchPlayerState()

@@ -31,7 +31,7 @@ public class Defence : Card
 
     private void DefenceCheck()
     {
-        if (cardManager.CurrentCard.cardColor == eCardColor.Black && cardManager.CurrentCard.cardNumberIndex == 12)
+        if (cardManager.CurrentCard.cardColor == eCardColor.Black && cardManager.CurrentCard.number == 12)
         {
             isActiveState = true;
         }

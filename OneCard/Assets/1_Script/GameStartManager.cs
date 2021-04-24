@@ -16,13 +16,13 @@ public class GameStartManager : MonoBehaviour
         {
             Instantiate(dataManagerForDebug).InitPlayerInfoForNoUseFirebaseDebug();
             Screen.SetResolution(640, 360, false);
-            StartCoroutine(WaitForSecTest("Game_Test"));
+            StartCoroutine(WaitForSecTest());
             return;
         }
         if (isTest == true)
         {
             Instantiate(dataManagerForDebug).InitPlayerInfoForNoUseFirebaseDebug();
-            StartCoroutine(WaitForSecTest("03_Main"));
+            StartCoroutine(WaitForSecTest());
 
             Screen.SetResolution(640,360, false);
         }
@@ -38,10 +38,10 @@ public class GameStartManager : MonoBehaviour
     {
         
     }
-    IEnumerator WaitForSecTest(string name)
+    IEnumerator WaitForSecTest()
     {
         yield return new WaitForSeconds(waitTime);
-        SceneManager.LoadScene(name);
+        SceneManager.LoadScene("03_Main");
         
     }
     IEnumerator WaitForSec()

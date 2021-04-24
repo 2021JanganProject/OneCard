@@ -31,7 +31,7 @@ public struct CardData
     [SerializeField] public eCardColor cardColor;
     [SerializeField] public eCardType cardType;
     [SerializeField] public eCardState cardState;
-    [SerializeField] public int cardNumberIndex;
+    [SerializeField] public int number;
 }
 public class Card : MonoBehaviour
 {
@@ -88,7 +88,6 @@ public class Card : MonoBehaviour
     {
         currentCardData.cardState = cardState;
         CardOpendClosedImageUpdate();
-
     }
 
     private void CardOpendClosedImageUpdate()
@@ -107,13 +106,13 @@ public class Card : MonoBehaviour
         }
     }
 
-    void OnMouseDown()
+   /* void OnMouseDown()
     {
         if (isActiveState)
         {
-            Put();
-        }        
-    }
+             Put();
+        }
+    }*/
     public void SetCardImage(Sprite sprite)
     {
         if (cardImage == null)
@@ -140,13 +139,13 @@ public class Card : MonoBehaviour
     /// </summary>
     protected virtual void Checking()
     {
-        if (currentCardData.cardNumberIndex == 7 || currentCardData.cardNumberIndex == 8)
+        if (currentCardData.number == 7 || currentCardData.number == 8)
         {
-            if (cardManager.CurrentCard.cardNumberIndex == 14)
+            if (cardManager.CurrentCard.number == 14)
             {
                 isActiveState = true;
             }
-            else if (cardManager.CurrentCard.cardColor == currentCardData.cardColor || cardManager.CurrentCard.cardNumberIndex == currentCardData.cardNumberIndex)
+            else if (cardManager.CurrentCard.cardColor == currentCardData.cardColor || cardManager.CurrentCard.number == currentCardData.number)
             {
                 isActiveState = true;
             }
@@ -155,9 +154,9 @@ public class Card : MonoBehaviour
                 isActiveState = false;
             }
         }
-        else if(currentCardData.cardNumberIndex == 12)
+        else if(currentCardData.number == 12)
         {
-            if (cardManager.CurrentCard.cardNumberIndex == 14)
+            if (cardManager.CurrentCard.number == 14)
             {
                 isActiveState = true;
             }
@@ -179,12 +178,12 @@ public class Card : MonoBehaviour
             {
                 isActiveState = false;
             }
-        }
-        else if(currentCardData.cardNumberIndex == 14)
+        }        
+        else if(currentCardData.number == 14)
         {
             isActiveState = true;
         }
-        else if(currentCardData.cardNumberIndex == 13)
+        else if(currentCardData.number == 13)
         {
             if(attackCounter.CurrentAttackCount == 0)
             {
@@ -197,11 +196,11 @@ public class Card : MonoBehaviour
         }
         else
         {
-            if (cardManager.CurrentCard.cardNumberIndex == 14)
+            if (cardManager.CurrentCard.number == 14)
             {
                 isActiveState = true;
             }
-            else if (cardManager.CurrentCard.cardColor == currentCardData.cardColor || cardManager.CurrentCard.cardNumberIndex == currentCardData.cardNumberIndex)
+            else if (cardManager.CurrentCard.cardColor == currentCardData.cardColor || cardManager.CurrentCard.number == currentCardData.number)
             {
                 if(attackCounter.CurrentAttackCount < 1)
                 {
@@ -217,5 +216,36 @@ public class Card : MonoBehaviour
                 isActiveState = false;
             }
         }
+
+        /*if (cardManager.CurrentCard.cardColor == cardData.cardColor || cardManager.CurrentCard.number == cardData.number)
+        {
+            isActiveState = true;
+        }
+        else if (cardData.number == 13)
+        {
+            if (cardManager.CurrentCard.cardColor == eCardColor.Black)
+            {
+                isActiveState = true;
+            }
+            else
+            {
+                isActiveState = false;
+            }
+        }
+        else if (cardData.number == 14)
+        {
+            if (cardManager.CurrentCard.cardColor == eCardColor.Red)
+            {
+                isActiveState = true;
+            }
+            else
+            {
+                isActiveState = false;
+            }
+        }
+        else
+        {
+            isActiveState = false;
+        }*/
     }
 }

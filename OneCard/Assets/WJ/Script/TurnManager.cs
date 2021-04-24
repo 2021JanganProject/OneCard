@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using System;
+using System.Linq;
 
 /* 3.11 현재까지 턴매니저 기능
  * 플레이어 정보 받을 플레이어 배열 -> 들어온 플레이어들을 플레이어 리스트에 랜덤으로 쏴줌
@@ -59,15 +61,23 @@ public class TurnManager : MonoBehaviourPun
         //SetRandomOrderPlayers(GameManager.instance.Players);
         //SetRandomOrderPlayers(GameManager.instance.Players);
     }
+    void UpdatePlayers()
+    {
+        for (int i = 0; i < orderList.Count; i++)
+        {
+            GameManager.instance.playersActorNumDebug[i].text = $"Player : {orderList[i].PlayerActorIndex.ToString()}";
+        }
+    }
 
     private void Update()
     {
+        
         QuitTurn();
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             if (isOrderDirection == true)
             {
-                ChangeOrderPlayer();
+                RPC_ALL_ChangeOrderPlayer();
             }
             else
             {
@@ -79,31 +89,48 @@ public class TurnManager : MonoBehaviourPun
             isOrderDirection = !isOrderDirection;
             SettingTurn();
         }
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            StartCoroutine(CoUpdatePlayers());
+        }
+        
+
+    }
+    IEnumerator CoUpdatePlayers()
+    {
+        while (true)
+        {
+            UpdatePlayers();
+            photonView.RPC(nameof(GameManager.UpdateCurrentTurnUIForDebug), RpcTarget.All);
+            yield return null;
+        }
     }
 
-    public void RPC_M_ChangeOrderPlayer()
+    public void RPC_ALL_ChangeOrderPlayer()
     {
-        photonView.RPC(nameof(ChangeOrderPlayer), RpcTarget.MasterClient);
+        photonView.RPC(nameof(ChangeOrderPlayer), RpcTarget.All);
     }
     [PunRPC]
     public void ChangeOrderPlayer() // 플레이어 순서 바꿔주기 
     {
-        SetCurrentPlayerAndRemoveList(CURRENT_TURN_PLAYER_IDX);
-        orderList.Add(CurrentTurnPlayer);
-        CurrentTurnPlayer = null;
+        
+        Player currentTurnPlayer = CurrentTurnPlayer;
+        orderList.RemoveAt(CURRENT_TURN_PLAYER_IDX);
+        orderList.Add(currentTurnPlayer);
         SettingTurn();
         clockUI.ResetCurrentTimeAndClockhand();
+        DebugGUI.Info($"Change OrderPlayer : {currentTurnPlayer.PlayerActorIndex}");
     }
     public void ChangeOrderRevers()//턴 순서 거꾸로
     {
         SetCurrentPlayerAndRemoveList(reversCurrentTurnPlayer);
         orderList.Insert(0, CurrentTurnPlayer);
-        CurrentTurnPlayer = null;
         SettingTurn();
         clockUI.ResetCurrentTimeAndClockhand();
     }
     public bool IsMyturn()
     {
+        Debug.Log($"GameManager.instance.LocalPlayerActorIndex_{GameManager.instance.LocalPlayerActorIndex } == CurrentTurnIdx_{CurrentTurnIdx}");
         if (GameManager.instance.LocalPlayerActorIndex == CurrentTurnIdx)
         {
             return true;
@@ -115,17 +142,15 @@ public class TurnManager : MonoBehaviourPun
     }
     private void SetCurrentPlayerAndRemoveList(int index)
     {
-        if(CurrentTurnPlayer = null)
+        if(CurrentTurnPlayer == null)
         {
             CurrentTurnPlayer = orderList[index];
-            orderList.RemoveAt(index);
         }
        
     }
     // Check 보다 Setting이 낫지 않을까? 
     private void SettingTurn()
     {
-       
         if (isOrderDirection == true)
         {
             DecideOrder(orderList.Count, true);
@@ -141,6 +166,9 @@ public class TurnManager : MonoBehaviourPun
         {
             switch (count)
             {
+                case 1:
+                    orderList[0].PlayerState = myTurn;
+                    break;
                 case 2:
                     orderList[0].PlayerState = myTurn;
                     orderList[1].PlayerState = nextTurn;
@@ -165,6 +193,9 @@ public class TurnManager : MonoBehaviourPun
         {
             switch (orderList.Count)
             {
+                case 1:
+                    orderList[0].PlayerState = myTurn;
+                    break;
                 case 2:
                     orderList[0].PlayerState = myTurn;
                     orderList[1].PlayerState = nextTurn;
@@ -202,45 +233,71 @@ public class TurnManager : MonoBehaviourPun
             }
         }
     }
-  
-    private void SetRandomOrderPlayers(List<Player> players)
+    public IEnumerator CoSetRandomOrderPlayersArrToList()
     {
-        int randomPlayerIndex = Random.Range(0, players.Count); //4명이면 0123
+        while(true)
+        {
+            if (GameManager.instance.RandomPlayerIndex < 0)
+            {
+                Debug.Log("Waiting RandomPlayerIndex...");
+                yield return null;
+                continue;
+            }
+            SetRandomOrderPlayers(GameManager.instance.RandomPlayerIndex);
+            yield return null;
+            break;
+        }
+    }
+    [PunRPC]
+    public void SetRandomOrderPlayers(int randomPlayerIndex)
+    {
+         
+        // #Arr => List
+        List<Player> playerList = new List<Player>();
+        for (int i = 0; i < GameManager.instance.PlayerArr.Length; i++)
+        {
+            playerList.Add(GameManager.instance.PlayerArr[i]);
+        }
+        // # Sorting
+
+        List<Player> sortedPlayerList = playerList.OrderBy(x => x.PlayerActorIndex).ToList();
+        foreach (var item in sortedPlayerList)
+        {
+            DebugGUI.Info(item.transform.name);
+        }
+        playerList = sortedPlayerList;
+        // # Logic
+        for (int i = 0; i < playerList.Count; i++)
+        {
+            Debug.Log(randomPlayerIndex);
+            orderList.Add(playerList[randomPlayerIndex]);
+            randomPlayerIndex--;
+            if (randomPlayerIndex < 0)
+            {
+                randomPlayerIndex = playerList.Count - 1;
+            }
+        }
+        reversCurrentTurnPlayer = playerList.Count - 1;
+        SettingTurn();
+
+        //SetRandomOrderPlayers(playerList, randomPlayerIndex);
+    }
+
+
+    private void SetRandomOrderPlayers(List<Player> players , int randomPlayerIndex)
+    {
         for (int i = 0; i < players.Count; i++)
         {
+            Debug.Log(randomPlayerIndex);
             orderList.Add(players[randomPlayerIndex--]);
-            if(randomPlayerIndex < 0)
+            if (randomPlayerIndex < 0)
             {
                 randomPlayerIndex = players.Count - 1;
             }
         }
         reversCurrentTurnPlayer = players.Count - 1;
-        SettingTurn();
     }
-   
-    /*public int CurrentTurnPlayer
-    {
-        get
-        {
-            return currentTurnPlayer;
-        }
-        set
-        {
-            if (currentTurnPlayer > 0 && currentTurnPlayer <= MaxPlayerCount)
-                currentTurnPlayer = value;
-        }
-    }*/
 
-
-
-
-    /*void NextCurrentTrunPlayer()
-    {
-        if(orderDirection == true)
-        {
-
-        }
-    }*/
-
+    
 }
 

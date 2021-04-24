@@ -9,6 +9,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 {
     private readonly string gameVersion = "1"; // 게임 버전이 다르면 같이 매칭이 안되게 해야하기 떄문이다. 
     [SerializeField] private Button joinButton;
+    public bool IsHojunForDebug= false;
 
     // Start is called before the first frame update
     void Start()
@@ -42,8 +43,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public void BtnEvt_Connect() // BtnEvnt 접속
     {
-       
-        //
         joinButton.interactable = false;
         if (PhotonNetwork.IsConnected)
         {
@@ -54,7 +53,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         {
             Debug.Log($"Offline! ToString()");
             joinButton.interactable = false;
-            PhotonNetwork.ConnectUsingSettings(); // 설정 정보(게임버전 등)를 가지고 마스터 서버에 접속  
+            PhotonNetwork.ConnectUsingSettings(); // 설정 정보(게임버전 등)를 가지고 마스터 서버에 재접속  
         }
     }
 
@@ -62,13 +61,21 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         // 빈방이 없을 때
         Debug.Log("빈방이 없습니다. 새로운 방을 만듭니다");
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 4 });
+        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 4 },null);
     }
 
     public override void OnJoinedRoom()// JoinRandomRoom 참가 완료 
     {
         Debug.Log("접속 완료!");
         // 일반적인 씬매니저로 씬 이동을 하면 해당 사용자만 넘어간다.
+        
+        if(IsHojunForDebug) // 호준 테스트 코드
+        {
+            PhotonNetwork.LoadLevel("Game_Test");
+            return;
+        }
         PhotonNetwork.LoadLevel("04_Game"); // player 모두 같은 씬으로 넘어갈 수 있게끔 자동으로 동기화 
     }
+
+ 
 }
