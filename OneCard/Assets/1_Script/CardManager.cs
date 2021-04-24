@@ -108,7 +108,7 @@ public class CardManager : MonoBehaviourPun
         StartCoroutine(DrawAtStart());
 
         openedCard = closedCardDeck[0];
-        UpdateCardData();
+        UpdateCardData();        
     }
 
     private void Awake()
