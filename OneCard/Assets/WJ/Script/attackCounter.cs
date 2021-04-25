@@ -72,8 +72,11 @@ public class AttackCounter : MonoBehaviour
             CountImage[i].SetActive(false);
             currentRot += 60f;
             baseTransform.DOLocalRotateQuaternion(Quaternion.Euler(0, 0, currentRot), 0.05f);
+            revolverBase.position = new Vector3(revolverBase.position.x + 1, revolverBase.position.y, revolverBase.position.z);
+            Invoke("RevolverMoveForInvoke", 0.05f);
             yield return new WaitForSeconds(0.2f);
         }
+        MoveOrigin(revolverBase);
         currentAttackCount = count;
         baseTransform.rotation = Quaternion.Euler(0, 0, 0);
         currentRot = 0f;
@@ -82,8 +85,11 @@ public class AttackCounter : MonoBehaviour
             CountImage[i].SetActive(false);
             currentRot += 60f;
             baseTransform.DOLocalRotateQuaternion(Quaternion.Euler(0, 0, currentRot), 0.05f);
+            revolverBase.position = new Vector3(revolverBase.position.x + 1, revolverBase.position.y, revolverBase.position.z);
+            Invoke("RevolverMoveForInvoke", 0.05f);
             yield return new WaitForSeconds(0.2f);
         }
+        MoveOrigin(revolverBase);
         currentAttackCount = 0;
         
         baseTransform.rotation = Quaternion.Euler(0, 0, 0);
@@ -91,20 +97,24 @@ public class AttackCounter : MonoBehaviour
     }
     IEnumerator Attack(int count)
     {
-        VibrateRevolver(revolverBase);
+        //VibrateRevolver(revolverBase);
         for (int i = count; i < currentAttackCount; i++)
         {
             CountImage[i].SetActive(false);
             currentRot += 60f;
             baseTransform.DOLocalRotateQuaternion(Quaternion.Euler(0, 0, currentRot), 0.05f);
-            //revolverBase.DOMove(new Vector3(revolverBase.position.x - 1, revolverBase.position.y, revolverBase.position.z), 0.02f);//
-            //revolverBase.DOMove(new Vector3(revolverBase.position.x + 1, revolverBase.position.y, revolverBase.position.z), 0.02f);
+            revolverBase.position = new Vector3(revolverBase.position.x + 1, revolverBase.position.y, revolverBase.position.z);    
+            Invoke("RevolverMoveForInvoke", 0.05f);
             yield return new WaitForSeconds(0.2f);
         }
         MoveOrigin(revolverBase);
         currentAttackCount = count;
         baseTransform.rotation = Quaternion.Euler(0, 0, 0);    
         currentRot = 0f;
+    }
+    void RevolverMoveForInvoke()
+    {
+        revolverBase.position = new Vector3(revolverBase.position.x - 1, revolverBase.position.y, revolverBase.position.z);
     }
     public void BtnEvt_attackCount2UpForTest()
     {
@@ -134,4 +144,5 @@ public class AttackCounter : MonoBehaviour
     {
         transform.position = originPos;
     }
+
 }
