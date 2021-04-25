@@ -13,6 +13,7 @@ public class CardInteraction : MonoBehaviour
     [SerializeField] private Vector3 originPos; // 카드의 위치를 기억할 변수
     [SerializeField] private Quaternion originRot; // 카드의 회전값을 기억할 변수
     [SerializeField] private CardManager CM;
+    [SerializeField] private Card cardScript;
 
     //Card card;
 
@@ -24,7 +25,8 @@ public class CardInteraction : MonoBehaviour
     {
         //card = GetComponent<Card>();
         CM = CardManager.instance;
-        spriteRenderer = GetComponent<SpriteRenderer>();   
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        cardScript = GetComponent<Card>();
     }
 //#else*/
     private void Update()
@@ -150,7 +152,7 @@ public class CardInteraction : MonoBehaviour
         Debug.Log(originPos);
         Debug.Log(originRot);
     }
-    private void PlayCard(Collider2D collision) // 카드를 냄. 내 카드패에서 해당카드 제거, OpenedCard에 추가,이동/ 레이어 재설정 
+    private void PlayCard(Collider2D collision) // 카드를 냄. 내 카드패에서 해당카드 제거, OpenedCard에 추가,이동/ 레이어 재설정 // 카드매니저 쪽에서 가지고 있는게 맞는 듯? 
     {
         int index = spriteRenderer.sortingOrder - 1;
         CM.MyCards.RemoveAt(index);
@@ -158,6 +160,8 @@ public class CardInteraction : MonoBehaviour
         CM.OpenedCard = transform.gameObject;
         CM.UpdateCardData();
         transform.parent = collision.transform;
+        //DebugGUI.Inst.RPC_ALL_Debug(cardScript);
+        cardScript.RPC_All_Put();
         CM.MoveCardToOpenedCardBase(transform);
         spriteRenderer.sortingOrder = CM.OpenedCardSortingOrder++;
         spriteRenderer.sortingLayerName = "CardOnField";

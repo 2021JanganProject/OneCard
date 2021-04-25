@@ -34,7 +34,7 @@ public class DebugGUI : MonoBehaviourPun
 	public static void Log_Yellow(object message) => Inst.ShowLog(message, "yellow");
 	public static void Log_Red(object message) => Inst.ShowLog(message, "red");
 	[PunRPC]
-	public void Log_RPC_Green(object message) => Inst.ShowLog(message, "green");
+	private void Log_RPC_Green(object message) => Inst.ShowLog(message, "green");
 
 	void ShowLog(object message, string colorName)
 	{

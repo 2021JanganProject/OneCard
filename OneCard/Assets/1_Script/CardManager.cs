@@ -211,6 +211,7 @@ public class CardManager : MonoBehaviourPun
             
             Debug.Log("Get! ClosedCardDeck");
             var cardObj = closedCardDeck[0];
+           
             AddCardDataAndImage(cardObj, (int)cardColorNum, CardNum);
             OpenedCardDeck.Add(cardObj);
             currentCard = OpenedCardDeck[0].GetComponent<Card>().currentCardData;
