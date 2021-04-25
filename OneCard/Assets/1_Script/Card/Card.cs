@@ -139,6 +139,15 @@ public class Card : MonoBehaviourPun
         Debug.Log(cardManager.OpenedCardDeck.Count);
         TurnManager.instance.RPC_ALL_EndTurn();
 
+        if(cardManager.CurrentCard.cardType == eCardType.Normal)
+        {
+            EffectManager.Instance.PlayEffect(1, this.transform.position, this.transform.position);
+        }
+        else
+        {
+            EffectManager.Instance.PlayEffect(3, this.transform.position, this.transform.position);
+        }
+
         isEfficient = false;
     }
     public void RPC_ALL_Put()
