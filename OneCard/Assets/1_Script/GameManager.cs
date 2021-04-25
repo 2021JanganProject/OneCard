@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] public DebugGUI debugGUI;
 
 
-    private int maxPlayerCount = 4;
+    private int maxPlayerCount = 2;
     private int playerCount = 0;
     [SerializeField] private int randomPlayerIndex = -1;
     private int currentTurnPlayer;

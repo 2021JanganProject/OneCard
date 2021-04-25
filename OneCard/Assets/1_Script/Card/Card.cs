@@ -122,30 +122,39 @@ public class Card : MonoBehaviourPun
         cardImage.sprite = sprite;
         cardSpriteTemp = sprite;
     }
-
+    [PunRPC]
     protected virtual void Put()
     {
         // 카드 매니저에 openedCardDeck 리스트에 추가
-        cardManager.OpenedCardDeck.Add(this.gameObject);
-        transform.position = new Vector3(0, 3, 0);
-        cardManager.OpenedCard = this.gameObject;
-        cardManager.UpdateCardData();
+        AddOpendCardDeck();
 
         // ... 추후 CardManager.instance.RPC_ALL_Put(); 으로 변경
-        //
-
+        // 
         //gameManager.TurnEnd();
         isEfficient = false;
-        Debug.Log(cardManager.OpenedCardDeck.Count);
+        
+        Debug.Log($"Card Put! Add Card_{gameObject.name}");
         TurnManager.instance.RPC_ALL_EndTurn();
-
-        isEfficient = false;
     }
-    public void RPC_ALL_Put()
+    public void RPC_All_Put()
     {
-        photonView.RPC(nameof(AddOpendCardDeck), RpcTarget.All);
+        Put();
+        //photonView.RPC(nameof(PutCard_), RpcTarget.All);
     }
     [PunRPC]
+    void PutCard_()
+    {
+        // 카드 매니저에 openedCardDeck 리스트에 추가
+        //AddOpendCardDeck();
+
+        // ... 추후 CardManager.instance.RPC_ALL_Put(); 으로 변경
+        // 
+        //gameManager.TurnEnd();
+        isEfficient = false;
+
+        Debug.Log($"Add Card_{gameObject.name}");
+        TurnManager.instance.RPC_ALL_EndTurn();
+    }
     private void AddOpendCardDeck()
     {
         // 카드 매니저에 openedCardDeck 리스트에 추가
