@@ -61,7 +61,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         // 빈방이 없을 때
         Debug.Log("빈방이 없습니다. 새로운 방을 만듭니다");
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 4 },null);
+        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 },null);
     }
 
     public override void OnJoinedRoom()// JoinRandomRoom 참가 완료 

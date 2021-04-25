@@ -77,6 +77,8 @@ public class UITimer : MonoBehaviour
         currentTime = maxTime;
         timeText.gameObject.SetActive(true);
         timeOver.SetActive(false);
+        Vector3 pos = new Vector3(transform.position.x, transform.position.y - 10.0f, transform.position.z - 30.0f);
+        EffectManager.Instance.PlayEffect(4, pos, transform.position);
 
         TurnChange();
     }
