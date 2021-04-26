@@ -19,7 +19,10 @@ public class EffectManager : MonoBehaviour
     }
 
     public ParticleSystem[] Effects;
-
+    private void Start()
+    {
+        GameObject.DontDestroyOnLoad(this);
+    }
     public void PlayEffect(int EffectNum, Vector3 pos, Vector3 normal, Transform parent = null)
     {
         var targetPrefab = Effects[EffectNum];
