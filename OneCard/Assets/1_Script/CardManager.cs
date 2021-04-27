@@ -64,8 +64,9 @@ public class CardManager : MonoBehaviourPun
     private int maxCardNum = 13;
     private int maxCardColorNum = 5;
     private GameObject openedCard;
-    private GameObject topClosedCard; // 뒤집혀져있는 카드중 제일 위에 있는 카드
     private UIManager uiManager;
+
+    private Card firstCardTemp;
 
 
     private string myCardTag = "MyCard"; // 내가 드로우한 카드의 태그를 바꿔주기 위한 변수
@@ -108,10 +109,11 @@ public class CardManager : MonoBehaviourPun
         maxCardLineForTest = 6; //원준
         maxCardNum = 13; // 중간에 0으로 초기화 되는 버그가 있어서 강제로 다시 설정함.
         maxCardColorNum = 5;
+        
         //SettingCard();
-       
+
         StartCoroutine(DrawAtStart());
-        StartCoroutine(AwaitInitlocalCards());
+        StartCoroutine(WaitSetlocalCards());
 
         //openedCard = closedCardDeck[0]; // @0415 버그로 임시 주석처리
         //UpdateCardData(); // @0415 버그로 임시 주석처리
@@ -148,10 +150,10 @@ public class CardManager : MonoBehaviourPun
         }
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            localCards = GameManager.instance.LocalPlayerObj.GetComponent<Player>().MyCards; //@NeedRewok
+            //RPC_ALL_Put();
         }
     }
-    IEnumerator AwaitInitlocalCards()
+    IEnumerator WaitSetlocalCards()
     {
         while(true)
         {
@@ -165,6 +167,72 @@ public class CardManager : MonoBehaviourPun
             yield return null;
         }
     }
+    public void RPC_M_FirstOpenCard()
+    {
+        if (PhotonNetwork.IsMasterClient && photonView.IsMine)
+        {
+            photonView.RPC(nameof(RequestSetFirstOpenCard), RpcTarget.MasterClient);
+        }
+            
+        //DebugGUI.Log_Red($"Master FirstOpenCard{cardScript.currentCardData.cardColor}_{cardScript.currentCardData.number}");
+        //StartCoroutine(CoAsyncCardData(cardColorNum, CardNum));
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    [PunRPC]
+    private void RequestSetFirstOpenCard()
+    {
+        var cardObj = closedCardDeck[0];
+        Card cardScript = cardObj.GetComponent<Card>();
+        photonView.RPC(nameof(ReciveFisrtOpenCardInfo), RpcTarget.All, (int)cardScript.currentCardData.cardColor, cardScript.currentCardData.number);
+    }
+   
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="cardColorNum"></param>
+    /// <param name="CardNum"></param>
+    [PunRPC]
+    private void ReciveFisrtOpenCardInfo(int cardColorNum, int CardNum)
+    {
+         StartCoroutine(CoAsyncCardData(cardColorNum, CardNum));
+    }
+    IEnumerator CoAsyncCardData(int cardColorNum, int CardNum)
+    {
+        while (true)
+        {
+            if (ClosedCardDeck.Count <= 0)
+            {
+                
+                yield return null;
+                continue;
+            }
+            
+            Debug.Log("Get! ClosedCardDeck");
+            var cardObj = closedCardDeck[0];
+           
+            AddCardDataAndImage(cardObj, (int)cardColorNum, CardNum);
+            OpenedCardDeck.Add(cardObj);
+            MoveFirstCardToOpendCard(cardObj);
+            
+            cardObj.transform.parent = openedCardBase.transform;
+            currentCard = OpenedCardDeck[0].GetComponent<Card>().currentCardData;
+            closedCardDeck.RemoveAt(0);
+            
+            yield return null;
+            break;
+        }
+    }
+    void MoveFirstCardToOpendCard(GameObject cardObj)
+    {
+        cardObj.transform.DOMove(openedCardBase.transform.position, 1f);
+        cardObj.transform.DORotateQuaternion(Quaternion.Euler(0, 0, 0), 1f);
+        cardObj.transform.DOScale(openedCardBase.transform.localScale, 1f);
+        //cardObj.GetComponent<SpriteRenderer>().sortingOrder = OpenedCardSortingOrder++;
+    }
+
+   
 
     public void AddCloseCards()
     {
@@ -181,11 +249,6 @@ public class CardManager : MonoBehaviourPun
     public void RPC_ReQuest_DrawCard(int requestActorNum)
     {
         photonView.RPC(nameof(DrawCard), RpcTarget.MasterClient, requestActorNum);
-        
-        if (TurnManager.instance.IsMyturn())
-        {
-           
-        }
     }
     // 마스터에서는 카드 값 동기화만 해주고
     // 나누거나 그런것들은 알아서 처리하게끔 하자
@@ -196,14 +259,12 @@ public class CardManager : MonoBehaviourPun
         //@원준: 마스터에서 뽑은 카드 => cardObj
         Card cardScript = cardObj.GetComponent<Card>();
         closedCardDeck.RemoveAt(0); // 마스터에서 지운다.
-
         photonView.RPC(nameof(SendToPlayer_DrawCardInfo), RpcTarget.AllViaServer, requestActorNum, cardScript.currentCardData.cardColor, cardScript.currentCardData.number);
     }
 
     [PunRPC]
     private void SendToPlayer_DrawCardInfo(int actorNum, int cardColorNum, int CardNum)
     {
-        
         // 요청한 플레이어에게만 카드를 전달
         GameObject drawCardObj = closedCardDeck[0];
 
@@ -215,7 +276,7 @@ public class CardManager : MonoBehaviourPun
             if (actorNum == targetActorNumber) // 요청 한 playerActorNum와 내가 가지고 있는 Player 목록과 일치했을 때만
             {
                 // 카드 정보를 통해 다시 컴포넌트 생성
-                InitCard(drawCardObj, cardColorNum, CardNum);
+                AddCardDataAndImage(drawCardObj, cardColorNum, CardNum);
                 closedCardDeck.RemoveAt(0);
             }
         }
@@ -223,7 +284,7 @@ public class CardManager : MonoBehaviourPun
     }
     private void HandOutDrawCard(GameObject cardObj, int requestActorNum)
     {
-        DebugGUI.Warn($"1_requestActorNum_{requestActorNum}");
+        DebugGUI.Log_Yellow($"1_requestActorNum_{requestActorNum}");
         if (TurnManager.instance.IsMyturn() == true)
         {
             //cardScript.UpdateCardState(eCardState.Opend);
@@ -236,7 +297,7 @@ public class CardManager : MonoBehaviourPun
             AlignCard(requestActorNum);
         }
         else if (TurnManager.instance.IsMyturn() == false)
-        {
+        { 
             Player currentTurnPlayer = TurnManager.instance.CurrentTurnPlayer;
             GameObject [] remotePlayers = GameManager.instance.RemotePlayerObjArr;
             int remotePlayersIndex = -1;
@@ -245,18 +306,15 @@ public class CardManager : MonoBehaviourPun
                 if(requestActorNum == remotePlayers[i].GetComponent<Player>().PlayerActorIndex)
                 {
                     remotePlayersIndex = i;
-                    DebugGUI.Warn($"2_remoteActorIndex_{remotePlayersIndex}");
                 }
             }
-            DebugGUI.Warn($"3_remoteActorIndex_{remotePlayersIndex}");
             //cardScript.UpdateCardState(eCardState.Closed);
             currentTurnPlayer.MyCards.Add(cardObj);
-            cardObj.transform.parent = remoteCardPosArr[remotePlayersIndex].CardStorage; // @E
+            cardObj.transform.parent = remoteCardPosArr[remotePlayersIndex].CardStorage;
             SetCardSortingOrderAndSortingLayerName(TurnManager.instance.CurrentTurnPlayer.MyCards, cardHandSortingOrderForTest);
             Debug.Log("내턴 아님");
             AlignCard(remotePlayersIndex);
         }
-       
     }
     public IEnumerator DrawAtStart()//처음 시작할 때 각 플레이어들이 5장씩 카드를 뽑는 함수(코루틴)
     {
@@ -272,8 +330,9 @@ public class CardManager : MonoBehaviourPun
             //if (turnIdxForTest > 3)
             //    turnIdxForTest = 0;
         }
-
     }
+    
+   
    
     public void SettingCard()
     {
@@ -288,10 +347,9 @@ public class CardManager : MonoBehaviourPun
             {
                 for (int j = 0; j < maxCardNum; j++)
                 {
-                    
                     //GameObject cardTemp = Instantiate(cardPrefab, closedCardBase.transform); // OfflineCode
                     GameObject cardTemp = PhotonNetwork.Instantiate(cardPrefab.name, closedCardBase.transform.position , closedCardBase.transform.rotation);
-                    InitCard(cardTemp, i, j);
+                    AddCardDataAndImage(cardTemp, i, j);
                     // 리스트에 추가
                     closedCardDeck.Add(cardTemp);
                 }
@@ -302,7 +360,7 @@ public class CardManager : MonoBehaviourPun
                 {
                     //GameObject cardTemp = Instantiate(cardPrefab, closedCardBase.transform); // OfflineCode
                     GameObject cardTemp = PhotonNetwork.Instantiate(cardPrefab.name, closedCardBase.transform.position, closedCardBase.transform.rotation);
-                    InitCard(cardTemp, i, 13 + j);
+                    AddCardDataAndImage(cardTemp, i, 13 + j);
                     // 리스트에 추가
                     closedCardDeck.Add(cardTemp);
                 }
@@ -311,7 +369,7 @@ public class CardManager : MonoBehaviourPun
         ShuffleCards(closedCardDeck); //함수 하나당 하나의 작업 권장 - 박세찬 
     }
 
-    private void InitCard(GameObject cardTemp, int cardColorNum, int CardNum)
+    private void AddCardDataAndImage(GameObject cardTemp, int cardColorNum, int CardNum)
     {
         Card cardComponent = null;
         switch (CardNum)
@@ -503,7 +561,7 @@ public class CardManager : MonoBehaviourPun
         targetCards = localCards;
 
         cardPosAndRots = GetAlignCardsForCardPosRot(myHandLeft, myHandRight, targetCards.Count);
-        SetAlignCardsToCardPosRots(targetCards, cardPosAndRots);
+        SetAlignCardsToCardPosRots(targetCards, cardPosAndRots, true);
         for (int i = 0; i < localCards.Count; i++)
         {
             localCards[i].GetComponent<CardInteraction>().Invoke("SetFalseIsEnlargeCardHand", 0.3f);
@@ -577,6 +635,9 @@ public class CardManager : MonoBehaviourPun
         cardTransform.DOMove(openedCardBase.transform.position, 0.3f);
         cardTransform.DORotateQuaternion(openedCardBase.transform.rotation, 0.3f);
         cardTransform.DOScale(openedCardBase.transform.localScale, 0.3f);
+        cardTransform.GetComponent<SpriteRenderer>().sortingLayerName = "CardOnField";
+        cardTransform.GetComponent<SpriteRenderer>().sortingOrder = openedCardSortingOrder++;
+
     }
     // 내 카드패가 확대됐을 때 줄에 따른 카드패 정렬 (첫째줄, 둘째줄 따로 정렬)
     private void AlignMyCardsForLines(int maxCardLine, List<GameObject> myCards, List<PosRot> PRs)
@@ -587,7 +648,7 @@ public class CardManager : MonoBehaviourPun
             var targetCard = myCards[i].GetComponent<Card>();
             var targetCardTransform = myCards[i].GetComponent<Transform>();
             targetCard.CardPosRot = PRs[j];
-            MoveTransformForCard(targetCardTransform, targetCard.CardPosRot);
+            MoveTransformForCard(targetCardTransform, targetCard.CardPosRot, true);
 
             j++;
         }
@@ -610,6 +671,7 @@ public class CardManager : MonoBehaviourPun
             var sprite = cards[i].GetComponent<SpriteRenderer>();
             sprite.sortingLayerName = "CardOnHand";
             sprite.sortingOrder = cardHandOrderForTest++;
+            
         }
     }
     //현재 턴인 사람(드로우를 한 사람)의 카드패를 새롭게 정렬해줌
@@ -617,55 +679,67 @@ public class CardManager : MonoBehaviourPun
     {
         List<PosRot> cardPosRots = new List<PosRot>();
         List<GameObject> targetCards = new List<GameObject>(); // 자신의 카드패 
-        DebugGUI.Error($"AlignCard_1_turnIdx_{turnIdx}");
+        DebugGUI.Log_Red($"AlignCard_1_turnIdx_{turnIdx}");
         if (TurnManager.instance.IsMyturn() == true) 
         {
             targetCards = localCards;
             cardPosRots = GetAlignCardsForCardPosRot(myHandLeft, myHandRight, targetCards.Count);
-            SetAlignCardsToCardPosRots(targetCards, cardPosRots);
+            SetAlignCardsToCardPosRots(targetCards, cardPosRots, true);
         }
         else if (TurnManager.instance.IsMyturn() == false)
         {
             var remotePlayerObj = GameManager.instance.RemotePlayerObjArr[turnIdx];
-            DebugGUI.Error($"remotePlayerObj_{remotePlayerObj.transform.name}");
+            DebugGUI.Log_Red($"remotePlayerObj_{remotePlayerObj.transform.name}");
             var remotePlayerScript = remotePlayerObj.GetComponent<Player>();
             
             targetCards = remotePlayerScript.MyCards;
             
             cardPosRots = GetAlignCardsForCardPosRot(remotePlayerScript.CardHandPos.HandLeft, remotePlayerScript.CardHandPos.HandRight, targetCards.Count);
-            SetAlignCardsToCardPosRots(targetCards, cardPosRots);
-
-            //foreach (GameObject children in playerScripts)
-            //{
-            //    var remotePlayerScript = children.GetComponent<Player>();
-            //    if (remotePlayerScript == turnIdx)
-            //    {
-            //        targetCards = remotePlayerScript.MyCards;
-            //        DebugGUI.Info(remotePlayerScript.CardHandPos.HandLeft);
-            //        cardPosRots = GetAlignCardsForCardPosRot(remotePlayerScript.CardHandPos.HandLeft, remotePlayerScript.CardHandPos.HandRight, targetCards.Count);
-            //        SetAlignCardsToCardPosRots(targetCards, cardPosRots);
-            //    }
-            //}
-
+            SetAlignCardsToCardPosRots(targetCards, cardPosRots, false);
         }
     }
+    public void PlayOthersCardToOpendDeck(Player player)
+    {
+        var targetCard = player.MyCards[0];
+        player.MyCards.RemoveAt(0);
+        openedCardDeck.Add(targetCard);
+        targetCard.transform.parent = openedCardBase.transform;
+        MoveCardToOpenedCardBase(targetCard.transform);
+        GameObject[] remotePlayerArr = GameManager.instance.RemotePlayerObjArr;
+        int index = -1;
+        for (int i = 0; i < remotePlayerArr.Length; i++)
+        {
+            if(player.PlayerActorIndex == remotePlayerArr[i].GetComponent<Player>().PlayerActorIndex)
+            {
+                index = i;
+            }
+        }
+        AlignCard(index);
+        //AlignCard(player.PlayerActorIndex);
+        Debug.Log(player.PlayerActorIndex);
+
+    }
     //각 플레이어들의 카드패를 각각의 PRs 위치로 정렬시켜줌
-    private void SetAlignCardsToCardPosRots(List<GameObject> myCards, List<PosRot> PRs)
+    private void SetAlignCardsToCardPosRots(List<GameObject> myCards, List<PosRot> PRs, bool isMine)
     {
         for (int i = 0; i < myCards.Count; i++)
         {
             var targetCard = myCards[i].GetComponent<Card>();
             var targetCardTransform = targetCard.GetComponent<Transform>();
             targetCard.CardPosRot = PRs[i];
-            MoveTransformForCard(targetCardTransform, targetCard.CardPosRot);
+            MoveTransformForCard(targetCardTransform, targetCard.CardPosRot, isMine);
         }
     }
     //카드 드로우, 카드패 확대, 카드패 축소 시에 카드들의 위치를 DOTween으로 이동시켜줌
-    private void MoveTransformForCard(Transform card, PosRot cardPR, float duration = 0.3f)
+    private void MoveTransformForCard(Transform card, PosRot cardPR, bool isMine, float duration = 0.3f)
     {
         Debug.Log("카드 이동 호출");
         card.DOMove(cardPR.position, duration);
-        card.DORotateQuaternion(cardPR.rotation, duration);
+        //if(card.GetComponent)
+        if(isMine == true)
+        {
+            card.DORotateQuaternion(cardPR.rotation, duration);
+        }     
     }
 
     //플레이어가 보유한 카드갯수에 따라서 각 카드들의 위치를 카드패의 왼쪽,오른쪽 기준에 맞춰 보간하여 반환
@@ -725,11 +799,12 @@ public class CardManager : MonoBehaviourPun
         }
         return resultsCardPR;
     }
-
     #endregion
 
     private void ResetCard()
     {
 
     }
+
+
 }

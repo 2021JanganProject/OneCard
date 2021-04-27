@@ -41,7 +41,7 @@ public class GameStartManager : MonoBehaviour
     IEnumerator WaitForSecTest()
     {
         yield return new WaitForSeconds(waitTime);
-        SceneManager.LoadScene("03_Main");
+        SceneManager.LoadScene("03_Main_v1");
         
     }
     IEnumerator WaitForSec()

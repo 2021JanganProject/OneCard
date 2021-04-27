@@ -73,8 +73,21 @@ public class Player : MonoBehaviourPunCallbacks
                 {
                     CardManager.instance.RPC_ReQuest_DrawCard(playerActorNumberIndex);
                 }
-                
             }
+        }
+        if (Input.GetKeyDown(KeyCode.P))//다른사람 카드 이동 테스트 코드
+        {
+            if (photonView.IsMine)
+            {
+                if (!TurnManager.instance.IsMyturn())
+                {
+                    if (TurnManager.instance.CurrentTurnPlayer.MyCards.Count > 0)
+                    {
+                        CardManager.instance.PlayOthersCardToOpendDeck(TurnManager.instance.CurrentTurnPlayer);
+                    }
+                }
+            }
+                                               
         }
     }
     [PunRPC]

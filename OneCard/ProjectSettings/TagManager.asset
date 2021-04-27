@@ -52,3 +52,6 @@ TagManager:
   - name: CardOnHand
     uniqueID: 414935667
     locked: 0
+  - name: CardBack
+    uniqueID: 2149857793
+    locked: 0

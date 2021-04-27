@@ -46,7 +46,9 @@ public class EnlargeCardHand : MonoBehaviour
 
             if(hit.collider != null && hit.collider.gameObject.tag == "ClosedCardDeck")
             {
-                //@DrawLogic...
+                //@DrawLogic...Now Space
+                Debug.Log("Click ClosedCardDeck");
+                CardManager.instance.RPC_ReQuest_DrawCard(GameManager.instance.LocalPlayerActorIndex);
             }
         }
 //#else

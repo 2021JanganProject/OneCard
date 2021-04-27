@@ -33,7 +33,7 @@ public struct CardData
     [SerializeField] public eCardState cardState;
     [SerializeField] public int number;
 }
-public class Card : MonoBehaviour
+public class Card : MonoBehaviourPun
 {
     public PosRot CardPosRot { get => cardPosRot; set => cardPosRot = value; }
     private PosRot cardPosRot;//원준
@@ -41,6 +41,8 @@ public class Card : MonoBehaviour
     /// 
     /// </summary>
     public bool IsMine { get => isMine; set => isMine = value; }
+
+    //public GameObject CardBack { get => cardBack; }
 
     private PosRot cardPR;//원준
 
@@ -50,6 +52,9 @@ public class Card : MonoBehaviour
     [SerializeField] private Sprite cardSpriteTemp;
     [SerializeField] private Sprite closedSprite;
 
+
+    [SerializeField] private GameObject cardBack;
+    [SerializeField] private SpriteRenderer cardBackRenderer;
     private CardManager cardManager;
     private GameManager gameManager;
     private SpriteRenderer renderer;
@@ -62,6 +67,8 @@ public class Card : MonoBehaviour
 
     void Start()
     {
+        cardBack = transform.Find("Card_BackSprite").gameObject;
+        cardBackRenderer = cardBack.GetComponent<SpriteRenderer>();
         cardManager = FindObjectOfType<CardManager>();
         gameManager = FindObjectOfType<GameManager>();
         renderer = GetComponent<SpriteRenderer>();
@@ -82,6 +89,8 @@ public class Card : MonoBehaviour
         {
             Put();
         }
+        cardBackRenderer.sortingLayerName = this.GetComponent<SpriteRenderer>().sortingLayerName;
+        cardBackRenderer.sortingOrder = this.GetComponent<SpriteRenderer>().sortingOrder;
     }
 
     public void UpdateCardState(eCardState cardState)
@@ -95,10 +104,11 @@ public class Card : MonoBehaviour
         switch(currentCardData.cardState)
         {
             case eCardState.Closed:
-                cardImage.sprite = closedSprite;
+                //cardImage.sprite = closedSprite;
                 break;
             case eCardState.Opend:
-                cardImage.sprite = cardSpriteTemp;
+                //cardImage.sprite = cardSpriteTemp;
+                transform.rotation = Quaternion.Euler(0, 0, 0);
                 break;
             default:
                 Debug.Log("CardOpendClosedImageUpdate Error");
@@ -122,17 +132,46 @@ public class Card : MonoBehaviour
         cardImage.sprite = sprite;
         cardSpriteTemp = sprite;
     }
-
+    [PunRPC]
     protected virtual void Put()
     {
         // 카드 매니저에 openedCardDeck 리스트에 추가
-        cardManager.OpenedCardDeck.Add(this.gameObject);
-        transform.position = new Vector3(0, 3, 0);
-        cardManager.OpenedCard = this.gameObject;
-        cardManager.UpdateCardData();
+        AddOpendCardDeck();
+
+        // ... 추후 CardManager.instance.RPC_ALL_Put(); 으로 변경
+        // 
         //gameManager.TurnEnd();
         isEfficient = false;
-        Debug.Log(cardManager.OpenedCardDeck.Count);
+        
+        Debug.Log($"Card Put! Add Card_{gameObject.name}");
+        TurnManager.instance.RPC_ALL_EndTurn();
+    }
+    public void RPC_All_Put()
+    {
+        Put();
+        //photonView.RPC(nameof(PutCard_), RpcTarget.All);
+    }
+    [PunRPC]
+    void PutCard_()
+    {
+        // 카드 매니저에 openedCardDeck 리스트에 추가
+        //AddOpendCardDeck();
+
+        // ... 추후 CardManager.instance.RPC_ALL_Put(); 으로 변경
+        // 
+        //gameManager.TurnEnd();
+        isEfficient = false;
+
+        Debug.Log($"Add Card_{gameObject.name}");
+        TurnManager.instance.RPC_ALL_EndTurn();
+    }
+    private void AddOpendCardDeck()
+    {
+        // 카드 매니저에 openedCardDeck 리스트에 추가
+        cardManager.OpenedCardDeck.Add(this.gameObject);
+        //cardManager.transform.position = new Vector3(0, 3, 0);
+        cardManager.OpenedCard = this.gameObject;
+        cardManager.UpdateCardData();
     }
     /// <summary>
     /// 카드 이미지 셋팅

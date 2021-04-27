@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class DebugGUI : MonoBehaviour
+public class DebugGUI : MonoBehaviourPun
 {
 	public static DebugGUI Inst { get; private set; }
 	void Awake() => Inst = this;
@@ -29,10 +30,11 @@ public class DebugGUI : MonoBehaviour
 		GUILayout.EndScrollView();
 		GUILayout.EndVertical();
 	}
-
-	public static void Info(object message) => Inst.ShowLog(message, "white");
-	public static void Warn(object message) => Inst.ShowLog(message, "yellow");
-	public static void Error(object message) => Inst.ShowLog(message, "red");
+	public static void Log_White(object message) => Inst.ShowLog(message, "white");
+	public static void Log_Yellow(object message) => Inst.ShowLog(message, "yellow");
+	public static void Log_Red(object message) => Inst.ShowLog(message, "red");
+	[PunRPC]
+	private void Log_RPC_Green(object message) => Inst.ShowLog(message, "green");
 
 	void ShowLog(object message, string colorName)
 	{
@@ -41,6 +43,11 @@ public class DebugGUI : MonoBehaviour
 
 		Inst.innerText += curMessage;
 		Inst.scrollPos.y = Mathf.Infinity;
+	}
+	
+	public void RPC_ALL_Debug(string message)
+	{
+		photonView.RPC(nameof(Log_RPC_Green) , RpcTarget.All , message);
 	}
 
 	void Update()

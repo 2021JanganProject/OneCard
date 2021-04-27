@@ -2101,7 +2101,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &628264211
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2167,8 +2167,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1110927355}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: BtnEvt_attackCount3Up
+        m_TargetAssemblyTypeName: AttackCounter, Assembly-CSharp
+        m_MethodName: BtnEvt_attackCount3UpForTest
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2234,7 +2234,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &639137871
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2299,9 +2299,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1110927355}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: BtnEvt_attackCount2Up
+      - m_Target: {fileID: 894393577}
+        m_TargetAssemblyTypeName: AttackCounter, Assembly-CSharp
+        m_MethodName: BtnEvt_attackCount2UpForTest
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2572,6 +2572,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 13700409}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &894393577 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6053294094783618993, guid: 022d847a2529452449c05f2a8a1e5726,
+    type: 3}
+  m_PrefabInstance: {fileID: 7247975192098723324}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cb21e9e08120124fa41b995c5a06d8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &935374494
 GameObject:
   m_ObjectHideFlags: 0
@@ -5376,10 +5388,11 @@ MonoBehaviour:
   playerArr: []
   localPlayerObj: {fileID: 0}
   remotePlayerObjArr: []
-  playerForTest: {fileID: 1039096070116928540, guid: bb6240522d622f34b8d748d22258a583,
-    type: 3}
-  pvForTest: {fileID: 0}
-  baseForTest: {fileID: 2089896646}
+  currentTurnPlayerTextForDebug: {fileID: 0}
+  currentTurnIndexTextForDebug: {fileID: 0}
+  playersActorNumDebug: []
+  debugGUI: {fileID: 0}
+  randomPlayerIndex: -1
 --- !u!114 &1869094343
 MonoBehaviour:
   m_ObjectHideFlags: 0

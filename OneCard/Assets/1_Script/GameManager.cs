@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+using System;
 // 역할 : 전체적인 게임의 설정과 관리를 담당
 public enum eGameFlowState
 {
@@ -29,7 +30,6 @@ public class GameManager : MonoBehaviourPunCallbacks
             return actorNum;
         }
     }
-
     public GameObject[] PlayerObjArr { get => playerObjArr; set => playerObjArr = value; } // 체크 필요 
     public GameObject PlayerProfileBase { get => playerProfileBase;}
     /// <summary>
@@ -60,14 +60,14 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] Text currentTurnPlayerTextForDebug, currentTurnIndexTextForDebug;
     [SerializeField] public Text [] playersActorNumDebug;
 
-
+    [SerializeField] public DebugGUI debugGUI;
 
 
     private int maxPlayerCount = 4;
     private int playerCount = 0;
     [SerializeField] private int randomPlayerIndex = -1;
     private int currentTurnPlayer;
-
+ 
     private bool isPlayerAllInTheRoom = false;
   
     
@@ -117,8 +117,6 @@ public class GameManager : MonoBehaviourPunCallbacks
                 //GameState(eGameFlowState.InitPlayer_1);
                 StartCoroutine(CoCheckingRoomFull());
                 break;
-            case eGameFlowState.InitPlayer_1:
-                break;
             case eGameFlowState.InitCard_2:
                 break;
             case eGameFlowState.InitGame_3:
@@ -132,7 +130,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         if(Input.GetKeyDown(KeyCode.Q))
         {
-            DebugGUI.Info($"Remote randomPlayerIndex : {randomPlayerIndex}");
+            DebugGUI.Log_White($"Remote randomPlayerIndex : {randomPlayerIndex}");
         }
     }
     private void InitOfflineDataForDebug()
@@ -141,8 +139,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         SetPlayerArr();
         //SetOrderList();
     }
-    
-    
+   
+
     IEnumerator CoCheckingRoomFull()
     {
         while(true)
@@ -165,9 +163,9 @@ public class GameManager : MonoBehaviourPunCallbacks
             SetPlayersPosition();
             
             RPC_M_SetRandomPlayerIndex();
-            DebugGUI.Info($"Remote randomPlayerIndex : {randomPlayerIndex}");
+            DebugGUI.Log_White($"Remote randomPlayerIndex : {randomPlayerIndex}");
             StartCoroutine(TurnManager.instance.CoSetRandomOrderPlayersArrToList());
-
+            CardManager.instance.RPC_M_FirstOpenCard();
             //TurnManager.instance.CoSetRandomOrderPlayersArrToList(randomPlayerIndex);
             yield return null;
             break;
@@ -209,8 +207,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void SetRandomPlayerIndex() // 마스터만 하고 나머지 값은 참조 해야함
     {
-        int randomPlayerIndex = Random.Range(0, playerArr.Length);
-        DebugGUI.Info($"Master RandomPlayerIndex : {randomPlayerIndex}");
+        int randomPlayerIndex = UnityEngine.Random.Range(0, playerArr.Length);
+        DebugGUI.Log_White($"Master RandomPlayerIndex : {randomPlayerIndex}");
         photonView.RPC(nameof(SendRandomPlayerIndex), RpcTarget.AllViaServer , randomPlayerIndex);
     }
     [PunRPC]
@@ -290,5 +288,4 @@ public class GameManager : MonoBehaviourPunCallbacks
         currentTurnIndexTextForDebug.text = $"현재 턴 {TurnManager.instance.CurrentTurnIdx}";
         currentTurnPlayerTextForDebug.text = $"현재 플레이어 ID {localPlayerObj.GetComponent<Player>().PlayerActorIndex}";
     }
-
 }
