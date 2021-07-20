@@ -22,6 +22,21 @@ public class AiManager : MonoBehaviour
         card = FindObjectOfType<Card>();
         cardManager = FindObjectOfType<CardManager>();
         attackCounter = FindObjectOfType<AttackCounter>();
+
+        // 랜덤으로 AI속성 결정
+        int rnd = Random.Range(0,3);
+        if(rnd == 0)
+        {
+            eAiState = eAiState.Normal;
+        }
+        else if(rnd == 1)
+        {
+            eAiState = eAiState.Attacker;
+        }
+        else if(rnd == 2)
+        {
+            eAiState = eAiState.Defencer;
+        }
     }
 
     #region == BtnEvts ==  
@@ -78,7 +93,6 @@ public class AiManager : MonoBehaviour
                     if (attackCounter.CurrentAttackCount == 0)
                     {
                         // 공격받지 않은경우
-
                         if (cardDataDeck[i].currentCardData.number == 11)
                         {
                             cardNum = i;

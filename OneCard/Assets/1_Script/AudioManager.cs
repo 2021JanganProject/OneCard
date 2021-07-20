@@ -5,6 +5,10 @@ using UnityEngine;
 public class AudioManager : MonoBehaviour
 {
     [SerializeField] AudioClip[] audioclip;
+    private void Start()
+    {
+        GameObject.DontDestroyOnLoad(this);
+    }
     #region == BtnEvts ==  
     public void BtnEvt_Audio()
     {
@@ -22,7 +26,6 @@ public class AudioManager : MonoBehaviour
 /*        SoundManager.Instance.PlayerAudioClip(1, false);
         SoundManager.Instance.PlayerAudioClip(2, false);*/
         SoundManager.Instance.PlayerAudioClip(3, true);
-
     }
     #endregion
 

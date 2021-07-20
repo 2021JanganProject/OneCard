@@ -67,11 +67,10 @@ public class AttackCounter : MonoBehaviourPun
         if(currentAttackCount > 6)
         {
             StartCoroutine(AttackStrong(6));
-            
         }
         else
         {
-            StartCoroutine(Attack(0)); 
+            StartCoroutine(Attack(0));
         }
     }
     IEnumerator AttackStrong(int count)
@@ -81,11 +80,11 @@ public class AttackCounter : MonoBehaviourPun
             CountImage[i].SetActive(false);
             currentRot += 60f;
             baseTransform.DOLocalRotateQuaternion(Quaternion.Euler(0, 0, currentRot), 0.05f);
-            revolverBase.position = new Vector3(revolverBase.position.x + 1, revolverBase.position.y, revolverBase.position.z);
-            Invoke("RevolverMoveForInvoke", 0.05f);
+            Vector3 ImagePos = new Vector3(CountImage[i].transform.position.x, CountImage[i].transform.position.y, CountImage[i].transform.position.z - 30.0f);
+            EffectManager.Instance.PlayEffect(2, ImagePos, CountImage[i].transform.position);
+            EffectManager.Instance.PlayEffect(0, this.transform.position, this.transform.position);
             yield return new WaitForSeconds(0.2f);
         }
-        MoveOrigin(revolverBase);
         currentAttackCount = count;
         baseTransform.rotation = Quaternion.Euler(0, 0, 0);
         currentRot = 0f;
@@ -94,35 +93,34 @@ public class AttackCounter : MonoBehaviourPun
             CountImage[i].SetActive(false);
             currentRot += 60f;
             baseTransform.DOLocalRotateQuaternion(Quaternion.Euler(0, 0, currentRot), 0.05f);
-            revolverBase.position = new Vector3(revolverBase.position.x + 1, revolverBase.position.y, revolverBase.position.z);
-            Invoke("RevolverMoveForInvoke", 0.05f);
+            Vector3 ImagePos = new Vector3(CountImage[i].transform.position.x, CountImage[i].transform.position.y, CountImage[i].transform.position.z - 30.0f);
+            EffectManager.Instance.PlayEffect(2, ImagePos, CountImage[i].transform.position);
+            EffectManager.Instance.PlayEffect(0, this.transform.position, this.transform.position);
             yield return new WaitForSeconds(0.2f);
         }
-        MoveOrigin(revolverBase);
         currentAttackCount = 0;
         baseTransform.rotation = Quaternion.Euler(0, 0, 0);
         currentRot = 0f;
     }
     IEnumerator Attack(int count)
     {
-        //VibrateRevolver(revolverBase);
+        VibrateRevolver(revolverBase);
         for (int i = count; i < currentAttackCount; i++)
         {
             CountImage[i].SetActive(false);
             currentRot += 60f;
             baseTransform.DOLocalRotateQuaternion(Quaternion.Euler(0, 0, currentRot), 0.05f);
-            revolverBase.position = new Vector3(revolverBase.position.x + 1, revolverBase.position.y, revolverBase.position.z);    
-            Invoke("RevolverMoveForInvoke", 0.05f);
+            Vector3 ImagePos = new Vector3(CountImage[i].transform.position.x, CountImage[i].transform.position.y, CountImage[i].transform.position.z - 30.0f);
+            EffectManager.Instance.PlayEffect(2, ImagePos, CountImage[i].transform.position);
+            EffectManager.Instance.PlayEffect(0, this.transform.position, this.transform.position);
+            //revolverBase.DOMove(new Vector3(revolverBase.position.x - 1, revolverBase.position.y, revolverBase.position.z), 0.02f);//
+            //revolverBase.DOMove(new Vector3(revolverBase.position.x + 1, revolverBase.position.y, revolverBase.position.z), 0.02f);
             yield return new WaitForSeconds(0.2f);
         }
         MoveOrigin(revolverBase);
         currentAttackCount = count;
         baseTransform.rotation = Quaternion.Euler(0, 0, 0);    
         currentRot = 0f;
-    }
-    void RevolverMoveForInvoke()
-    {
-        revolverBase.position = new Vector3(revolverBase.position.x - 1, revolverBase.position.y, revolverBase.position.z);
     }
     public void BtnEvt_attackCount2UpForTest()
     {
@@ -154,5 +152,4 @@ public class AttackCounter : MonoBehaviourPun
     {
         transform.position = originPos;
     }
-
 }

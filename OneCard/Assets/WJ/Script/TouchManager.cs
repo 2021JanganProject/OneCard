@@ -75,7 +75,6 @@ public class TouchManager : MonoBehaviourPunCallbacks
                             isEnlargeCard = false;
                         }
                     }
-
                 }
 
 

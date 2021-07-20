@@ -142,8 +142,18 @@ public class Card : MonoBehaviourPun
         // 
         //gameManager.TurnEnd();
         isEfficient = false;
+        Vector3 pos = new Vector3(cardManager.OpenedCardBase.transform.position.x , cardManager.OpenedCardBase.transform.position.y, cardManager.OpenedCardBase.transform.position.z) ;
+        if(currentCardData.cardType == eCardType.Normal)
+        {
+            EffectManager.Instance.PlayEffect(1, pos, cardManager.OpenedCardBase.transform.position);
+        }
+        else
+        {
+            EffectManager.Instance.PlayEffect(3, pos, cardManager.OpenedCardBase.transform.position);
+        }
         
         Debug.Log($"Card Put! Add Card_{gameObject.name}");
+        Debug.Log(currentCardData.cardType);
         TurnManager.instance.RPC_ALL_EndTurn();
     }
     public void RPC_All_Put()

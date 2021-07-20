@@ -18,8 +18,11 @@ public class EffectManager : MonoBehaviour
         }
     }
 
-    public ParticleSystem[] Effects; 
-
+    public ParticleSystem[] Effects;
+    private void Start()
+    {
+        GameObject.DontDestroyOnLoad(this);
+    }
     public void PlayEffect(int EffectNum, Vector3 pos, Vector3 normal, Transform parent = null)
     {
         var targetPrefab = Effects[EffectNum];
@@ -30,5 +33,13 @@ public class EffectManager : MonoBehaviour
             effect.transform.SetParent(parent);
         }
         effect.Play();
+        Destroy(effect.gameObject, 3.0f);
     }
+
+    #region == BtnEvts ==  
+    public void BtnEvt_Effect()
+    {
+        EffectManager.Instance.PlayEffect(5, this.transform.position, this.transform.position);
+    }
+    #endregion
 }

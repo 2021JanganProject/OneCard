@@ -38,6 +38,7 @@ public class CardManager : MonoBehaviourPun
     [SerializeField] private List<GameObject> closedCardDeck = new List<GameObject>();
     [SerializeField] private List<GameObject> openedCardDeck = new List<GameObject>();
     public CardPos[] RemoteCardPosArr { get => remoteCardPosArr; set => remoteCardPosArr = value; }
+    public GameObject OpenedCardBase { get => openedCardBase; set => openedCardBase = value; }
 
     [SerializeField] private GameObject cardPrefab;
     [SerializeField] private CardData currentCard;
