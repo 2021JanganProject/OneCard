@@ -69,6 +69,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     private int currentTurnPlayer;
  
     private bool isPlayerAllInTheRoom = false;
+
+    [SerializeField] private GameObject TimerPrefab;
+    [SerializeField] private Canvas canvas;
   
     
 
@@ -90,6 +93,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         SpawnLocalPlayer();
         yield return new WaitForSeconds(0.2f);
         UpdateGameState(eGameFlowState.WaittingPlayer_0);
+
         if (PhotonNetwork.IsMasterClient == true)
         {
             CardManager.instance.SettingCard();
@@ -98,10 +102,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             CardManager.instance.AddCloseCards();
         }
-        
-
-       
-
+              
     }
 
     bool await = false;
@@ -160,9 +161,15 @@ public class GameManager : MonoBehaviourPunCallbacks
 
             SetPlayerObjArrAndRemotePlayerObjArr();
             SetPlayerArr();
-            SetPlayersPosition();
+            SetPlayersPosition();            
             
             RPC_M_SetRandomPlayerIndex();
+            
+            // 시간 동기화를 위해 타이머 생성
+            var timer = PhotonNetwork.Instantiate(TimerPrefab.name, canvas.transform.position, canvas.transform.rotation).transform.parent = canvas.transform;
+            timer.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 0);
+            //timer.localScale = new Vector3(1, 1, 0);
+
             DebugGUI.Log_White($"Remote randomPlayerIndex : {randomPlayerIndex}");
             StartCoroutine(TurnManager.instance.CoSetRandomOrderPlayersArrToList());
             CardManager.instance.RPC_M_FirstOpenCard();
