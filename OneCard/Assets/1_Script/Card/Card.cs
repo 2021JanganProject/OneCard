@@ -59,7 +59,7 @@ public class Card : MonoBehaviourPun
     private GameManager gameManager;
     private SpriteRenderer renderer;
     [SerializeField] private bool isEfficient = false;
-    private AttackCounter attackCounter;
+    [SerializeField] private AttackCounter attackCounter;
     //public CardData currentCardData { get => cardData; set => cardData = value; }
     public bool IsEfficient { get => isEfficient; set => isEfficient = value; }
 

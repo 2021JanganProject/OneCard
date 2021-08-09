@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public int RandomPlayerIndex { get => randomPlayerIndex; set => randomPlayerIndex = value; }
 
     public eGameFlowState gameFlowState = eGameFlowState.WaittingPlayer_0;
-    [SerializeField] private CardManager cardManager;
+    [SerializeField] private CardManager cardManager; //t
     [SerializeField] private TurnManager turnManager;
     [SerializeField] private Transform [] spawnPositions;
     [SerializeField] private Transform localSpawnPosition;
@@ -103,10 +103,10 @@ public class GameManager : MonoBehaviourPunCallbacks
        
 
     }
-
-    bool await = false;
-    // 플레이어 대기
-    // 
+    /// <summary>
+    /// GameState 르
+    /// </summary>
+    /// <param name="chageGameFlowState"></param>
     void UpdateGameState(eGameFlowState chageGameFlowState)
     {
         gameFlowState = chageGameFlowState;
@@ -133,17 +133,23 @@ public class GameManager : MonoBehaviourPunCallbacks
             DebugGUI.Log_White($"Remote randomPlayerIndex : {randomPlayerIndex}");
         }
     }
+
+    
     private void InitOfflineDataForDebug()
     {
         SetPlayerObjArrAndRemotePlayerObjArr();
         SetPlayerArr();
         //SetOrderList();
     }
-   
 
+    /// <summary>
+    /// Test
+    /// </summary>
+    /// <remarks>Testing now!</remarks>
+    /// <returns></returns>
     IEnumerator CoCheckingRoomFull()
     {
-        while(true)
+        while (true)
         {
             if (IsTheRoomFull() == false) // 예외처리 : RPC로 Player들을 삽입 하기 때문에 들어오는 순서가 때마다 다름  
             {
@@ -151,7 +157,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                 yield return null;
                 continue;
             }
-            if(IsNotNullPlayerObjArr() == false)
+            if (IsNotNullPlayerObjArr() == false)
             {
                 Debug.Log("Waiting...IsNotNullPlayerObjArr");
                 yield return null;
@@ -161,7 +167,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             SetPlayerObjArrAndRemotePlayerObjArr();
             SetPlayerArr();
             SetPlayersPosition();
-            
+
             RPC_M_SetRandomPlayerIndex();
             DebugGUI.Log_White($"Remote randomPlayerIndex : {randomPlayerIndex}");
             StartCoroutine(TurnManager.instance.CoSetRandomOrderPlayersArrToList());
@@ -171,7 +177,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             break;
         }
     }
-    
+
     private void SetPlayerObjArrAndRemotePlayerObjArr()
     {
         // 플레이어 오브젝트 찾아서 삽입 
@@ -270,7 +276,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         // LocalPlayer : 현재 방에 들어온 로컬 플레이어 (즉 나 자신)
         // 플레이어 번호를 가져온다.
-        
         var spawnPosition = spawnPositions[LocalPlayerActorIndex % spawnPositions.Length];
     }
     
