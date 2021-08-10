@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public GameObject LocalPlayerObj { get => localPlayerObj; set => localPlayerObj = value; }
     public Player[] PlayerArr { get => playerArr; set => playerArr = value; }
     public int RandomPlayerIndex { get => randomPlayerIndex; set => randomPlayerIndex = value; }
+    public bool IsPlayerAllInTheRoom { get => isPlayerAllInTheRoom; set => isPlayerAllInTheRoom = value; }
 
     public eGameFlowState gameFlowState = eGameFlowState.WaittingPlayer_0;
 
@@ -75,8 +76,9 @@ public class GameManager : MonoBehaviourPunCallbacks
  
     private bool isPlayerAllInTheRoom = false;
 
-    
-    
+    [SerializeField] private GameObject TimerPrefab;
+    [SerializeField] private Canvas canvas;
+
 
 
     private void Awake()
@@ -185,10 +187,18 @@ public class GameManager : MonoBehaviourPunCallbacks
 
             FullRoomEventHandler();
 
+            //if(PhotonNetwork.IsMasterClient) 이렇게 하면 다같이 생성되는게 아니였나...?
+            {
+                // 시간 동기화를 위해 타이머 생성
+                var timer = PhotonNetwork.Instantiate(TimerPrefab.name, canvas.transform.position, canvas.transform.rotation).transform.parent = canvas.transform;
+                timer.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 0);
+            }
+
             DebugGUI.Log_White($"Remote randomPlayerIndex : {randomPlayerIndex}");
             StartCoroutine(TurnManager.instance.CoSetRandomOrderPlayersArrToList());
             CardManager.instance.RPC_M_FirstOpenCard();
             //TurnManager.instance.CoSetRandomOrderPlayersArrToList(randomPlayerIndex);
+            isPlayerAllInTheRoom = true;
             yield return null;
             break;
         }

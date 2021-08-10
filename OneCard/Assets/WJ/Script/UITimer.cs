@@ -22,6 +22,9 @@ public class UITimer : MonoBehaviour
     [SerializeField] private float viberateTime = 10f; //시계가 떨리는 시점 설정
     private Vector3 originPos;
     private float currentTime;
+
+    public float CurrentTime { get => currentTime; set => currentTime = value; }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -68,6 +71,7 @@ public class UITimer : MonoBehaviour
         {
             transform.position = originPos;
             ResetTimerForInvoke(); //@rework
+            //TurnChange();
         }
             
     }
@@ -80,10 +84,10 @@ public class UITimer : MonoBehaviour
         Vector3 pos = new Vector3(transform.position.x, transform.position.y - 10.0f, transform.position.z - 30.0f);
         EffectManager.Instance.PlayEffect(4, pos, transform.position);
 
-        TurnChange();
+        
     }
     private void TurnChange()
     {
-        Debug.Log("턴넘김");
+        TurnManager.instance.RPC_ALL_EndTurn();
     }
 }

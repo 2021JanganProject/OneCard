@@ -37,7 +37,7 @@ public class TurnManager : MonoBehaviourPun
 
     [SerializeField] private int maxPlayerCount = 4;
     [SerializeField] private List<Player> orderList = new List<Player>();  // 실질적인 턴을 결정함
-    [SerializeField] private UIClock clockUI;
+    [SerializeField] private UITimer timerUI;
 
     private int playerCount = 0;
     private int reversCurrentTurnPlayer;
@@ -58,7 +58,7 @@ public class TurnManager : MonoBehaviourPun
     }
     private void Start()
     {
-      
+
     }
     void UpdatePlayers()
     {
@@ -83,7 +83,14 @@ public class TurnManager : MonoBehaviourPun
     private void Update()
     {
         
-        QuitTurn();
+        if(GameManager.instance.IsPlayerAllInTheRoom)
+        {
+            QuitTurn();
+            if(timerUI == null)
+            {
+                timerUI = GameObject.Find("Timer(Clone)").GetComponent<UITimer>();
+            }
+        }
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             RPC_ALL_EndTurn();
@@ -122,14 +129,14 @@ public class TurnManager : MonoBehaviourPun
         orderList.RemoveAt(CURRENT_TURN_PLAYER_IDX);
         orderList.Add(currentTurnPlayer);
         SettingTurn();
-        clockUI.ResetCurrentTimeAndClockhand();
+        //clockUI.ResetCurrentTimeAndClockhand();
     }
     public void ChangeOrderRevers()//턴 순서 거꾸로
     {
         SetCurrentPlayerAndRemoveList(reversCurrentTurnPlayer);
         orderList.Insert(0, CurrentTurnPlayer);
         SettingTurn();
-        clockUI.ResetCurrentTimeAndClockhand();
+        //clockUI.ResetCurrentTimeAndClockhand();
     }
     public bool IsMyturn()
     {
@@ -223,7 +230,7 @@ public class TurnManager : MonoBehaviourPun
     }
     private void QuitTurn()
     {
-        float currentTime = clockUI.CurrentTime;
+        float currentTime = timerUI.CurrentTime;
         if (currentTime <= 0)
         {
             if (isOrderDirection == true)
