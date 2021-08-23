@@ -32,12 +32,12 @@ public class TurnManager : MonoBehaviourPun
     public int CurrentTurnIdx { get => CurrentTurnPlayer.PlayerActorIndex; }
     public Player CurrentTurnPlayer { get => orderList[0]; set => orderList[0] = value; } // 현재 턴인 플레이어 받을 변수 -> 리스트0번쨰 플레이어가 계속 들어갈거임
     public List<Player> OrderList { get => orderList; set => orderList = value; }
+    public bool IsTimeOver { get => isTimeOver; set => isTimeOver = value; }
 
     private const int CURRENT_TURN_PLAYER_IDX = 0;//현재 턴인 플레이어 인덱스 -> List첫번쨰 플레이어가 턴이니깐 계속 0이면 될듯 
 
     [SerializeField] private int maxPlayerCount = 4;
     [SerializeField] private List<Player> orderList = new List<Player>();  // 실질적인 턴을 결정함
-    [SerializeField] private UITimer timerUI;
 
     private int playerCount = 0;
     private int reversCurrentTurnPlayer;
@@ -48,6 +48,9 @@ public class TurnManager : MonoBehaviourPun
     private ePlayerState myTurn = ePlayerState.myTurn;
     private ePlayerState nextTurn = ePlayerState.NextTurn;
     private ePlayerState wait = ePlayerState.Wait;
+
+    private int currentTime = 0;
+    private bool isTimeOver = true;
 
     private void Awake()
     {
@@ -82,19 +85,29 @@ public class TurnManager : MonoBehaviourPun
   
     private void Update()
     {
-        
-        if(GameManager.instance.IsPlayerAllInTheRoom)
+        if(GameManager.instance.TimerUI != null)
+        {            
+            currentTime = Mathf.CeilToInt(GameManager.instance.TimerUI.CurrentTime);
+            Debug.Log(currentTime);
+        }
+        if (GameManager.instance.TimerUI != null)
         {
-            QuitTurn();
-            if(timerUI == null)
+            // IsTimeOver는 UITimer에서 true로 초기화
+            if (currentTime <= 1 && isTimeOver && PhotonNetwork.IsMasterClient)
             {
-                timerUI = GameObject.Find("Timer(Clone)").GetComponent<UITimer>();
+                RPC_ALL_EndTurn();
+                isTimeOver = false;
             }
+        }
+        if (GameManager.instance.IsPlayerAllInTheRoom)
+        {
+            //QuitTurn();
         }
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             RPC_ALL_EndTurn();
         }
+
         if (Input.GetKeyDown(KeyCode.G))
         {
             isOrderDirection = !isOrderDirection;
@@ -104,8 +117,6 @@ public class TurnManager : MonoBehaviourPun
         {
             StartCoroutine(CoUpdatePlayers());
         }
-        
-
     }
     IEnumerator CoUpdatePlayers()
     {
@@ -229,18 +240,24 @@ public class TurnManager : MonoBehaviourPun
               
     }
     private void QuitTurn()
-    {
-        float currentTime = timerUI.CurrentTime;
-        if (currentTime <= 0)
+    {        
+        if(GameManager.instance.TimerUI != null)
         {
-            if (isOrderDirection == true)
+            if (currentTime<=0)
             {
-                ChangeOrderPlayer();
+                if (isOrderDirection == true)
+                {
+                    ChangeOrderPlayer();
+                }
+                else
+                {
+                    ChangeOrderRevers();
+                }
             }
-            else
-            {
-                ChangeOrderRevers();
-            }
+        }
+        else
+        {
+            Debug.Log("타이머오류");
         }
     }
     public IEnumerator CoSetRandomOrderPlayersArrToList()
