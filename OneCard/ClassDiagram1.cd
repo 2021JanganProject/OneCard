@@ -1,0 +1,469 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Game&#xD;&#xA;">
+    <Position X="3.001" Y="6.161" Height="0.291" Width="0.7" />
+  </Comment>
+  <Class Name="AiManager" Collapsed="true">
+    <Position X="18.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEIAAAAQCBIAAEAAAAAAJAJACAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\AiManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AudioManager" Collapsed="true">
+    <Position X="24" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAADAAAACAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\AudioManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataManager" Collapsed="true">
+    <Position X="29.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AASAAAAAACAAAAAAAAAAAABAAABAQAAAAAIAAAAAAMA=</HashCode>
+      <FileName>Assets\1_Script\BackEnd\DataManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AuthManager" Collapsed="true">
+    <Position X="25.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABCACAADQAAAIAAMAAAJAgAACAQAACCAAAAAAAAYo=</HashCode>
+      <FileName>Assets\1_Script\BackEnd\FireBase\AuthManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DatabaseManager" Collapsed="true">
+    <Position X="27.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAEACAAwBAAAACCgBAwCQAARBAAAAAAAAAAgAA=</HashCode>
+      <FileName>Assets\1_Script\BackEnd\FireBase\DatabaseManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FireBaseManager" Collapsed="true">
+    <Position X="27.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAQIAAAAACAAABAAAAAQIAAAECAAAAAAAAAAAAAAiAA=</HashCode>
+      <FileName>Assets\1_Script\BackEnd\FireBase\FireBaseManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LobbyManager" Collapsed="true">
+    <Position X="24" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAIAACAAAAAAAEAAAEAAAAAAABAIEAAAAAAAAII=</HashCode>
+      <FileName>Assets\1_Script\BackEnd\Pun2\LobbyManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Attack" Collapsed="true">
+    <Position X="0.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAABAIAIAAAAAAAAAAAAAAAAAEw=</HashCode>
+      <FileName>Assets\1_Script\Card\Attack.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Back" Collapsed="true">
+    <Position X="5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAQAEg=</HashCode>
+      <FileName>Assets\1_Script\Card\Back.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Card" Collapsed="true">
+    <Position X="8.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CE0AAAgAACQAkAAAQAoBQMAJAAAAAAAIQAAAAQAEgAk=</HashCode>
+      <FileName>Assets\1_Script\Card\Card.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ChageShape" Collapsed="true">
+    <Position X="14" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAAAAABAgAAAAAAAAAAAAAAAAAAAEg=</HashCode>
+      <FileName>Assets\1_Script\Card\ChageShape.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Defence" Collapsed="true">
+    <Position X="16.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQBAIAIAAAAAIAAAAAAAAAAAEg=</HashCode>
+      <FileName>Assets\1_Script\Card\Defence.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Jump" Collapsed="true">
+    <Position X="2.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAABAAQAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Assets\1_Script\Card\Jump.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OneMore" Collapsed="true">
+    <Position X="7.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAABAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Assets\1_Script\Card\OneMore.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Smoke" Collapsed="true">
+    <Position X="9.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Assets\1_Script\Card\Smoke.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Spy" Collapsed="true">
+    <Position X="11.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\Card\Spy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PosRot" Collapsed="true">
+    <Position X="29.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAACAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\Card\UtilsForCard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UtilsForCard" Collapsed="true">
+    <Position X="25.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\Card\UtilsForCard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardManager" Collapsed="true">
+    <Position X="18.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JxQwCcgFACmoLAgABJNSKgT1FxFVFAa6AOBhGg0ACuc=</HashCode>
+      <FileName>Assets\1_Script\CardManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CameraResolution" Collapsed="true">
+    <Position X="27.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\Common\CameraResolution.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DebugerManager" Collapsed="true">
+    <Position X="18.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAGACAAAAAAAAAAAAAAAAhQQAAIAAAAAAAAAEA=</HashCode>
+      <FileName>Assets\1_Script\Debuger\DebugerManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DebugGUI" Collapsed="true">
+    <Position X="20.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAIAAIAAAwAAQAAgAAIAgAAAHCEAAAAFA=</HashCode>
+      <FileName>Assets\1_Script\Debuger\DebugGUI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PhotonParentTest" Collapsed="true">
+    <Position X="22.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\Debuger\PhotonParentTest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PhotonTest" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="24" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAEBAAAABQAAQAAAAFAAABAAgAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\Debuger\PhotonTest.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="TouchEffect" Collapsed="true">
+    <Position X="24" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\Effect,Sound\TouchEffect.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EffectManager" Collapsed="true">
+    <Position X="22.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAACAAAAAAAEQAAAAAAAAAAAAIQAAAAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\EffectManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameManager">
+    <Position X="3" Y="6.5" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>QNQA4hABACRYAKAIQAAAJiEIRABQQQAoGAAAAAEIREA=</HashCode>
+      <FileName>Assets\1_Script\GameManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameStartManager" Collapsed="true">
+    <Position X="20.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAEAACAAAQQQAAAAIAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\GameStartManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Login" Collapsed="true">
+    <Position X="25.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQwIAAAACAAAAAAAAASAAAAAAAAAAAgAAAAAAQAAAA=</HashCode>
+      <FileName>Assets\1_Script\Login\Login.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LoginManager" Collapsed="true">
+    <Position X="27.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAEAAAACAAAAAAAAAAAAAgAABAAAAAAAAAAAgAEEA=</HashCode>
+      <FileName>Assets\1_Script\Login\LoginManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainManager" Collapsed="true">
+    <Position X="29.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\Main\MainManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Player_test" Collapsed="true">
+    <Position X="27.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQQAAAAACAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\Player\Player_test.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SoundManager" Collapsed="true">
+    <Position X="18.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAABAAAQgAAAAABAAAAQAAAAgQAAAAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\SoundManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UIManager" Collapsed="true">
+    <Position X="20.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAgAAAAAgAIAAIAAAAgAAAAAAAAAAAAAAAEgAAAA=</HashCode>
+      <FileName>Assets\1_Script\UIManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AppSettingsExtensions" Collapsed="true">
+    <Position X="20.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Photon\PhotonChat\Demos\DemoChat\AppSettingsExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ChannelSelector" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAgAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Photon\PhotonChat\Demos\DemoChat\ChannelSelector.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ChatAppIdCheckerUI" Collapsed="true">
+    <Position X="22.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Photon\PhotonChat\Demos\DemoChat\ChatAppIdCheckerUI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ChatGui" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="24" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CGQBAFoQQCqDGEQAABCAAICUAEBggYIYCRAwTAAQAJA=</HashCode>
+      <FileName>Assets\Photon\PhotonChat\Demos\DemoChat\ChatGui.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="FriendItem" Collapsed="true">
+    <Position X="29.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAAAAIAAAAAAABAAAAEAAAAQAAAEA=</HashCode>
+      <FileName>Assets\Photon\PhotonChat\Demos\DemoChat\FriendItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IgnoreUiRaycastWhenInactive" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="22.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Photon\PhotonChat\Demos\DemoChat\IgnoreUiRaycastWhenInactive.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="NamePickGui" Collapsed="true">
+    <Position X="18.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAACAAACAACAAAAAAAAAAAAAAAACAAAAAAAAgAAAA=</HashCode>
+      <FileName>Assets\Photon\PhotonChat\Demos\DemoChat\NamePickGui.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UIMain" Collapsed="true">
+    <Position X="18.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAEAAAACAAAgAAAAAAAAAAAAAAAAAAAAAAAADAAAA=</HashCode>
+      <FileName>Assets\WJ\MainScenes\Script\UIMain.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AttackCounter" Collapsed="true">
+    <Position X="22.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABSARAAAiCAAYAIAIBAkAAAgIIAAAAgADAAQAAwAAIA=</HashCode>
+      <FileName>Assets\WJ\Script\attackCounter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardInteraction" Collapsed="true">
+    <Position X="29.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IBQBAAAAAABIAiIAKEIUAGAEAAAgAAYQAIAAEAACAEg=</HashCode>
+      <FileName>Assets\WJ\Script\CardInteraction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EnlargeCardHand" Collapsed="true">
+    <Position X="24" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAgAAAAKAAAAAAAEAAABAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\WJ\Script\EnlargeCardHand.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Player" Collapsed="true">
+    <Position X="25.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQRAIBAIACAQACAIBABAAACgQAADBEAAEAgAABUAQgA=</HashCode>
+      <FileName>Assets\WJ\Script\Player.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TouchManager" Collapsed="true">
+    <Position X="25.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQBAAAAASAAAgAACEAAAhAAAAAAEAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Assets\WJ\Script\TouchManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TurnManager" Collapsed="true">
+    <Position X="27.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABQBIAAEACBAAAEACJgAQAAAAABBAIgUiASQAEgEEEE=</HashCode>
+      <FileName>Assets\WJ\Script\TurnManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UIClock" Collapsed="true">
+    <Position X="29.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQEAgAAEACAAAAAAAAAAAAQAAAAAACAQBAAgAAAQEA=</HashCode>
+      <FileName>Assets\WJ\Script\UIClock.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UIProfile" Collapsed="true">
+    <Position X="22.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EIQggAAAACAAAAAQAAAAAAAAAAAwAAAIAAAAAJAABEA=</HashCode>
+      <FileName>Assets\WJ\Script\UIProfile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UITimer" Collapsed="true">
+    <Position X="24" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQABEAAACAAIAAAABAFAgAQAAAAAASIQAAAAAQAAAM=</HashCode>
+      <FileName>Assets\WJ\Script\UITimer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Photon.Chat.UtilityScripts.EventSystemSpawner" Collapsed="true">
+    <Position X="25.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Photon\PhotonChat\Demos\Common\EventSystemSpawner.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Photon.Chat.UtilityScripts.OnStartDelete" Collapsed="true">
+    <Position X="20.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Photon\PhotonChat\Demos\Common\OnStartDelete.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Photon.Chat.UtilityScripts.TextButtonTransition" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAABAAAAAAAAAAAAAAAAAgAAAIAAAAAQAACEI=</HashCode>
+      <FileName>Assets\Photon\PhotonChat\Demos\Common\TextButtonTransition.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Photon.Chat.UtilityScripts.TextToggleIsOnTransition" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="22.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAAAAADAAggAEIAAAQAQAAKAA=</HashCode>
+      <FileName>Assets\Photon\PhotonChat\Demos\Common\TextToggleIsOnTransition.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Photon.Realtime.Demo.ConnectAndJoinRandomLb" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="25.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gEaAAEIAACAAEQAAAEACAIEAAAGBAAIEEAJAAAAAQIA=</HashCode>
+      <FileName>Assets\Photon\PhotonRealtime\Demos\DemoLoadBalancing\ConnectAndJoinRandomLb.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Struct Name="PlayerInfo" Collapsed="true">
+    <Position X="22.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAQAAAQAAAAAAAAAAAAAAAAEAEAAAAAIAAAAAAQA=</HashCode>
+      <FileName>Assets\1_Script\BackEnd\DataManager.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CardData" Collapsed="true">
+    <Position X="18.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAACAAAAAAAAAAAAAAAAAAARAA=</HashCode>
+      <FileName>Assets\1_Script\Card\Card.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CardPos" Collapsed="true">
+    <Position X="20.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAIAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\CardManager.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="eAiState" Collapsed="true">
+    <Position X="18.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAgAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\AiManager.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="eCardColor" Collapsed="true">
+    <Position X="20.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAGAABAAAAAAgAAAAAAAAAAAAAAAAAAAAAAACAAAAA=</HashCode>
+      <FileName>Assets\1_Script\Card\Card.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="eCardType" Collapsed="true">
+    <Position X="24" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAAAAIAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\Card\Card.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="eCardState" Collapsed="true">
+    <Position X="22.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAI=</HashCode>
+      <FileName>Assets\1_Script\Card\Card.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="eGameFlowState" Collapsed="true">
+    <Position X="25.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAAAAgAEAgAAAAgEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\1_Script\GameManager.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ePlayerState" Collapsed="true">
+    <Position X="27.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAACAAAQAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>Assets\WJ\Script\Player.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="맑은 고딕" Size="9" />
+</ClassDiagram>

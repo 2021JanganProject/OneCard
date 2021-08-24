@@ -22,6 +22,11 @@ public class UITimer : MonoBehaviour
     [SerializeField] private float viberateTime = 10f; //시계가 떨리는 시점 설정
     private Vector3 originPos;
     private float currentTime;
+    private bool isTimeOver = true;
+
+    public float CurrentTime { get => currentTime; set => currentTime = value; }
+    public bool IsTimeOver { get => isTimeOver; set => isTimeOver = value; }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -66,12 +71,12 @@ public class UITimer : MonoBehaviour
         }
         if (currentTime <= 0)
         {
-            transform.position = originPos;
+            transform.position = originPos;            
             ResetTimerForInvoke(); //@rework
         }
             
     }
-    private void ResetTimerForInvoke()
+    public void ResetTimerForInvoke()
     {
         timeBoad.color = originColor;
         currentTime = maxTime;
@@ -79,11 +84,10 @@ public class UITimer : MonoBehaviour
         timeOver.SetActive(false);
         Vector3 pos = new Vector3(transform.position.x, transform.position.y - 10.0f, transform.position.z - 30.0f);
         EffectManager.Instance.PlayEffect(4, pos, transform.position);
-
-        TurnChange();
+        TurnManager.instance.IsTimeOver = true;
     }
-    private void TurnChange()
+    public void TurnChange()
     {
-        Debug.Log("턴넘김");
+        TurnManager.instance.RPC_ALL_EndTurn();
     }
 }

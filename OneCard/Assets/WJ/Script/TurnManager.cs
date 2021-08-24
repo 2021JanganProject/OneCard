@@ -32,22 +32,26 @@ public class TurnManager : MonoBehaviourPun
     public int CurrentTurnIdx { get => CurrentTurnPlayer.PlayerActorIndex; }
     public Player CurrentTurnPlayer { get => orderList[0]; set => orderList[0] = value; } // 현재 턴인 플레이어 받을 변수 -> 리스트0번쨰 플레이어가 계속 들어갈거임
     public List<Player> OrderList { get => orderList; set => orderList = value; }
+    public bool IsTimeOver { get => isTimeOver; set => isTimeOver = value; }
 
     private const int CURRENT_TURN_PLAYER_IDX = 0;//현재 턴인 플레이어 인덱스 -> List첫번쨰 플레이어가 턴이니깐 계속 0이면 될듯 
 
     [SerializeField] private int maxPlayerCount = 4;
     [SerializeField] private List<Player> orderList = new List<Player>();  // 실질적인 턴을 결정함
-    [SerializeField] private UIClock clockUI;
 
     private int playerCount = 0;
     private int reversCurrentTurnPlayer;
     private int currentTurnIdx;
     private bool isOrderDirection = true; // true면 시계 방향
+    //private bool isTurnEnd = false;
 
 
     private ePlayerState myTurn = ePlayerState.myTurn;
     private ePlayerState nextTurn = ePlayerState.NextTurn;
     private ePlayerState wait = ePlayerState.Wait;
+
+    private int currentTime = 0;
+    private bool isTimeOver = true;
 
     private void Awake()
     {
@@ -58,7 +62,7 @@ public class TurnManager : MonoBehaviourPun
     }
     private void Start()
     {
-      
+
     }
     void UpdatePlayers()
     {
@@ -69,25 +73,42 @@ public class TurnManager : MonoBehaviourPun
     }
 
     public void RPC_ALL_EndTurn()
-    {
+    {        
         if (isOrderDirection == true)
         {
-            RPC_ALL_ChangeOrderPlayer();
+            RPC_ALL_ChangeOrderPlayer();            
         }
         else
         {
             ChangeOrderRevers();
         }
+        GameManager.instance.TimerUI.ResetTimerForInvoke();
     }
   
     private void Update()
     {
-        
-        QuitTurn();
+        if(GameManager.instance.TimerUI != null)
+        {            
+            currentTime = Mathf.CeilToInt(GameManager.instance.TimerUI.CurrentTime);
+        }
+        if (GameManager.instance.TimerUI != null)
+        {
+            // IsTimeOver는 UITimer에서 true로 초기화
+            if (currentTime <= 1 && isTimeOver && PhotonNetwork.IsMasterClient)
+            {
+                RPC_ALL_EndTurn();
+                isTimeOver = false;
+            }
+        }
+        if (GameManager.instance.IsPlayerAllInTheRoom)
+        {
+            //QuitTurn();
+        }
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             RPC_ALL_EndTurn();
         }
+
         if (Input.GetKeyDown(KeyCode.G))
         {
             isOrderDirection = !isOrderDirection;
@@ -97,8 +118,6 @@ public class TurnManager : MonoBehaviourPun
         {
             StartCoroutine(CoUpdatePlayers());
         }
-        
-
     }
     IEnumerator CoUpdatePlayers()
     {
@@ -117,19 +136,18 @@ public class TurnManager : MonoBehaviourPun
     [PunRPC]
     private void ChangeOrderPlayer() // 플레이어 순서 바꿔주기 
     {
-        
         Player currentTurnPlayer = CurrentTurnPlayer;
         orderList.RemoveAt(CURRENT_TURN_PLAYER_IDX);
         orderList.Add(currentTurnPlayer);
         SettingTurn();
-        clockUI.ResetCurrentTimeAndClockhand();
+        //clockUI.ResetCurrentTimeAndClockhand();
     }
     public void ChangeOrderRevers()//턴 순서 거꾸로
     {
         SetCurrentPlayerAndRemoveList(reversCurrentTurnPlayer);
         orderList.Insert(0, CurrentTurnPlayer);
         SettingTurn();
-        clockUI.ResetCurrentTimeAndClockhand();
+        //clockUI.ResetCurrentTimeAndClockhand();
     }
     public bool IsMyturn()
     {
@@ -222,18 +240,24 @@ public class TurnManager : MonoBehaviourPun
               
     }
     private void QuitTurn()
-    {
-        float currentTime = clockUI.CurrentTime;
-        if (currentTime <= 0)
+    {        
+        if(GameManager.instance.TimerUI != null)
         {
-            if (isOrderDirection == true)
+            if (currentTime<=0)
             {
-                ChangeOrderPlayer();
+                if (isOrderDirection == true)
+                {
+                    ChangeOrderPlayer();
+                }
+                else
+                {
+                    ChangeOrderRevers();
+                }
             }
-            else
-            {
-                ChangeOrderRevers();
-            }
+        }
+        else
+        {
+            Debug.Log("타이머오류");
         }
     }
     public IEnumerator CoSetRandomOrderPlayersArrToList()

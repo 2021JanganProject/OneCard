@@ -61,7 +61,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         // 빈방이 없을 때
         Debug.Log("빈방이 없습니다. 새로운 방을 만듭니다");
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 },null);
+        // 7.26 MaxPlayers가 2로 되어있어 플레이어가 두명밖에 못들어가 턴이 형성 안되었는데 4로 수정
+        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 4 },null);
     }
 
     public override void OnJoinedRoom()// JoinRandomRoom 참가 완료 

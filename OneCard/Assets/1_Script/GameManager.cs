@@ -17,6 +17,7 @@ public enum eGameFlowState
 public class GameManager : MonoBehaviourPunCallbacks
 {
     public static GameManager instance = null;
+    
     public int MaxPlayerCount { get => maxPlayerCount; set => maxPlayerCount = value; }
     /// <summary>
     /// 현재 나의 PlayerActorNumberIndex이다. PlayerActorNumber는 방에 들어온 순서대로 할당되는 플레이어 Number이다. 
@@ -42,9 +43,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     public GameObject LocalPlayerObj { get => localPlayerObj; set => localPlayerObj = value; }
     public Player[] PlayerArr { get => playerArr; set => playerArr = value; }
     public int RandomPlayerIndex { get => randomPlayerIndex; set => randomPlayerIndex = value; }
+    public bool IsPlayerAllInTheRoom { get => isPlayerAllInTheRoom; set => isPlayerAllInTheRoom = value; }
+    public UITimer TimerUI { get => timerUI; set => timerUI = value; }
 
     public eGameFlowState gameFlowState = eGameFlowState.WaittingPlayer_0;
-    [SerializeField] private CardManager cardManager;
+
+
+    [SerializeField] private CardManager cardManager; //t
     [SerializeField] private TurnManager turnManager;
     [SerializeField] private Transform [] spawnPositions;
     [SerializeField] private Transform localSpawnPosition;
@@ -62,6 +67,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     [SerializeField] public DebugGUI debugGUI;
 
+    delegate void FullRoom();
+    FullRoom FullRoomEventHandler;
 
     private int maxPlayerCount = 4;
     private int playerCount = 0;
@@ -69,8 +76,11 @@ public class GameManager : MonoBehaviourPunCallbacks
     private int currentTurnPlayer;
  
     private bool isPlayerAllInTheRoom = false;
-  
-    
+
+    [SerializeField] private GameObject TimerPrefab;
+    [SerializeField] private Transform canvas;
+
+    private UITimer timerUI;
 
     private void Awake()
     {
@@ -83,10 +93,26 @@ public class GameManager : MonoBehaviourPunCallbacks
     IEnumerator Start()
     {
         #region ==배열 초기화==
+
         playerObjArr = new GameObject[maxPlayerCount];
         playerArr = new Player[maxPlayerCount];
         remotePlayerObjArr = new GameObject[maxPlayerCount - 1];
+
         #endregion
+
+        #region ==이벤트 초기화==
+
+        FullRoomEventHandler += () => 
+        {
+            SetPlayerObjArrAndRemotePlayerObjArr();
+            SetPlayerArr();
+            SetPlayersPosition();
+            RPC_M_SetRandomPlayerIndex();
+        };
+
+
+        #endregion
+
         SpawnLocalPlayer();
         yield return new WaitForSeconds(0.2f);
         UpdateGameState(eGameFlowState.WaittingPlayer_0);
@@ -98,15 +124,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             CardManager.instance.AddCloseCards();
         }
-        
-
        
 
-    }
 
-    bool await = false;
-    // 플레이어 대기
-    // 
+    }
+    /// <summary>
+    /// GameState 르
+    /// </summary>
+    /// <param name="chageGameFlowState"></param>
     void UpdateGameState(eGameFlowState chageGameFlowState)
     {
         gameFlowState = chageGameFlowState;
@@ -115,7 +140,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             case eGameFlowState.WaittingPlayer_0:
                 //GameState(eGameFlowState.InitPlayer_1);
-                StartCoroutine(CoCheckingRoomFull());
+                StartCoroutine(OnFullRoom());
                 break;
             case eGameFlowState.InitCard_2:
                 break;
@@ -133,17 +158,19 @@ public class GameManager : MonoBehaviourPunCallbacks
             DebugGUI.Log_White($"Remote randomPlayerIndex : {randomPlayerIndex}");
         }
     }
+
+    
     private void InitOfflineDataForDebug()
     {
         SetPlayerObjArrAndRemotePlayerObjArr();
         SetPlayerArr();
         //SetOrderList();
     }
-   
+    
 
-    IEnumerator CoCheckingRoomFull()
+    IEnumerator OnFullRoom()
     {
-        while(true)
+        while (true)
         {
             if (IsTheRoomFull() == false) // 예외처리 : RPC로 Player들을 삽입 하기 때문에 들어오는 순서가 때마다 다름  
             {
@@ -151,27 +178,36 @@ public class GameManager : MonoBehaviourPunCallbacks
                 yield return null;
                 continue;
             }
-            if(IsNotNullPlayerObjArr() == false)
+            if (IsNotNullPlayerObjArr() == false)
             {
                 Debug.Log("Waiting...IsNotNullPlayerObjArr");
                 yield return null;
                 continue;
             }
 
-            SetPlayerObjArrAndRemotePlayerObjArr();
-            SetPlayerArr();
-            SetPlayersPosition();
-            
-            RPC_M_SetRandomPlayerIndex();
+            FullRoomEventHandler();
+
+            CreateTimer();
             DebugGUI.Log_White($"Remote randomPlayerIndex : {randomPlayerIndex}");
             StartCoroutine(TurnManager.instance.CoSetRandomOrderPlayersArrToList());
             CardManager.instance.RPC_M_FirstOpenCard();
             //TurnManager.instance.CoSetRandomOrderPlayersArrToList(randomPlayerIndex);
+            isPlayerAllInTheRoom = true;
             yield return null;
             break;
         }
     }
+
+   private void CreateTimer()
+    {
+        // 시간 동기화를 위해 타이머 생성
+        var timer = PhotonNetwork.Instantiate(TimerPrefab.name, canvas.localPosition, canvas.rotation);
+        GameObject.Find("Timer(Clone)").GetComponent<Transform>().parent = canvas;
+        timerUI = GameObject.Find("Timer(Clone)").GetComponent<UITimer>();
+        Debug.Log(timerUI);
+    }
     
+
     private void SetPlayerObjArrAndRemotePlayerObjArr()
     {
         // 플레이어 오브젝트 찾아서 삽입 
@@ -270,7 +306,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         // LocalPlayer : 현재 방에 들어온 로컬 플레이어 (즉 나 자신)
         // 플레이어 번호를 가져온다.
-        
         var spawnPosition = spawnPositions[LocalPlayerActorIndex % spawnPositions.Length];
     }
     

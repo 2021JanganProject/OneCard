@@ -82,22 +82,18 @@ public class CardManager : MonoBehaviourPun
     public void BtnEvt_changeBlack()
     {
         ChangeBlack();
-        QuitChangeCardColor();
     }
     public void BtnEvt_changeBlue()
     {
         ChangeBlue();
-        QuitChangeCardColor();
     }
     public void BtnEvt_changeYellow()
     {
         ChangeYellow();
-        QuitChangeCardColor();
     }
     public void BtnEvt_changeRed()
     {
         ChangeRed();
-        QuitChangeCardColor();
     }
     #endregion
 
@@ -168,10 +164,13 @@ public class CardManager : MonoBehaviourPun
             yield return null;
         }
     }
+
+    // 맨위에 있는 카드 정보를 모두에게 전달하는 함수를 MasterClient가 실행
     public void RPC_M_FirstOpenCard()
     {
         if (PhotonNetwork.IsMasterClient && photonView.IsMine)
         {
+            // MasterClient만 실행할수 있기 때문에 타겟이 MasterClient인것
             photonView.RPC(nameof(RequestSetFirstOpenCard), RpcTarget.MasterClient);
         }
             
@@ -181,6 +180,8 @@ public class CardManager : MonoBehaviourPun
     /// <summary>
     /// 
     /// </summary>
+ 
+    // 전체에게 맨위에 있는 카드의 정보를 전달
     [PunRPC]
     private void RequestSetFirstOpenCard()
     {
@@ -523,18 +524,22 @@ public class CardManager : MonoBehaviourPun
     private void ChangeBlack()
     {
         currentCard.cardColor = eCardColor.Black;
+        QuitChangeCardColor();
     }
     private void ChangeBlue()
     {
         currentCard.cardColor = eCardColor.Blue;
+        QuitChangeCardColor();
     }
     private void ChangeYellow()
     {
         currentCard.cardColor = eCardColor.Yellow;
+        QuitChangeCardColor();
     }
     private void ChangeRed()
     {
         currentCard.cardColor = eCardColor.Red;
+        QuitChangeCardColor();
     }
     #endregion
     private void AddInitedCardsToColsedCardDeck()

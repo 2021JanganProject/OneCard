@@ -3681,7 +3681,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxPlayerCount: 4
   orderList: []
-  clockUI: {fileID: 727360786}
+  timerUI: {fileID: 0}
 --- !u!4 &978675188
 Transform:
   m_ObjectHideFlags: 0
@@ -6571,6 +6571,8 @@ MonoBehaviour:
   playersActorNumDebug: []
   debugGUI: {fileID: 0}
   randomPlayerIndex: -1
+  TimerPrefab: {fileID: 0}
+  canvas: {fileID: 0}
 --- !u!1001 &1882680763
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7647,6 +7649,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8078465279751280122, guid: d8f441c29ddfef944b31bce7a8bfe4c6,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d8f441c29ddfef944b31bce7a8bfe4c6, type: 3}
