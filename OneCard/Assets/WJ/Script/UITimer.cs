@@ -76,7 +76,7 @@ public class UITimer : MonoBehaviour
         }
             
     }
-    private void ResetTimerForInvoke()
+    public void ResetTimerForInvoke()
     {
         timeBoad.color = originColor;
         currentTime = maxTime;

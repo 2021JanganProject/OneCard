@@ -3606,7 +3606,7 @@ MonoBehaviour:
   randomPlayerIndex: -1
   TimerPrefab: {fileID: 5405654940472380814, guid: d8f441c29ddfef944b31bce7a8bfe4c6,
     type: 3}
-  canvas: {fileID: 459124497}
+  canvas: {fileID: 459124498}
 --- !u!114 &1869094343
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3643,7 +3643,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxPlayerCount: 4
   orderList: []
-  timerUI: {fileID: 3254555055958776113, guid: d8f441c29ddfef944b31bce7a8bfe4c6, type: 3}
 --- !u!114 &1869094345
 MonoBehaviour:
   m_ObjectHideFlags: 0

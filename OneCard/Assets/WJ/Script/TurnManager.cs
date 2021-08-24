@@ -43,6 +43,7 @@ public class TurnManager : MonoBehaviourPun
     private int reversCurrentTurnPlayer;
     private int currentTurnIdx;
     private bool isOrderDirection = true; // true면 시계 방향
+    //private bool isTurnEnd = false;
 
 
     private ePlayerState myTurn = ePlayerState.myTurn;
@@ -72,15 +73,16 @@ public class TurnManager : MonoBehaviourPun
     }
 
     public void RPC_ALL_EndTurn()
-    {
+    {        
         if (isOrderDirection == true)
         {
-            RPC_ALL_ChangeOrderPlayer();
+            RPC_ALL_ChangeOrderPlayer();            
         }
         else
         {
             ChangeOrderRevers();
         }
+        GameManager.instance.TimerUI.ResetTimerForInvoke();
     }
   
     private void Update()
@@ -88,7 +90,6 @@ public class TurnManager : MonoBehaviourPun
         if(GameManager.instance.TimerUI != null)
         {            
             currentTime = Mathf.CeilToInt(GameManager.instance.TimerUI.CurrentTime);
-            Debug.Log(currentTime);
         }
         if (GameManager.instance.TimerUI != null)
         {
@@ -135,7 +136,6 @@ public class TurnManager : MonoBehaviourPun
     [PunRPC]
     private void ChangeOrderPlayer() // 플레이어 순서 바꿔주기 
     {
-        
         Player currentTurnPlayer = CurrentTurnPlayer;
         orderList.RemoveAt(CURRENT_TURN_PLAYER_IDX);
         orderList.Add(currentTurnPlayer);

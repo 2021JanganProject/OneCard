@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private bool isPlayerAllInTheRoom = false;
 
     [SerializeField] private GameObject TimerPrefab;
-    [SerializeField] private Canvas canvas;
+    [SerializeField] private Transform canvas;
 
     private UITimer timerUI;
 
@@ -187,15 +187,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
             FullRoomEventHandler();
 
-            if(PhotonNetwork.IsMasterClient) //이렇게 하면 다같이 생성되는게 아니였나...?
-            {
-                // 시간 동기화를 위해 타이머 생성
-                var timer = PhotonNetwork.Instantiate(TimerPrefab.name, canvas.transform.position, canvas.transform.rotation).transform.parent = canvas.transform;
-                //timer.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 0);                
-                timerUI = GameObject.Find("Timer(Clone)").GetComponent<UITimer>();
-                Debug.Log(timerUI);
-            }
-
+            CreateTimer();
             DebugGUI.Log_White($"Remote randomPlayerIndex : {randomPlayerIndex}");
             StartCoroutine(TurnManager.instance.CoSetRandomOrderPlayersArrToList());
             CardManager.instance.RPC_M_FirstOpenCard();
@@ -206,7 +198,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
-   
+   private void CreateTimer()
+    {
+        // 시간 동기화를 위해 타이머 생성
+        var timer = PhotonNetwork.Instantiate(TimerPrefab.name, canvas.localPosition, canvas.rotation);
+        GameObject.Find("Timer(Clone)").GetComponent<Transform>().parent = canvas;
+        timerUI = GameObject.Find("Timer(Clone)").GetComponent<UITimer>();
+        Debug.Log(timerUI);
+    }
     
 
     private void SetPlayerObjArrAndRemotePlayerObjArr()
