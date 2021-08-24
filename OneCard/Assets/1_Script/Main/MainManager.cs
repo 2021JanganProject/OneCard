@@ -5,6 +5,8 @@ using UnityEngine;
 public class MainManager : MonoBehaviour
 {
     [SerializeField] UIProfile Profile;
+
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -16,4 +18,5 @@ public class MainManager : MonoBehaviour
     {
         
     }
+    
 }

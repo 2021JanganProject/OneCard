@@ -33,7 +33,21 @@ public class Attack : Card
         if (currentCardData.number == 7)
         {
             // 공격받았을때 A면 카드를 못낸다.
-            if (attackCounter.CurrentAttackCount > 1)
+            if(attackCounter != null)
+            {
+                if (attackCounter.CurrentAttackCount > 1)
+                {
+                    if (cardManager.CurrentCard.number == 7)
+                    {
+                        isActiveState = true;
+                    }
+                    else
+                    {
+                        isActiveState = false;
+                    }
+                }
+            }
+            /*if (attackCounter.CurrentAttackCount > 1)
             {
                 if(cardManager.CurrentCard.number == 7)
                 {
@@ -43,7 +57,7 @@ public class Attack : Card
                 {
                     isActiveState = false;
                 }
-            }
+            }*/
         }
     }
 

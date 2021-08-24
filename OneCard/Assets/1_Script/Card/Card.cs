@@ -234,14 +234,25 @@ public class Card : MonoBehaviourPun
         }
         else if(currentCardData.number == 13)
         {
-            if(attackCounter.CurrentAttackCount == 0)
+            if(attackCounter != null)
+            {
+                if (attackCounter.CurrentAttackCount == 0)
+                {
+                    isActiveState = true;
+                }
+                else
+                {
+                    isActiveState = false;
+                }
+            }
+            /*if(attackCounter.CurrentAttackCount == 0)
             {
                 isActiveState = true;
             }
             else
             {
                 isActiveState = false;
-            }
+            }*/
         }
         else
         {
@@ -251,14 +262,25 @@ public class Card : MonoBehaviourPun
             }
             else if (cardManager.CurrentCard.cardColor == currentCardData.cardColor || cardManager.CurrentCard.number == currentCardData.number)
             {
-                if(attackCounter.CurrentAttackCount < 1)
+                if(attackCounter != null)
                 {
-                    isActiveState = true;
+                    if (attackCounter.CurrentAttackCount < 1)
+                    {
+                        isActiveState = true;
+                    }
+                    else
+                    {
+                        isActiveState = false;
+                    }
                 }
-                else
-                {
-                    isActiveState = false;
-                }
+               // if(attackCounter.CurrentAttackCount < 1)
+                //{
+                  //  isActiveState = true;
+               // }
+               // else
+               // {
+               //     isActiveState = false;
+               // }
             }            
             else
             {
