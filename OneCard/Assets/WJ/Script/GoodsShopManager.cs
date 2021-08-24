@@ -123,6 +123,6 @@ public class GoodsShopManager : MonoBehaviour
  
     public void PurchaseGoods(Content content)
     {
-
+        //ÄÁÅÙÃ÷ ±¸¸Å ·ÎÁ÷
     }
 }
