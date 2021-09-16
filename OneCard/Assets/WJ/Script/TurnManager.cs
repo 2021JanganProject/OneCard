@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 using System;
 using System.Linq;
@@ -53,6 +54,9 @@ public class TurnManager : MonoBehaviourPun
     private int currentTime = 0;
     private bool isTimeOver = true;
 
+    private GameObject TurnEnd;
+    private Player player;
+
     private void Awake()
     {
         if (instance == null)
@@ -62,7 +66,8 @@ public class TurnManager : MonoBehaviourPun
     }
     private void Start()
     {
-
+        TurnEnd = GameObject.Find("btn_TurnEnd");
+        player = FindObjectOfType<Player>();
     }
     void UpdatePlayers()
     {
@@ -118,6 +123,8 @@ public class TurnManager : MonoBehaviourPun
         {
             StartCoroutine(CoUpdatePlayers());
         }
+
+        ButtonActive();
     }
     IEnumerator CoUpdatePlayers()
     {
@@ -322,6 +329,26 @@ public class TurnManager : MonoBehaviourPun
             }
         }
         reversCurrentTurnPlayer = players.Count - 1;
+    }
+
+    private void ButtonActive()
+    {
+        if (player.PlayerState == ePlayerState.myTurn)
+        {
+            TurnEnd.gameObject.SetActive(true);
+        }
+        else
+        {
+            TurnEnd.gameObject.SetActive(false);
+        }
+    }
+
+    public void btn_ClientEndTurn()
+    {
+        if(!PhotonNetwork.IsMasterClient)
+        {
+            //photonView.RPC(Debug.Log("클라이언트"), RpcTarget.MasterClient);
+        }
     }
 }
 
