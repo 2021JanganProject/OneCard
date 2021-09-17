@@ -77,6 +77,7 @@ public class TurnManager : MonoBehaviourPun
         }
     }
 
+    [PunRPC]
     public void RPC_ALL_EndTurn()
     {        
         if (isOrderDirection == true)
@@ -343,12 +344,14 @@ public class TurnManager : MonoBehaviourPun
         }
     }
 
-    public void btn_ClientEndTurn()
+    public void btn_EndTurn()
     {
-        if(!PhotonNetwork.IsMasterClient)
-        {
-            //photonView.RPC(Debug.Log("클라이언트"), RpcTarget.MasterClient);
-        }
+        photonView.RPC(nameof(RPC_ALL_EndTurn), RpcTarget.MasterClient);
+    }
+    [PunRPC]
+    private void debugTurn()
+    {
+        Debug.Log("RPC 사용하는 법 연구용");
     }
 }
 

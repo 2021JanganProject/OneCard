@@ -202,9 +202,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         // 시간 동기화를 위해 타이머 생성
         var timer = PhotonNetwork.Instantiate(TimerPrefab.name, canvas.localPosition, canvas.rotation);
-        GameObject.Find("Timer(Clone)").GetComponent<Transform>().parent = canvas;
-        timerUI = GameObject.Find("Timer(Clone)").GetComponent<UITimer>();
-        Debug.Log(timerUI);
+        GameObject.Find("Timer(Clone)").GetComponent<Transform>().parent = canvas;        
+        timerUI = timer.GetComponent<UITimer>();
+        //GameObject.Find("Timer(Clone)").GetComponent<UITimer>();
     }
     
 
