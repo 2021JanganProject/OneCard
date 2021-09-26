@@ -44,7 +44,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     public Player[] PlayerArr { get => playerArr; set => playerArr = value; }
     public int RandomPlayerIndex { get => randomPlayerIndex; set => randomPlayerIndex = value; }
     public bool IsPlayerAllInTheRoom { get => isPlayerAllInTheRoom; set => isPlayerAllInTheRoom = value; }
-    public UITimer TimerUI { get => timerUI; set => timerUI = value; }
 
     public eGameFlowState gameFlowState = eGameFlowState.WaittingPlayer_0;
 
@@ -79,8 +78,6 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     [SerializeField] private GameObject TimerPrefab;
     [SerializeField] private Transform canvas;
-
-    private UITimer timerUI;
 
     private void Awake()
     {
@@ -201,10 +198,8 @@ public class GameManager : MonoBehaviourPunCallbacks
    private void CreateTimer()
     {
         // 시간 동기화를 위해 타이머 생성
-        var timer = PhotonNetwork.Instantiate(TimerPrefab.name, canvas.localPosition, canvas.rotation);
-        GameObject.Find("Timer(Clone)").GetComponent<Transform>().parent = canvas;        
-        timerUI = timer.GetComponent<UITimer>();
-        //GameObject.Find("Timer(Clone)").GetComponent<UITimer>();
+        PhotonNetwork.Instantiate(TimerPrefab.name, canvas.localPosition, canvas.rotation, 0);
+        GameObject.Find("Timer(Clone)").GetComponent<Transform>().parent = canvas;
     }
     
 

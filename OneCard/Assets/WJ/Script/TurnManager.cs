@@ -57,6 +57,10 @@ public class TurnManager : MonoBehaviourPun
     private GameObject TurnEnd;
     private Player player;
 
+    private UITimer timerUI;
+    private GameObject[] timers;
+    private bool TimerOnce = false;
+
     private void Awake()
     {
         if (instance == null)
@@ -88,16 +92,17 @@ public class TurnManager : MonoBehaviourPun
         {
             ChangeOrderRevers();
         }
-        GameManager.instance.TimerUI.ResetTimerForInvoke();
+        timerUI.ResetTimerForInvoke();
     }
   
     private void Update()
     {
-        if(GameManager.instance.TimerUI != null)
+        GetTimerUI();
+        if (timerUI != null)
         {            
-            currentTime = Mathf.CeilToInt(GameManager.instance.TimerUI.CurrentTime);
+            currentTime = Mathf.CeilToInt(timerUI.CurrentTime);
         }
-        if (GameManager.instance.TimerUI != null)
+        if (timerUI != null)
         {
             // IsTimeOver는 UITimer에서 true로 초기화
             if (currentTime <= 1 && isTimeOver && PhotonNetwork.IsMasterClient)
@@ -249,7 +254,7 @@ public class TurnManager : MonoBehaviourPun
     }
     private void QuitTurn()
     {        
-        if(GameManager.instance.TimerUI != null)
+        if(timerUI != null)
         {
             if (currentTime<=0)
             {
@@ -330,6 +335,26 @@ public class TurnManager : MonoBehaviourPun
             }
         }
         reversCurrentTurnPlayer = players.Count - 1;
+    }
+
+    private void GetTimerUI()
+    {
+        if(GameManager.instance.IsPlayerAllInTheRoom)
+        {
+            if(!TimerOnce)
+            {
+                timers = GameObject.FindGameObjectsWithTag("Timer");
+                Debug.Log($"TimerLength :{timers.Length}");
+                for (int i = 0; i < 4; i++)
+                {
+                    if (timers[i].GetComponent<PhotonView>().IsMine)
+                    {
+                        timerUI = timers[i].GetComponent<UITimer>();
+                    }
+                }
+                TimerOnce = true;
+            }            
+        }
     }
 
     private void ButtonActive()

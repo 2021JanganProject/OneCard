@@ -9,6 +9,7 @@ TagManager:
   - MyCard
   - OpenedCard
   - ClosedCard
+  - Timer
   layers:
   - Default
   - TransparentFX

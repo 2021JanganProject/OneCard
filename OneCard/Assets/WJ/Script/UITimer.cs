@@ -86,8 +86,4 @@ public class UITimer : MonoBehaviour
         EffectManager.Instance.PlayEffect(4, pos, transform.position);
         TurnManager.instance.IsTimeOver = true;
     }
-    public void TurnChange()
-    {
-        TurnManager.instance.RPC_ALL_EndTurn();
-    }
 }
