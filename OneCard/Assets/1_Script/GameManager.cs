@@ -79,6 +79,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject TimerPrefab;
     [SerializeField] private Transform canvas;
 
+    private float createTimer = 0.0f;
+    private float waitTime = 1.0f;
+
     private void Awake()
     {
         if (instance == null)
@@ -188,8 +191,8 @@ public class GameManager : MonoBehaviourPunCallbacks
             DebugGUI.Log_White($"Remote randomPlayerIndex : {randomPlayerIndex}");
             StartCoroutine(TurnManager.instance.CoSetRandomOrderPlayersArrToList());
             CardManager.instance.RPC_M_FirstOpenCard();
-            //TurnManager.instance.CoSetRandomOrderPlayersArrToList(randomPlayerIndex);
             isPlayerAllInTheRoom = true;
+            //TurnManager.instance.CoSetRandomOrderPlayersArrToList(randomPlayerIndex);
             yield return null;
             break;
         }
@@ -199,7 +202,21 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         // 시간 동기화를 위해 타이머 생성
         PhotonNetwork.Instantiate(TimerPrefab.name, canvas.localPosition, canvas.rotation, 0);
-        GameObject.Find("Timer(Clone)").GetComponent<Transform>().parent = canvas;
+        TimerChangeParent();
+    }
+
+    private void TimerChangeParent()
+    {
+            GameObject[] timers = GameObject.FindGameObjectsWithTag("Timer");
+            Debug.Log("타이머 :" + timers.Length);
+            for (int i = 0; i < timers.Length; i++)
+            {
+                if (timers[i].GetComponent<PhotonView>().IsMine)
+                {
+                    Debug.Log("타이머 이동");
+                    timers[i].GetComponent<Transform>().parent = canvas;
+                }
+            }
     }
     
 

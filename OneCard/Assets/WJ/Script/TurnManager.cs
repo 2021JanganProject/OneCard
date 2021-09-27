@@ -58,8 +58,10 @@ public class TurnManager : MonoBehaviourPun
     private Player player;
 
     private UITimer timerUI;
-    private GameObject[] timers;
+    private GameObject[] timers = new GameObject[3];
     private bool TimerOnce = false;
+    private float createTimer = 0.0f;
+    private int waitTime = 1;
 
     private void Awake()
     {
@@ -82,6 +84,12 @@ public class TurnManager : MonoBehaviourPun
     }
 
     [PunRPC]
+    public void RPC_ALL_TimerReset()
+    {
+        timerUI.ResetTimerForInvoke();
+    }
+
+    [PunRPC]
     public void RPC_ALL_EndTurn()
     {        
         if (isOrderDirection == true)
@@ -92,7 +100,6 @@ public class TurnManager : MonoBehaviourPun
         {
             ChangeOrderRevers();
         }
-        timerUI.ResetTimerForInvoke();
     }
   
     private void Update()
@@ -340,21 +347,30 @@ public class TurnManager : MonoBehaviourPun
     private void GetTimerUI()
     {
         if(GameManager.instance.IsPlayerAllInTheRoom)
-        {
+        {           
             if(!TimerOnce)
             {
-                timers = GameObject.FindGameObjectsWithTag("Timer");
-                Debug.Log($"TimerLength :{timers.Length}");
-                for (int i = 0; i < 4; i++)
-                {
-                    if (timers[i].GetComponent<PhotonView>().IsMine)
-                    {
-                        timerUI = timers[i].GetComponent<UITimer>();
-                    }
+                createTimer += Time.deltaTime;
+                if (createTimer > waitTime)
+                {                    
+                    //timers = GameObject.Find;
+                    timers = GameObject.FindGameObjectsWithTag("Timer");
+                    PutTimerUI();                    
+                    TimerOnce = true;
                 }
-                TimerOnce = true;
-            }            
+            }
         }
+    }
+
+    private void PutTimerUI()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (timers[i].GetComponent<PhotonView>().IsMine)
+            {
+                timerUI = timers[i].GetComponent<UITimer>();
+            }
+        }        
     }
 
     private void ButtonActive()
@@ -371,12 +387,8 @@ public class TurnManager : MonoBehaviourPun
 
     public void btn_EndTurn()
     {
+        photonView.RPC(nameof(RPC_ALL_TimerReset), RpcTarget.All);
         photonView.RPC(nameof(RPC_ALL_EndTurn), RpcTarget.MasterClient);
-    }
-    [PunRPC]
-    private void debugTurn()
-    {
-        Debug.Log("RPC 사용하는 법 연구용");
     }
 }
 

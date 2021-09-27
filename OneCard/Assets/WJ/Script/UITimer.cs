@@ -78,6 +78,7 @@ public class UITimer : MonoBehaviour
     }
     public void ResetTimerForInvoke()
     {
+        Debug.Log("버튼눌렸음");
         timeBoad.color = originColor;
         currentTime = maxTime;
         timeText.gameObject.SetActive(true);
